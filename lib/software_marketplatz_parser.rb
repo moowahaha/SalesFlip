@@ -15,7 +15,7 @@ class SoftwareMarketplatzParser
     parse_index("http://#{uri.host}#{uri.path}")
     doc.search('//a').each do |a|
       if a.attributes['href'].match(/^\/f_liste/)
-        parse_index("http://#{uri.host}/#{a.attributes['href']}")
+        parse_index("http://#{uri.host}#{a.attributes['href']}")
       end
     end
   end
