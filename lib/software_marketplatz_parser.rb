@@ -83,7 +83,11 @@ class SoftwareMarketplatzParser
     lead.notes.gsub!(/<a href="/, '<a target="_blank" href="http://www.software-marktplatz.de/')
     lead.do_not_notify = true
     lead.do_not_log = true
-    lead.save unless Lead.find_by_email(lead.email)
+    if l = Lead.find_by_email(lead.email)
+      puts "#{l.email} exists"
+    else
+      lead.save
+    end
     @parsed_pages << page
   rescue
   end
