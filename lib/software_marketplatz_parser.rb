@@ -32,7 +32,7 @@ class SoftwareMarketplatzParser
   def parse_page( page )
     puts "parsing page: #{page}"
     lead = User.find_by_email('mattbeedle@googlemail.com').leads.build :rating => 5, :source => 'Imported'
-    p = agent.get Iconv.iconv('utf-8', 'iso-8859-1', "http://#{uri.host}/#{page}")
+    p = agent.get Iconv.iconv('utf-8', 'iso-8859-1', "http://#{uri.host}#{page}")
     fieldsets = p.search('//fieldset')
     fieldset = nil
     fieldsets.each do |f|
