@@ -4,7 +4,7 @@ class InvitationTest < ActiveSupport::TestCase
   context 'Class' do
     should_have_key :email, :inviter_id, :invited_id, :created_at, :updated_at, :user_type,
       :code
-    should_require_key :email, :inviter
+    should_require_key :email, :inviter, :user_type
     should_have_constant :user_types
     should_belong_to :inviter, :invited
   end

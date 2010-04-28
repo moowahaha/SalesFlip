@@ -6,7 +6,7 @@ class Invitation
   key :inviter_id,  ObjectId
   key :invited_id,  ObjectId
   key :code,        String,   :required => true
-  key :user_type,   Integer
+  key :user_type,   Integer,  :required => true
   timestamps!
 
   belongs_to :invited,  :class_name => 'User'

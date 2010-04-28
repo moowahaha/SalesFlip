@@ -19,6 +19,7 @@ Feature: Manage users
     And I follow "invitations"
     And I follow "new"
     When I fill in "invitation_email" with "werner@1000jobboersen.de"
+    And I select "Freelancer" from "invitation_user_type"
     And I press "invitation_submit"
     Then I should be on the invitations page
     And I should see "werner@1000jobboersen.de"

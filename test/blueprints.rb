@@ -13,6 +13,7 @@ Sham.annika_email { |index| "annika.fleischer#{index}@1000jobboersen.de" }
 Invitation.blueprint do
   email
   inviter { User.make }
+  user_type { 'User' }
 end
 
 Configuration.blueprint do
