@@ -17,5 +17,9 @@ cucumber:
   <<: *base
 
 production:
-  database: db/lean_crm_production.sqlite3
-  <<: *base
+  database: maildb
+  encoding: utf8
+  user: mail
+  password: 8arcelona
+  adapter: mysql
+  socket: /tmp/mysql.sock

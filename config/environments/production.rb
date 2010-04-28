@@ -29,6 +29,8 @@ config.cache_store = :mem_cache_store
 # Enable threaded mode
 # config.threadsafe
 
+config.gem 'mysql'
+
 ActionMailer::Base.delivery_method = :smtp
 ActionMailer::Base.smtp_settings = {
   :address => 'mail.authsmtp.com',

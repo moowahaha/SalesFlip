@@ -82,6 +82,13 @@ class UserTest < ActiveSupport::TestCase
       @user = User.make_unsaved(:annika)
     end
 
+    should 'add user to postfix after creation' do
+      @user.save!
+      assert Domain.find_by_domain("#{@user.api_key}.salesflip.com")
+      assert Alias.find_by_mail_and_destination("@#{@user.api_key}.salesflip.com",
+                                                'catch.all@salesflip.com')
+    end
+
     should 'create company from company name' do
       @user = User.new User.plan(:annika, :company_name => 'A test company')
       @user.save!

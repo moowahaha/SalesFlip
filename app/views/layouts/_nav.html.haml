@@ -13,5 +13,5 @@
     %li= link_to t('contacts'), contacts_path, :id => 'contacts', :class => active_if(controller_is('contacts'))
     %li= link_to current_user.deleted_items_count > 0 ? t('recycle_bin', :count => current_user.deleted_items_count) : t('recycle_bin_empty'), deleted_items_path, :id => 'recycle_bin', :class => active_if(controller_is('deleted_items'))
     - if current_user.instance_of?(User)
-      %li= link_to t('users'), users_path, :id => 'users'
-      %li= link_to t('invitations'), invitations_path, :id => 'invitations'
+      %li= link_to t('users'), users_path, :id => 'users', :class => active_if(controller_is('users'))
+      %li= link_to t('invitations'), invitations_path, :id => 'invitations', :class => active_if(controller_is('users'))

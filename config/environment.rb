@@ -30,7 +30,7 @@ Rails::Initializer.run do |config|
   config.gem 'cucumber'
   config.gem 'machinist'
   #config.gem 'machinist_mongo'
-  #config.gem 'pickle'
+  config.gem 'pickle'
   config.gem 'uuid'
   config.gem 'faker'
   config.gem 'has_scope'

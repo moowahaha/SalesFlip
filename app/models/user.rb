@@ -25,7 +25,7 @@ class User
   belongs_to :company
 
   before_validation_on_create :set_api_key, :create_company
-  after_create :update_invitation
+  after_create :update_invitation, :add_user_to_postfix
 
   validates_presence_of :company
 
@@ -93,5 +93,11 @@ protected
 
   def update_invitation
     @invitation.update_attributes :invited_id => self.id if @invitation
+  end
+
+  def add_user_to_postfix
+    Alias.create :mail => "@#{self.api_key}.salesflip.com",
+      :destination => 'catch.all@salesflip.com'
+    Domain.create :domain => "#{self.api_key}.salesflip.com"
   end
 end
