@@ -11,3 +11,4 @@ config/settings.yml
 config/deploy.rb
 sphinx/*
 sphinx
+*.sqlite3
