@@ -2,8 +2,9 @@
   = t('invitations')
   = add_new t('new_invitation'), new_invitation_path
 
-%table
-  %tr
-    %th= t('email')
-    %th= t('state')
-  = render :partial => 'invitation', :collection => @invitations
+- if @invitations.any?
+  %table
+    %tr
+      %th= t('email')
+      %th= t('state')
+    = render :partial => 'invitation', :collection => @invitations
