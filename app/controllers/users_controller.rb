@@ -24,4 +24,8 @@ protected
     attributes.merge!(:invitation_code => invitation.code) if invitation
     @user ||= User.new attributes
   end
+
+  def collection
+    @users ||= current_user.company.users.order('username', 'asc')
+  end
 end

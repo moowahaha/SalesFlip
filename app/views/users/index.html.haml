@@ -1,0 +1,9 @@
+%h2.title
+  =t('users')
+
+%table
+  %tr
+    %th= t('username')
+    %th= t('email')
+    %th= t('confirmed_at')
+  = render :partial => 'user', :collection => @users
