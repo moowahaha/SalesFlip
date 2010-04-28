@@ -285,6 +285,7 @@ en:
   add_user: Add User
   confirmed_at: Confirmed At
   username: Username
+  user_type: User Type
 
   #--------------------------------------------------------------
   # Invitations

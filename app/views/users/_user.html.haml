@@ -2,3 +2,4 @@
   %td= user.username
   %td= user.email
   %td= user.confirmed_at.to_s :short if user.confirmed?
+  %td= user._type
