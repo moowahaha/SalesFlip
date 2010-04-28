@@ -7,6 +7,7 @@ class User
   key :username,    String
   key :company_id,  ObjectId
   key :api_key,     String, :index => true
+  key :_type,       String
   timestamps!
 
   attr_accessor :company_name
@@ -18,12 +19,24 @@ class User
   has_many :contacts
   has_many :activities
   has_many :searches
+  has_many :invitations, :as => :inviter, :dependent => :destroy
+  has_one :invitation, :as => :invited
 
   belongs_to :company
 
   before_validation_on_create :set_api_key, :create_company
+  after_create :update_invitation
 
   validates_presence_of :company
+
+  def invitation_code=( invitation_code )
+    if @invitation = Invitation.find_by_code(invitation_code)
+      self.company_id = @invitation.inviter.company_id
+      self.username = @invitation.email.split('@').first if self.username.blank?
+      self.email = @invitation.email if self.email.blank?
+      self._type = @invitation.user_type
+    end
+  end
 
   def deleted_items_count
     [Lead, Contact, Account, Comment].map do |model|
@@ -76,5 +89,9 @@ protected
     if company.save
       self.company_id = company.id
     end
+  end
+
+  def update_invitation
+    @invitation.update_attributes :invited_id => self.id if @invitation
   end
 end

@@ -13,14 +13,14 @@ class Search
 
   def results
     unless company.blank?
-      @results ||= Lead.scoped(:conditions => { :id => Lead.search("@company #{company}").map(&:id) }).
-        permitted_for(user).not_deleted +
+      @results ||= Lead.scoped(:conditions => { :id => Lead.search("@company #{company}").
+                               map(&:id) }).not_deleted +
         Account.scoped(:conditions => { :id => Account.search("@name #{company}").map(&:id) }).
-        permitted_for(user).not_deleted
+        not_deleted
     else
       @results ||= (collections.blank? ? %w(Lead, Contact, Account) : collections).map do |klass|
         klass = klass.constantize
-        klass.scoped(:conditions => { :id => klass.search(terms).map(&:id) }).permitted_for(user).not_deleted
+        klass.scoped(:conditions => { :id => klass.search(terms).map(&:id) }).not_deleted
       end.inject { |sum,n| sum += n }
     end
   end

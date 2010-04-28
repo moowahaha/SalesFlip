@@ -10,6 +10,11 @@ Sham.title { Faker::Lorem.sentence }
 Sham.sentence { Faker::Lorem.sentence }
 Sham.annika_email { |index| "annika.fleischer#{index}@1000jobboersen.de" }
 
+Invitation.blueprint do
+  email
+  inviter { User.make }
+end
+
 Configuration.blueprint do
   domain_name 'lean-crm.com'
   company_name 'A company'
@@ -21,6 +26,13 @@ end
 
 Company.blueprint(:jobboersen) do
   name { '1000JobBoersen' }
+end
+
+Freelancer.blueprint do
+  company { Company.make }
+  email
+  password { 'password' }
+  password_confirmation { 'password' }
 end
 
 User.blueprint do

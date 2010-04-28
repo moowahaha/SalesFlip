@@ -2,10 +2,12 @@ require 'test_helper.rb'
 
 class UserTest < ActiveSupport::TestCase
   context 'Class' do
-    should_have_key :company_id
+    should_have_key :company_id, :_type
     should_require_key :email, :company
     should_belong_to :company
     should_have_instance_methods :company_name=, :company_name
+    should_have_many :invitations, :leads, :comments, :tasks, :accounts, :contacts, :activities,
+      :searches
 
     context 'send_tracked_items_mail' do
       setup do
@@ -90,6 +92,39 @@ class UserTest < ActiveSupport::TestCase
     should 'have dropbox email' do
       @user.save!
       assert_equal "dropbox@#{@user.api_key}.salesflip.com", @user.dropbox_email
+    end
+
+    context 'when invited' do
+      setup do
+        @user.save!
+        @invitation = Invitation.make:inviter => @user, :user_type => 'Freelancer',
+          :email => 'test@test.com'
+      end
+
+      should 'populate details from invitation code' do
+        user = User.new :invitation_code => @invitation.code
+        assert_equal 'test@test.com', user.email
+        assert_equal 'Freelancer', user._type
+        assert_equal 'test', user.username
+        assert_equal @user.company_id, user.company_id
+      end
+
+      should 'be able to override invitation code details' do
+        user = User.new :invitation_code => @invitation.code, :username => 'wtf', :email => 'wtf'
+        assert_equal 'wtf', user.email
+        assert_equal 'wtf', user.username
+      end
+
+      should 'update invitation with invited id after creation' do
+        user = User.new :invitation_code => @invitation.code, :password => 'password',
+          :password_confirmation => 'password'
+        user.save!
+        assert user.invitation
+      end
+    end
+
+    should 'update invitation with invited id after create' do
+      @user.save!
     end
 
     context 'deleted_items_count' do

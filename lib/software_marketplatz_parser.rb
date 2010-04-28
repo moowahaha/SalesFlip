@@ -12,7 +12,7 @@ class SoftwareMarketplatzParser
 
   def parse
     @parsed_pages = []
-    parse_index("http://#{uri.host}#{uri.path}")
+    #parse_index("http://#{uri.host}#{uri.path}")
     doc.search('//a').each do |a|
       if a.attributes['href'].match(/^\/f_liste/)
         parse_index("http://#{uri.host}#{a.attributes['href']}")
@@ -30,9 +30,9 @@ class SoftwareMarketplatzParser
   end
 
   def parse_page( page )
-    puts "parsing page: #{page}"
+    puts "parsing page: #{Iconv.iconv('utf-8', 'iso-8859-1', "http://#{uri.host}/#{page}")}"
     lead = User.find_by_email('mattbeedle@googlemail.com').leads.build :rating => 5, :source => 'Imported'
-    p = agent.get Iconv.iconv('utf-8', 'iso-8859-1', "http://#{uri.host}#{page}")
+    p = agent.get Iconv.iconv('utf-8', 'iso-8859-1', "http://#{uri.host}/#{page}")
     fieldsets = p.search('//fieldset')
     fieldset = nil
     fieldsets.each do |f|
@@ -89,7 +89,6 @@ class SoftwareMarketplatzParser
       lead.save
     end
     @parsed_pages << page
-  rescue
   end
 
   def add_fieldset( fieldset, lead )

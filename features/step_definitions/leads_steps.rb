@@ -7,6 +7,20 @@ Given /^I am registered and logged in as annika$/ do
   store_model('user', 'annika', User.last(:order => 'created_at'))
 end
 
+Given /^I have accepted an invitation from annika$/ do
+  annika = model!('annika')
+  invitation = Invitation.make(:inviter => annika, :email => 'test@test.com',
+                               :user_type => 'Freelancer')
+  freelancer = Freelancer.make :invitation_code => invitation.code,
+    :email => 'test@test.com', :username => 'test'
+  freelancer.confirm!
+  store_model('freelancer', 'freelancer', freelancer)
+  visit new_user_session_path
+  fill_in 'user_email', :with => 'test@test.com'
+  fill_in 'user_password', :with => 'password'
+  click_button 'user_submit'
+end
+
 Given /I execute "([^\"]*)"$/ do |command|
   eval command
 end

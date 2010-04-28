@@ -4,14 +4,23 @@ module Permission
       key :permission,          Integer, :required => true, :default => 0, :index => true
       key :permitted_user_ids,  Array, :index => true
 
-      # TODO: this.permitted_user_ids[0] is obviously a hack,
-      # must write more thorough tests for this scope
-      named_scope :permitted_for, lambda {|user| { :conditions => {
-        '$where' => <<-JAVASCRIPT
-        this.user_id == '#{user.id}' || this.permission == '#{Contact.permissions.index('Public')}' ||
-        (this.permission == '#{Contact.permissions.index('Shared')}' && this.permitted_user_ids[0] == '#{user.id}')
-        JAVASCRIPT
-      } } }
+      named_scope :permitted_for, lambda { |user|
+        if user.instance_of?(User)
+          { :conditions => {
+            '$where' => "this.user_id == '#{user.id}' || this.permission == '#{Contact.permissions.index('Public')}' || " +
+            "this.assignee_id == '#{user.id}' || " +
+            "(this.permission == '#{Contact.permissions.index('Shared')}' && contains(this.permitted_user_ids, '#{user.id}')) || " +
+            "(this.permission == '#{Contact.permissions.index('Private')}' && this.assignee_id == '#{user.id}')"
+          } }
+        else
+          { :conditions => {
+          '$where' => "this.user_id == '#{user.id}' || " +
+            "(this.assignee_id == '#{user.id}' && this.permission == '#{Contact.permissions.index('Public')}') || " +
+            "(this.assignee_id == '#{user.id}' && this.permission == '#{Contact.permissions.index('Private')}') || " +
+            "(this.permission == '#{Contact.permissions.index('Shared')}' && contains(this.permitted_user_ids, '#{user.id}'))"
+        } }
+        end
+      }
 
       validate :require_permitted_users
 
@@ -24,6 +33,20 @@ module Permission
     def require_permitted_users
       if I18n.locale_around(:en) { permission_is?('Shared') } and permitted_user_ids.length < 1
         errors.add :permitted_user_ids, I18n.t('activerecord.errors.messages.blank')
+      end
+    end
+
+    def permitted_for?( user )
+      I18n.locale_around(:en) do
+        if user.instance_of?(User)
+          user_id == user.id || permission == 'Public' || assignee_id == user.id ||
+            (permission == 'Shared' && permitted_user_ids.include?(user.id)) ||
+            (permission == 'Private' && assignee_id == user.id)
+        else
+          user_id == user.id || (assignee_id == user.id && permission == 'Public') ||
+            (assignee_id == user.id && permission == 'Private') ||
+            (permission == 'Shared' && permitted_user_ids.include?(user.id) && assignee_id == user.id)
+        end
       end
     end
   end

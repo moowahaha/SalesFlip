@@ -12,3 +12,4 @@ config/deploy.rb
 sphinx/*
 sphinx
 *.sqlite3
+.autotest

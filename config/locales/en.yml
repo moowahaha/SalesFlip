@@ -18,6 +18,8 @@ en:
   logout: Logout
   recycle_bin_empty: Recycle Bin
   recycle_bin: "Recycle Bin ({{count}})"
+  users: Users
+  invitations: Invitations
 
   #--------------------------------------------------------------
   # Time
@@ -295,6 +297,10 @@ en:
       subject: "SalesFlip: Tracked items update for {{date}}"
     lead_assignment:
       subject: "SalesFlip: You have been assigned a lead"
+    invitation:
+      subject: "SalesFlip: You have been invited to join {{company}}'s company"
+      body:
+        top: "Here is your invitation link, please signup here.  You will then receive a confirmation email before you are able to log in"
   
   
   #--------------------------------------------------------------

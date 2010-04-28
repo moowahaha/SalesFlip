@@ -1,7 +1,11 @@
 %dl.item.lead
   %dt{ :class => lead.status.downcase }= lead.status
   %dd{ :class => lead.assignee == current_user ? nil : "accept" }
-    %strong= link_to lead.full_name, lead, :id => lead.full_name.to_dom_id
+    %strong
+      - if lead.permitted_for?(current_user)
+        = link_to lead.full_name, lead, :id => lead.full_name.to_dom_id
+      - else
+        = lead.full_name
     = rating_for(lead)
     %small
       = "at #{lead.company}" if !lead.company.blank?
@@ -12,17 +16,21 @@
       %em.timestamp
         = t('added_ago_by', :time => l(lead.created_at, :format => :short), :by => lead.user.username)
         = " : #{t('assigned_to', :user => User.find(lead.assignee_id).full_name) if lead.assignee_id.present?}"
-        = " : #{link_to(pluralize(lead.comments.size, t('comment')), lead)}" if lead.comments.any?
-    %span.actions
-      - if lead.assignee.blank?
-        - simple_form_for lead, :html => { :method => :put } do |form|
-          = form.hidden_field :assignee_id, :value => current_user.id
-          = hidden_field_tag :return_to, lead_path(lead)
-          = form.hidden_field :do_not_notify, :value => true
-          = form.button :submit, t('accept'), :id => 'accept'
+        - if lead.permitted_for?(current_user)
+          = " : #{link_to(pluralize(lead.comments.size, t('comment')), lead)}" if lead.comments.any?
+        - else
+          = pluralize(lead.comments.size, t('comment')) if lead.comments.any?
+    - if lead.permitted_for?(current_user)
+      %span.actions
+        - if lead.assignee.blank?
+          - simple_form_for lead, :html => { :method => :put } do |form|
+            = form.hidden_field :assignee_id, :value => current_user.id
+            = hidden_field_tag :return_to, lead_path(lead)
+            = form.hidden_field :do_not_notify, :value => true
+            = form.button :submit, t('accept'), :id => 'accept'
+          %b.divider= "|"
+        = link_to t('edit'), edit_lead_path(lead, :return_to => request.request_uri), :id => "edit_#{dom_id lead}"
+      -#
         %b.divider= "|"
-      = link_to t('edit'), edit_lead_path(lead, :return_to => request.request_uri), :id => "edit_#{dom_id lead}"
-    -#
-      %b.divider= "|"
-      - simple_form_for lead, :html => { :method => :delete } do |form|
-        = form.button :submit, t('delete_icon'), :class => 'delete', :id => "delete_#{dom_id(lead)}"
+        - simple_form_for lead, :html => { :method => :delete } do |form|
+          = form.button :submit, t('delete_icon'), :class => 'delete', :id => "delete_#{dom_id(lead)}"

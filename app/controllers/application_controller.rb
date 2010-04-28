@@ -47,4 +47,10 @@ protected
     end
   end
 
+  def freelancer_redirect
+    if current_user.is_a?(Freelancer)
+      redirect_to root_path
+      return false
+    end
+  end
 end

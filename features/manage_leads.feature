@@ -95,6 +95,16 @@ Feature: Manage leads
   #  And lead "erich" should have been deleted
   #  And a new "Deleted" activity should have been created for "Lead" with "first_name" "Erich" and user: "annika"
 
+  Scenario: Leads index when freelance user
+    Given a user: "annika" exists
+    And I have accepted an invitation from annika
+    And a lead: "erich" exists with user: annika
+    And a lead: "markus" exists with user: freelancer
+    When I am on the leads page
+    Then I should not see "Erich"
+    And I should see "Markus"
+    And I should not see "filter"
+
   Scenario: Filtering leads
     Given I am registered and logged in as annika
     And a lead exists with user: annika, status: "New", first_name: "Erich"

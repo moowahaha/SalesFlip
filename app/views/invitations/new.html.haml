@@ -1,0 +1,6 @@
+- simple_form_for @invitation do |form|
+  %fieldset
+    .50.a= form.input :email
+    .50.z= form.input :user_type, :collection => Invitation.user_types
+  .act.pad
+    = form.submit t('create'), :id => 'invitation_submit'

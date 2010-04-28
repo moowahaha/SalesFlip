@@ -5,6 +5,7 @@ ActionController::Routing::Routes.draw do |map|
   map.profile '/profile', :controller => 'users', :action => 'profile'
 
   map.devise_for :users, :admins
+  map.resources :freelancers, :controller => 'users'
   map.resources :users
   map.resources :leads, :member => { :convert => :get, :promote => :put, :reject => :put }
   map.resources :comments
@@ -14,6 +15,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :attachments
   map.resources :deleted_items
   map.resources :searches
+  map.resources :invitations
 
   map.namespace(:admin) do |admin|
     admin.root :controller => 'configurations', :action => 'show'

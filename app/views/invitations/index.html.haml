@@ -1,0 +1,9 @@
+%h2.title
+  = t('invitations')
+  = add_new t('invitation'), new_invitation_path
+
+%table
+  %tr
+    %th= t('email')
+    %th= t('state')
+  = render :partial => 'invitation', :collection => @invitations
