@@ -56,7 +56,7 @@ protected
   def collection
     if params[:scopes]
       @tasks ||= Task.grouped_by_scope(params[:scopes].map {|k,v| k.to_sym },
-                                       :target => apply_scopes(Task))
+                                       :target => apply_scopes(Task.order('due_at', 'desc')))
     else
       @tasks ||= apply_scopes(Task)
     end
