@@ -28,7 +28,7 @@ loop do
         item.update_attributes :status => 'Failed'
       end
     rescue StandardError => e
-      @logger.warn("The following error occurred in the queue processor loop: #{e}")
+      @logger.warn("The following error occurred in the queue processor loop: #{e} at #{Time.zone.now}")
     end
   else
     @logger.warn("Don't know how to process #{job_hash.inspect}")
