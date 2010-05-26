@@ -1,19 +1,12 @@
+# Make sure you have the following libs in your load path or you could have issues:
+#   gem 'activesupport', '>= 2.3.4'
+#   gem 'mongo', '1.0'
+#   gem 'jnunemaker-validatable', '1.8.4'
 require 'set'
 require 'uri'
-
-# if Gem is defined i'll assume you are using rubygems and lock specific versions
-# call me crazy but a plain old require will just get the latest version you have installed
-# so i want to make sure that if you are using gems you do in fact have the correct versions
-# if there is a better way to do this, please enlighten me!
-if self.class.const_defined?(:Gem)
-  gem 'activesupport', '>= 2.3'
-  gem 'mongo', '0.19.1'
-  gem 'jnunemaker-validatable', '1.8.3'
-end
-
-require 'active_support/all'
 require 'mongo'
 require 'validatable'
+require 'active_support/all'
 
 module MongoMapper
   # generic MM error
@@ -78,7 +71,7 @@ module MongoMapper
   def self.config_for_environment(environment)
     env = config[environment]
     return env if env['uri'].blank?
-    
+
     uri = URI.parse(env['uri'])
     raise InvalidScheme.new('must be mongodb') unless uri.scheme == 'mongodb'
     {
@@ -113,24 +106,10 @@ module MongoMapper
     end
   end
 
-  # @api private
-  def self.use_time_zone?
-    Time.respond_to?(:zone) && Time.zone ? true : false
-  end
-
-  # @api private
-  def self.time_class
-    use_time_zone? ? Time.zone : Time
-  end
-
-  # @api private
-  def self.normalize_object_id(value)
-    value.is_a?(String) ? Mongo::ObjectID.from_string(value) : value
-  end
-
   autoload :Query,            'mongo_mapper/query'
   autoload :Document,         'mongo_mapper/document'
   autoload :EmbeddedDocument, 'mongo_mapper/embedded_document'
+  autoload :Version,          'mongo_mapper/version'
 end
 
 require 'mongo_mapper/support'

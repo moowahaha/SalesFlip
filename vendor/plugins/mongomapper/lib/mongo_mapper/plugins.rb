@@ -22,6 +22,7 @@ module MongoMapper
     autoload :Logger,         'mongo_mapper/plugins/logger'
     autoload :Modifiers,      'mongo_mapper/plugins/modifiers'
     autoload :NamedScopes,    'mongo_mapper/plugins/named_scope'
+    autoload :Persistence,    'mongo_mapper/plugins/persistence'
     autoload :Protected,      'mongo_mapper/plugins/protected'
     autoload :Rails,          'mongo_mapper/plugins/rails'
     autoload :Serialization,  'mongo_mapper/plugins/serialization'

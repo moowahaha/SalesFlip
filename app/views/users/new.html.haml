@@ -1,5 +1,5 @@
 %h2.title= t('add_user')
-- simple_form_for @user do |f|
+- simple_form_for :user, @user, :url => users_path do |f|
   - if @invitation
     = render :partial => 'form_with_invite', :locals => { :f => f, :invitation => @invitation }
   - else

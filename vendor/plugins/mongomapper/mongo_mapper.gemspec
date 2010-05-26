@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mongo_mapper}
-  s.version = "0.7.0"
+  s.version = "0.7.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Nunemaker"]
-  s.date = %q{2010-02-10}
+  s.date = %q{2010-04-30}
   s.default_executable = %q{mmconsole}
   s.email = %q{nunemaker@gmail.com}
   s.executables = ["mmconsole"]
@@ -22,7 +22,6 @@ Gem::Specification.new do |s|
      "LICENSE",
      "README.rdoc",
      "Rakefile",
-     "VERSION",
      "bin/mmconsole",
      "lib/mongo_mapper.rb",
      "lib/mongo_mapper/document.rb",
@@ -40,6 +39,7 @@ Gem::Specification.new do |s|
      "lib/mongo_mapper/plugins/associations/many_embedded_polymorphic_proxy.rb",
      "lib/mongo_mapper/plugins/associations/many_embedded_proxy.rb",
      "lib/mongo_mapper/plugins/associations/many_polymorphic_proxy.rb",
+     "lib/mongo_mapper/plugins/associations/one_embedded_proxy.rb",
      "lib/mongo_mapper/plugins/associations/one_proxy.rb",
      "lib/mongo_mapper/plugins/associations/proxy.rb",
      "lib/mongo_mapper/plugins/callbacks.rb",
@@ -51,20 +51,26 @@ Gem::Specification.new do |s|
      "lib/mongo_mapper/plugins/inspect.rb",
      "lib/mongo_mapper/plugins/keys.rb",
      "lib/mongo_mapper/plugins/logger.rb",
+     "lib/mongo_mapper/plugins/modifiers.rb",
      "lib/mongo_mapper/plugins/pagination.rb",
      "lib/mongo_mapper/plugins/pagination/proxy.rb",
+     "lib/mongo_mapper/plugins/persistence.rb",
      "lib/mongo_mapper/plugins/protected.rb",
      "lib/mongo_mapper/plugins/rails.rb",
      "lib/mongo_mapper/plugins/serialization.rb",
+     "lib/mongo_mapper/plugins/timestamps.rb",
+     "lib/mongo_mapper/plugins/userstamps.rb",
      "lib/mongo_mapper/plugins/validations.rb",
      "lib/mongo_mapper/query.rb",
      "lib/mongo_mapper/support.rb",
      "lib/mongo_mapper/support/descendant_appends.rb",
      "lib/mongo_mapper/support/find.rb",
+     "lib/mongo_mapper/version.rb",
      "mongo_mapper.gemspec",
      "performance/read_write.rb",
      "specs.watchr",
      "test/NOTE_ON_TESTING",
+     "test/active_model_lint_test.rb",
      "test/functional/associations/test_belongs_to_polymorphic_proxy.rb",
      "test/functional/associations/test_belongs_to_proxy.rb",
      "test/functional/associations/test_in_array_proxy.rb",
@@ -73,6 +79,7 @@ Gem::Specification.new do |s|
      "test/functional/associations/test_many_embedded_polymorphic_proxy.rb",
      "test/functional/associations/test_many_embedded_proxy.rb",
      "test/functional/associations/test_many_polymorphic_proxy.rb",
+     "test/functional/associations/test_one_embedded_proxy.rb",
      "test/functional/associations/test_one_proxy.rb",
      "test/functional/test_associations.rb",
      "test/functional/test_binary.rb",
@@ -81,11 +88,14 @@ Gem::Specification.new do |s|
      "test/functional/test_document.rb",
      "test/functional/test_embedded_document.rb",
      "test/functional/test_identity_map.rb",
+     "test/functional/test_indexing.rb",
      "test/functional/test_logger.rb",
      "test/functional/test_modifiers.rb",
      "test/functional/test_pagination.rb",
      "test/functional/test_protected.rb",
      "test/functional/test_string_id_compatibility.rb",
+     "test/functional/test_timestamps.rb",
+     "test/functional/test_userstamps.rb",
      "test/functional/test_validations.rb",
      "test/models.rb",
      "test/support/custom_matchers.rb",
@@ -113,10 +123,11 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/jnunemaker/mongomapper}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.5}
-  s.summary = %q{Awesome gem for modeling your domain and storing it in mongo}
+  s.rubygems_version = %q{1.3.6}
+  s.summary = %q{A Ruby Object Mapper for Mongo}
   s.test_files = [
-    "test/functional/associations/test_belongs_to_polymorphic_proxy.rb",
+    "test/active_model_lint_test.rb",
+     "test/functional/associations/test_belongs_to_polymorphic_proxy.rb",
      "test/functional/associations/test_belongs_to_proxy.rb",
      "test/functional/associations/test_in_array_proxy.rb",
      "test/functional/associations/test_many_documents_as_proxy.rb",
@@ -124,6 +135,7 @@ Gem::Specification.new do |s|
      "test/functional/associations/test_many_embedded_polymorphic_proxy.rb",
      "test/functional/associations/test_many_embedded_proxy.rb",
      "test/functional/associations/test_many_polymorphic_proxy.rb",
+     "test/functional/associations/test_one_embedded_proxy.rb",
      "test/functional/associations/test_one_proxy.rb",
      "test/functional/test_associations.rb",
      "test/functional/test_binary.rb",
@@ -132,11 +144,14 @@ Gem::Specification.new do |s|
      "test/functional/test_document.rb",
      "test/functional/test_embedded_document.rb",
      "test/functional/test_identity_map.rb",
+     "test/functional/test_indexing.rb",
      "test/functional/test_logger.rb",
      "test/functional/test_modifiers.rb",
      "test/functional/test_pagination.rb",
      "test/functional/test_protected.rb",
      "test/functional/test_string_id_compatibility.rb",
+     "test/functional/test_timestamps.rb",
+     "test/functional/test_userstamps.rb",
      "test/functional/test_validations.rb",
      "test/models.rb",
      "test/support/custom_matchers.rb",
@@ -167,26 +182,29 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<activesupport>, [">= 2.3"])
-      s.add_runtime_dependency(%q<mongo>, ["= 0.18.3"])
-      s.add_runtime_dependency(%q<jnunemaker-validatable>, ["= 1.8.1"])
+      s.add_runtime_dependency(%q<activesupport>, [">= 2.3.4"])
+      s.add_runtime_dependency(%q<mongo>, ["= 1.0"])
+      s.add_runtime_dependency(%q<jnunemaker-validatable>, ["= 1.8.4"])
+      s.add_development_dependency(%q<json>, [">= 1.2.3"])
       s.add_development_dependency(%q<jnunemaker-matchy>, ["= 0.4.0"])
       s.add_development_dependency(%q<shoulda>, ["= 2.10.2"])
       s.add_development_dependency(%q<timecop>, ["= 0.3.1"])
       s.add_development_dependency(%q<mocha>, ["= 0.9.8"])
     else
-      s.add_dependency(%q<activesupport>, [">= 2.3"])
-      s.add_dependency(%q<mongo>, ["= 0.18.3"])
-      s.add_dependency(%q<jnunemaker-validatable>, ["= 1.8.1"])
+      s.add_dependency(%q<activesupport>, [">= 2.3.4"])
+      s.add_dependency(%q<mongo>, ["= 1.0"])
+      s.add_dependency(%q<jnunemaker-validatable>, ["= 1.8.4"])
+      s.add_dependency(%q<json>, [">= 1.2.3"])
       s.add_dependency(%q<jnunemaker-matchy>, ["= 0.4.0"])
       s.add_dependency(%q<shoulda>, ["= 2.10.2"])
       s.add_dependency(%q<timecop>, ["= 0.3.1"])
       s.add_dependency(%q<mocha>, ["= 0.9.8"])
     end
   else
-    s.add_dependency(%q<activesupport>, [">= 2.3"])
-    s.add_dependency(%q<mongo>, ["= 0.18.3"])
-    s.add_dependency(%q<jnunemaker-validatable>, ["= 1.8.1"])
+    s.add_dependency(%q<activesupport>, [">= 2.3.4"])
+    s.add_dependency(%q<mongo>, ["= 1.0"])
+    s.add_dependency(%q<jnunemaker-validatable>, ["= 1.8.4"])
+    s.add_dependency(%q<json>, [">= 1.2.3"])
     s.add_dependency(%q<jnunemaker-matchy>, ["= 0.4.0"])
     s.add_dependency(%q<shoulda>, ["= 2.10.2"])
     s.add_dependency(%q<timecop>, ["= 0.3.1"])

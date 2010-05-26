@@ -1,12 +1,15 @@
 module MongoMapper
   module Plugins
     module Keys
+      autoload :Key, 'mongo_mapper/plugins/keys/key'
+
       def self.configure(model)
         model.key :_id, ObjectId
       end
 
       module ClassMethods
         def inherited(descendant)
+          key :_type, String unless keys.keys.include?(:_type)
           descendant.instance_variable_set(:@keys, keys.dup)
           super
         end
@@ -16,15 +19,17 @@ module MongoMapper
         end
 
         def key(*args)
-          key = Key.new(*args)
-          keys[key.name] = key
+          Key.new(*args).tap do |key|
+            keys[key.name] = key
+            create_accessors_for(key)
+            create_key_in_descendants(*args)
+            create_indexes_for(key)
+            create_validations_for(key)
+          end
+        end
 
-          create_accessors_for(key)
-          create_key_in_descendants(*args)
-          create_indexes_for(key)
-          create_validations_for(key)
-
-          key
+        def key?(key)
+          keys.keys.include?(key.to_s)
         end
 
         def using_object_id?
@@ -57,14 +62,16 @@ module MongoMapper
         end
 
         private
-          def accessors_module
-            module_defined =  if method(:const_defined?).arity == 1 # Ruby 1.9 compat check
-                                const_defined?('MongoMapperKeys')
-                              else
-                                const_defined?('MongoMapperKeys', false)
-                              end
+          def key_accessors_module_defined?
+            if method(:const_defined?).arity == 1 # Ruby 1.9 compat check
+              const_defined?('MongoMapperKeys')
+            else
+              const_defined?('MongoMapperKeys', false)
+            end
+          end
 
-            if module_defined
+          def accessors_module
+            if key_accessors_module_defined?
               const_get 'MongoMapperKeys'
             else
               const_set 'MongoMapperKeys', Module.new
@@ -94,7 +101,6 @@ module MongoMapper
           end
 
           def create_key_in_descendants(*args)
-            return if descendants.blank?
             descendants.each { |descendant| descendant.key(*args) }
           end
 
@@ -146,41 +152,31 @@ module MongoMapper
 
       module InstanceMethods
         def initialize(attrs={}, from_database=false)
-          unless attrs.nil?
-            provided_keys = attrs.keys.map { |k| k.to_s }
-            unless provided_keys.include?('_id') || provided_keys.include?('id')
-              write_key :_id, Mongo::ObjectID.new
-            end
-          end
-
-          assign_type_if_present
+          default_id_value(attrs)
 
           if from_database
             @new = false
-            self.attributes = attrs
+            load_from_database(attrs)
           else
             @new = true
             assign(attrs)
           end
+
+          assign_type
         end
 
-        def new?
-          @new
+        def persisted?
+          !new? && !destroyed?
         end
 
         def attributes=(attrs)
           return if attrs.blank?
 
-          attrs.each_pair do |name, value|
-            writer_method = "#{name}="
-
-            if respond_to?(writer_method)
-              if writer_method == '_root_document='
-                puts "_root_document= #{value.inspect}"
-              end
-              self.send(writer_method, value)
+          attrs.each_pair do |key, value|
+            if respond_to?(:"#{key}=")
+              self.send(:"#{key}=", value)
             else
-              self[name.to_s] = value
+              self[key] = value
             end
           end
         end
@@ -195,7 +191,11 @@ module MongoMapper
 
           embedded_associations.each do |association|
             if documents = instance_variable_get(association.ivar)
-              attrs[association.name] = documents.map { |document| document.to_mongo }
+              if association.one?
+                attrs[association.name] = documents.to_mongo
+              else
+                attrs[association.name] = documents.map { |document| document.to_mongo }
+              end
             end
           end
 
@@ -223,7 +223,7 @@ module MongoMapper
 
         def id=(value)
           if self.class.using_object_id?
-            value = MongoMapper.normalize_object_id(value)
+            value = ObjectId.to_mongo(value)
           end
 
           self[:_id] = value
@@ -238,28 +238,44 @@ module MongoMapper
           write_key(name, value)
         end
 
-        # @api public
         def keys
           self.class.keys
         end
 
-        # @api private?
         def key_names
           keys.keys
         end
 
-        # @api private?
         def non_embedded_keys
           keys.values.select { |key| !key.embeddable? }
         end
 
-        # @api private?
         def embedded_keys
           keys.values.select { |key| key.embeddable? }
         end
 
         private
-          def assign_type_if_present
+          def load_from_database(attrs)
+            return if attrs.blank?
+            attrs.each do |key, value|
+              if respond_to?(:"#{key}=") && !self.class.key?(key)
+                self.send(:"#{key}=", value)
+              else
+                self[key] = value
+              end
+            end
+          end
+
+          def default_id_value(attrs)
+            unless attrs.nil?
+              provided_keys = attrs.keys.map { |k| k.to_s }
+              unless provided_keys.include?('_id') || provided_keys.include?('id')
+                write_key :_id, BSON::ObjectID.new
+              end
+            end
+          end
+
+          def assign_type
             self._type = self.class.name if respond_to?(:_type=)
           end
 
@@ -267,70 +283,35 @@ module MongoMapper
             self.class.key(name) unless respond_to?("#{name}=")
           end
 
-          def read_key(name)
-            if key = keys[name]
-              var_name = "@#{name}"
-              value = key.get(instance_variable_get(var_name))
-              instance_variable_set(var_name, value)
+          def set_parent_document(key, value)
+            if key.embeddable? && value.is_a?(key.type)
+              value._parent_document = self
+            end
+          end
+
+          def read_key(key_name)
+            if key = keys[key_name]
+              value = key.get(instance_variable_get(:"@#{key_name}"))
+              set_parent_document(key, value)
+              instance_variable_set(:"@#{key_name}", value)
             else
-              raise KeyNotFound, "Could not find key: #{name.inspect}"
+              raise KeyNotFound, "Could not find key: #{key_name.inspect}"
             end
           end
 
           def read_key_before_typecast(name)
-            instance_variable_get("@#{name}_before_typecast")
+            instance_variable_get(:"@#{name}_before_typecast")
           end
 
           def write_key(name, value)
-            key = keys[name]
-
-            if key.embeddable? && value.is_a?(key.type)
-              value._parent_document = self
-            end
-
-            instance_variable_set "@#{name}_before_typecast", value
-            instance_variable_set "@#{name}", key.set(value)
+            key = keys[name.to_s]
+            set_parent_document(key, value)
+            instance_variable_set :"@#{name}_before_typecast", value
+            instance_variable_set :"@#{name}", key.set(value)
           end
       end
 
-      class Key
-        attr_accessor :name, :type, :options, :default_value
 
-        def initialize(*args)
-          options = args.extract_options!
-          @name, @type = args.shift.to_s, args.shift
-          self.options = (options || {}).symbolize_keys
-          self.default_value = self.options.delete(:default)
-        end
-
-        def ==(other)
-          @name == other.name && @type == other.type
-        end
-
-        def embeddable?
-          type.respond_to?(:embeddable?) && type.embeddable? ? true : false
-        end
-
-        def number?
-          [Integer, Float].include?(type)
-        end
-
-        def get(value)
-          if value.nil? && !default_value.nil?
-            if default_value.respond_to?(:call)
-              return default_value.call
-            else
-              return default_value
-            end
-          end
-
-          type.from_mongo(value)
-        end
-
-        def set(value)
-          type.to_mongo(value)
-        end
-      end
     end
   end
 end

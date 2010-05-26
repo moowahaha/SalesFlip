@@ -21,8 +21,12 @@ protected
 
   def build_resource
     attributes = params[:user] || {}
-    attributes.merge!(:invitation_code => invitation.code) if invitation
-    @user ||= User.new attributes
+    if invitation
+      attributes.merge!(:invitation_code => invitation.code)
+      @user ||= invitation.user_type.constantize.new attributes
+    else
+      @user ||= User.new attributes
+    end
   end
 
   def collection

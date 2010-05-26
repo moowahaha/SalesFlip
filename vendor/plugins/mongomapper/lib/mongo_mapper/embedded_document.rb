@@ -15,10 +15,12 @@ module MongoMapper
         plugin Plugins::Inspect
         plugin Plugins::Keys
         plugin Plugins::Logger
+        plugin Plugins::Persistence
         plugin Plugins::Protected
         plugin Plugins::Rails
         plugin Plugins::Serialization
         plugin Plugins::Validations
+        plugin Plugins::Callbacks
 
         attr_reader :_root_document, :_parent_document
       end
@@ -37,6 +39,14 @@ module MongoMapper
     end
 
     module InstanceMethods
+      def destroyed?
+        !!_root_document.try(:destroyed?)
+      end
+
+      def new?
+        _root_document.try(:new?) || @new
+      end
+
       def save(options={})
         if result = _root_document.try(:save, options)
           @new = false
@@ -50,7 +60,7 @@ module MongoMapper
         end
         result
       end
-      
+
       def _parent_document=(value)
         @_root_document   = value._root_document
         @_parent_document = value

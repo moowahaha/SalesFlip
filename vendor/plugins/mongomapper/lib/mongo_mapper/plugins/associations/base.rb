@@ -16,8 +16,8 @@ module MongoMapper
 
         def class_name
           return @class_name if defined?(@class_name)
-          
-          @class_name = 
+
+          @class_name =
             if cn = options[:class_name]
               cn
             elsif many?
@@ -56,7 +56,7 @@ module MongoMapper
         end
 
         def embeddable?
-          many? && klass.embeddable?
+          (one? || many?) && klass.embeddable?
         end
 
         def type_key_name
@@ -78,8 +78,8 @@ module MongoMapper
         # hate this, need to revisit
         def proxy_class
           return @proxy_class if defined?(@proxy_class)
-          
-          @proxy_class = 
+
+          @proxy_class =
             if many?
               if klass.embeddable?
                 polymorphic? ? ManyEmbeddedPolymorphicProxy : ManyEmbeddedProxy
@@ -95,7 +95,7 @@ module MongoMapper
                 end
               end
             elsif one?
-              OneProxy
+              klass.embeddable? ? OneEmbeddedProxy : OneProxy
             else
               polymorphic? ? BelongsToPolymorphicProxy : BelongsToProxy
             end

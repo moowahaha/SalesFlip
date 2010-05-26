@@ -19,6 +19,7 @@ module MongoMapper
         plugin Plugins::Logger
         plugin Plugins::Modifiers
         plugin Plugins::Pagination
+        plugin Plugins::Persistence
         plugin Plugins::Protected
         plugin Plugins::Rails
         plugin Plugins::Serialization
@@ -39,14 +40,8 @@ module MongoMapper
         super
       end
 
-      def ensure_index(name_or_array, options={})
-        keys_to_index = if name_or_array.is_a?(Array)
-          name_or_array.map { |pair| [pair[0], pair[1]] }
-        else
-          name_or_array
-        end
-
-        collection.create_index(keys_to_index, options[:unique])
+      def ensure_index(spec, options={})
+        collection.create_index(spec, options)
       end
 
       def find(*args)
@@ -84,12 +79,12 @@ module MongoMapper
         find(id)
       end
 
-      def first_or_create(arg)
-        first(arg) || create(arg)
+      def first_or_create(args)
+        first(args) || create(args.reject { |key, value| !key?(key) })
       end
 
-      def first_or_new(arg)
-        first(arg) || new(arg)
+      def first_or_new(args)
+        first(args) || new(args.reject { |key, value| !key?(key) })
       end
 
       def first(options={})
@@ -150,43 +145,6 @@ module MongoMapper
 
       def embeddable?
         false
-      end
-
-      def connection(mongo_connection=nil)
-        if mongo_connection.nil?
-          @connection ||= MongoMapper.connection
-        else
-          @connection = mongo_connection
-        end
-        @connection
-      end
-
-      def set_database_name(name)
-        @database_name = name
-      end
-
-      def database_name
-        @database_name
-      end
-
-      def database
-        if database_name.nil?
-          MongoMapper.database
-        else
-          connection.db(database_name)
-        end
-      end
-
-      def set_collection_name(name)
-        @collection_name = name
-      end
-
-      def collection_name
-        @collection_name ||= self.to_s.tableize.gsub(/\//, '.')
-      end
-
-      def collection
-        database.collection(collection_name)
       end
 
       def single_collection_inherited?
@@ -290,14 +248,6 @@ module MongoMapper
     end
 
     module InstanceMethods
-      def collection
-        self.class.collection
-      end
-
-      def database
-        self.class.database
-      end
-
       def save(options={})
         options.assert_valid_keys(:validate, :safe)
         options.reverse_merge!(:validate => true)
@@ -316,6 +266,10 @@ module MongoMapper
       def delete
         @_destroyed = true
         self.class.delete(id) unless new?
+      end
+
+      def new?
+        @new
       end
 
       def destroyed?

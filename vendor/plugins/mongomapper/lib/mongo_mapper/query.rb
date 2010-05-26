@@ -65,52 +65,65 @@ module MongoMapper
         conditions.each_pair do |key, value|
           key = normalized_key(key)
 
-          if model.object_id_key?(key) && value.is_a?(String)
-            value = Mongo::ObjectID.from_string(value)
+          if model.object_id_key?(key)
+            case value
+              when String
+                value = ObjectId.to_mongo(value)
+              when Array
+                value.map! { |id| ObjectId.to_mongo(id) }
+            end
           end
 
           if symbol_operator?(key)
-            value = {"$#{key.operator}" => value}
-            key = normalized_key(key.field)
+            key, value = normalized_key(key.field), {"$#{key.operator}" => value}
           end
 
-          criteria[key] = normalized_value(key, value)
+          criteria[key] = normalized_value(criteria, key, value)
         end
 
         criteria
       end
 
-      def to_fields(fields)
-        return if fields.blank?
+      def to_fields(keys)
+        return keys if keys.is_a?(Hash)
+        return nil  if keys.blank?
 
-        if fields.respond_to?(:flatten, :compact)
-          fields.flatten.compact
+        if keys.respond_to?(:flatten, :compact)
+          keys.flatten.compact
         else
-          fields.split(',').map { |field| field.strip }
+          keys.split(',').map { |key| key.strip }
         end
       end
 
-      def to_order(field, direction=nil)
-        direction ||= 'ASC'
-        direction = direction.upcase == 'ASC' ? 1 : -1
-        [normalized_key(field).to_s, direction]
+      def to_order(key, direction=nil)
+        [normalized_key(key).to_s, normalized_direction(direction)]
       end
 
-      def normalized_key(field)
-        field.to_s == 'id' ? :_id : field
+      def normalized_key(key)
+        key.to_s == 'id' ? :_id : key
       end
 
-      def normalized_value(field, value)
+      # TODO: this is getting heavy enough to move to a class
+      def normalized_value(criteria, key, value)
         case value
-          when Array
-            modifier?(field) ? value : {'$in' => value}
+          when Array, Set
+            modifier?(key) ? value.to_a : {'$in' => value.to_a}
           when Hash
-            to_criteria(value, field)
+            if criteria[key].kind_of?(Hash)
+              criteria[key].dup.merge(to_criteria(value, key))
+            else
+              to_criteria(value, key)
+            end
           when Time
             value.utc
           else
             value
         end
+      end
+
+      def normalized_direction(direction)
+        direction ||= 'asc'
+        direction.downcase == 'asc' ? Mongo::ASCENDING : Mongo::DESCENDING
       end
 
       def normalized_sort(sort)

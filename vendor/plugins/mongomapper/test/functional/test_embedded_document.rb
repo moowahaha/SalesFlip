@@ -42,6 +42,14 @@ class EmbeddedDocumentTest < Test::Unit::TestCase
       address._parent_document.should be(doc)
       address._root_document.should be(doc)
     end
+
+    should "assign _parent_document and _root_document when loading" do
+      address = @address_class.new(:city => 'South Bend', :state => 'IN')
+      doc = @klass.create(:foo => address)
+      doc.reload
+      doc.foo._parent_document.should be(doc)
+      doc.foo._root_document.should be(doc)
+    end
   end
 
   should "correctly instantiate single collection inherited embedded documents" do
@@ -53,31 +61,93 @@ class EmbeddedDocumentTest < Test::Unit::TestCase
     doc1.reload.message.class.should be(Enter)
   end
 
-  context "new?" do
+  context "new? (embedded key)" do
     setup do
       @klass.key :foo, @address_class
     end
 
-    should "be new until document is saved" do
+    should "be true until document is saved" do
       address = @address_class.new(:city => 'South Bend', :state => 'IN')
       doc = @klass.new(:foo => address)
-      address.new?.should == true
+      address.new?.should be_true
     end
 
-    should "not be new after document is saved" do
+    should "be false after document is saved" do
       address = @address_class.new(:city => 'South Bend', :state => 'IN')
       doc = @klass.new(:foo => address)
       doc.save
-      doc.foo.new?.should == false
+      doc.foo.new?.should be_false
     end
 
-    should "not be new when document is read back" do
+    should "be false when loaded from database" do
       address = @address_class.new(:city => 'South Bend', :state => 'IN')
       doc = @klass.new(:foo => address)
       doc.save
 
-      doc = doc.reload
-      doc.foo.new?.should == false
+      doc.reload
+      doc.foo.new?.should be_false
+    end
+  end
+
+  context "new? (embedded association)" do
+    setup do
+      @doc = @klass.new(:pets => [{:name => 'poo bear'}])
+    end
+
+    should "be true until document is saved" do
+      @doc.should be_new
+      @doc.pets.first.should be_new
+    end
+
+    should "be false after document is saved" do
+      @doc.save
+      @doc.pets.first.should_not be_new
+    end
+
+    should "be false when loaded from database" do
+      @doc.save
+      @doc.pets.first.should_not be_new
+      @doc.reload
+      @doc.pets.first.should_not be_new
+    end
+  end
+
+  context "#destroyed?" do
+    setup do
+      @doc = @klass.create(:pets => [@pet_klass.new(:name => 'sparky')])
+    end
+
+    should "be false if root document is not destroyed" do
+      @doc.should_not be_destroyed
+      @doc.pets.first.should_not be_destroyed
+    end
+
+    should "be true if root document is destroyed" do
+      @doc.destroy
+      @doc.should be_destroyed
+      @doc.pets.first.should be_destroyed
+    end
+  end
+
+  context "#persisted?" do
+    setup do
+      @doc = @klass.new(:name => 'persisted doc', :pets => [@pet_klass.new(:name => 'persisted pet')])
+    end
+
+    should "be false if new" do
+      @doc.pets.first.should_not be_persisted
+    end
+
+    should "be false if destroyed" do
+      @doc.save
+      @doc.destroy
+      @doc.pets.first.should be_destroyed
+      @doc.pets.first.should_not be_persisted
+    end
+
+    should "be true if not new or destroyed" do
+      @doc.save
+      @doc.pets.first.should be_persisted
     end
   end
 
@@ -126,5 +196,15 @@ class EmbeddedDocumentTest < Test::Unit::TestCase
     pet.expects(:attributes=).with(attributes)
     pet.expects(:save!)
     pet.update_attributes!(attributes)
+  end
+
+  should "have database instance method that is equal to root document" do
+    person = @klass.create(:pets => [@pet_klass.new(:name => 'sparky')])
+    person.pets.first.database.should == person.database
+  end
+
+  should "have collection instance method that is equal to root document" do
+    person = @klass.create(:pets => [@pet_klass.new(:name => 'sparky')])
+    person.pets.first.collection.name.should == person.collection.name
   end
 end

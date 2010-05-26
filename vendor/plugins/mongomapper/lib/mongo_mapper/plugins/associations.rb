@@ -84,6 +84,14 @@ module MongoMapper
 
           proxy
         end
+
+        def save_to_collection(options = {})
+          super
+          associations.each do |association_name, association|
+            proxy = get_proxy(association)
+            proxy.save_to_collection(options) if proxy.proxy_respond_to?(:save_to_collection)
+          end
+        end
       end
 
       autoload :Base,                         'mongo_mapper/plugins/associations/base'
@@ -97,6 +105,7 @@ module MongoMapper
       autoload :ManyEmbeddedPolymorphicProxy, 'mongo_mapper/plugins/associations/many_embedded_polymorphic_proxy'
       autoload :ManyDocumentsAsProxy,         'mongo_mapper/plugins/associations/many_documents_as_proxy'
       autoload :OneProxy,                     'mongo_mapper/plugins/associations/one_proxy'
+      autoload :OneEmbeddedProxy,             'mongo_mapper/plugins/associations/one_embedded_proxy'
       autoload :InArrayProxy,                 'mongo_mapper/plugins/associations/in_array_proxy'
     end
   end

@@ -27,6 +27,7 @@ class ActivityTest < ActiveSupport::TestCase
         Activity.log(@lead.user, @lead, 'Viewed')
         activity = Activity.last(:order => 'created_at')
         updated_at = activity.updated_at
+        sleep 1
         activity2 = Activity.log(@lead.user, @lead, 'Viewed')
         assert_equal 1, Activity.count
         assert updated_at != activity2.updated_at
@@ -36,6 +37,7 @@ class ActivityTest < ActiveSupport::TestCase
         Activity.log(@lead.user, @lead, 'Commented')
         activity = Activity.last(:order => 'created_at')
         updated_at = activity.updated_at
+        sleep 1
         activity2 = Activity.log(@lead.user, @lead, 'Commented')
         assert_equal 1, Activity.count
         assert updated_at != activity2.updated_at
@@ -45,6 +47,7 @@ class ActivityTest < ActiveSupport::TestCase
         Activity.log(@lead.user, @lead, 'Updated')
         activity = Activity.last(:order => 'created_at')
         updated_at = activity.updated_at
+        sleep 1
         activity2 = Activity.log(@lead.user, @lead, 'Updated')
         assert_equal 1, Activity.count
         assert updated_at != activity2.updated_at

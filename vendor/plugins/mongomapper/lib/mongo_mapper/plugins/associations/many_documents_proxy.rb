@@ -37,13 +37,13 @@ module MongoMapper
         def replace(docs)
           load_target
           target.map(&:destroy)
-          docs.each { |doc| apply_scope(doc).save }
+          docs.each { |doc| prepare(doc).save }
           reset
         end
 
         def <<(*docs)
           ensure_owner_saved
-          flatten_deeper(docs).each { |doc| apply_scope(doc).save }
+          flatten_deeper(docs).each { |doc| prepare(doc).save }
           reset
         end
         alias_method :push, :<<
@@ -52,7 +52,8 @@ module MongoMapper
         def build(attrs={})
           doc = klass.new(attrs)
           apply_scope(doc)
-          reset
+          @target ||= [] unless loaded?
+          @target << doc
           doc
         end
 
@@ -88,6 +89,10 @@ module MongoMapper
           reset
         end
 
+        def save_to_collection(options = {})
+          @target.each { |doc| doc.save(options) } if @target
+        end
+
         protected
           def scoped_conditions
             {self.foreign_key => owner.id}
@@ -103,6 +108,10 @@ module MongoMapper
 
           def ensure_owner_saved
             owner.save if owner.new?
+          end
+
+          def prepare(doc)
+            klass === doc ? apply_scope(doc) : build(doc)
           end
 
           def apply_scope(doc)

@@ -41,8 +41,8 @@ class Account
   alias :full_name :name
 
   def self.find_or_create_for( object, name_or_id, options = {} )
-    account = Account.find_by_id(Mongo::ObjectID.from_string(name_or_id.to_s))
-  rescue Mongo::InvalidObjectID => e
+    account = Account.find_by_id(BSON::ObjectID.from_string(name_or_id.to_s))
+  rescue BSON::InvalidObjectID => e
     account = Account.find_by_name(name_or_id)
     account = create_for(object, name_or_id, options) unless account
     account

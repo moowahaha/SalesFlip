@@ -35,12 +35,22 @@ Feature: Manage users
     Then 1 users should exist with username: "Werner"
     And I should be on the root page
 
+  Scenario: Accepting a freelancer invitation
+    Given I have a Freelancer invitation
+    And I go to the accept invitation page
+    And I fill in "user_username" with "Werner"
+    And I fill in "user_password" with "password"
+    And I fill in "user_password_confirmation" with "password"
+    When I press "user_submit"
+    Then 1 freelancers should exist with username: "Werner"
+    And I should be on the root page
+
   Scenario: Accepted an invitation with errors
     Given I have an invitation
     And I go to the accept invitation page
     When I press "user_submit"
     Then I should be on the users page
-    And I should see "can't be empty"
+    And I should see "can't be blank"
 
   Scenario: Inviting a user as a freelancer
     Given a user: "annika" exists

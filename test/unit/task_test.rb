@@ -410,17 +410,17 @@ class TaskTest < ActiveSupport::TestCase
 
     context 'due_in_words' do
       should 'return overdue when due_at is at the end of a day and in the past' do
-        @task.due_at = Time.zone.now.yesterday.end_of_day - 1.second
+        @task.due_at = Time.zone.now.yesterday.end_of_day
         assert_equal 'overdue', @task.due_at_in_words
       end
 
       should 'return "due_today" when due_at is at the end of today' do
-        @task.due_at = Time.zone.now.end_of_day - 1.second
+        @task.due_at = Time.zone.now.end_of_day
         assert_equal 'due_today', @task.due_at_in_words
       end
 
       should 'return "due_tomorrow" when due_at is at the end of tomorrow' do
-        @task.due_at = Time.zone.now.tomorrow.end_of_day - 1.second
+        @task.due_at = Time.zone.now.tomorrow.end_of_day
         assert_equal 'due_tomorrow', @task.due_at_in_words
       end
 
@@ -430,12 +430,12 @@ class TaskTest < ActiveSupport::TestCase
       #end
 
       should 'return "due_next_week" when due_at is at the end of a day sometime during the following week' do
-        @task.due_at = Time.zone.now.next_week.end_of_week - 1.second
+        @task.due_at = Time.zone.now.next_week.end_of_week
         assert_equal 'due_next_week', @task.due_at_in_words
       end
 
       should 'return "due_later" when due_at is at the end of a day and further away than one week' do
-        @task.due_at = (Time.zone.now.next_week.end_of_week + 1.day) - 1.second
+        @task.due_at = Time.zone.now.next_week.end_of_week + 1.day
         assert_equal 'due_later', @task.due_at_in_words
       end
 

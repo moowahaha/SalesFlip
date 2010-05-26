@@ -142,8 +142,8 @@ class DocumentTest < Test::Unit::TestCase
     end
 
     should "automatically set id" do
-      @doc_instance.id.should be_instance_of(Mongo::ObjectID)
-      @doc_instance._id.should be_instance_of(Mongo::ObjectID)
+      @doc_instance.id.should be_instance_of(BSON::ObjectID)
+      @doc_instance._id.should be_instance_of(BSON::ObjectID)
     end
 
     should "no longer be new?" do
@@ -290,17 +290,25 @@ class DocumentTest < Test::Unit::TestCase
         @document.find(@doc1._id, @doc2._id).should == [@doc1, @doc2]
       end
 
+      should "work as arguments with string ids" do
+        @document.find(@doc1._id.to_s, @doc2._id.to_s).should == [@doc1, @doc2]
+      end
+
       should "work as array" do
         @document.find([@doc1._id, @doc2._id]).should == [@doc1, @doc2]
       end
 
+      should "work as array with string ids" do
+        @document.find([@doc1._id.to_s, @doc2._id.to_s]).should == [@doc1, @doc2]
+      end
+
       should "compact not found when using find" do
-        @document.find(@doc1._id, 1234).should == [@doc1]
+        @document.find(@doc1._id, BSON::ObjectID.new.to_s).should == [@doc1]
       end
 
       should "raise error if not all found when using find!" do
         assert_raises(MongoMapper::DocumentNotFound) do
-          @document.find!(@doc1._id, 1234)
+          @document.find!(@doc1._id, BSON::ObjectID.new.to_s)
         end
       end
 
@@ -440,6 +448,15 @@ class DocumentTest < Test::Unit::TestCase
         created.last_name.should == 'Nunemaker'
       }.should change { @document.count }.by(1)
     end
+
+    should "disregard non-keys when creating, but use them in the query" do
+      assert_nothing_raised do
+        @document.create(:first_name => 'John', :age => 9)
+        lambda {
+          @document.first_or_create(:first_name => 'John', :age.gt => 10).first_name.should == 'John'
+        }.should change { @document.count }.by(1)
+      end
+    end
   end
 
   context "first_or_new" do
@@ -458,6 +475,13 @@ class DocumentTest < Test::Unit::TestCase
         created.last_name.should == 'Nunemaker'
         created.should be_new
       }.should_not change { @document.count }
+    end
+
+    should "disregard non-keys when initializing, but use them in the query" do
+      assert_nothing_raised do
+        @document.create(:first_name => 'John', :age => 9)
+        @document.first_or_new(:first_name => 'John', :age.gt => 10).first_name.should == 'John'
+      end
     end
   end
 
@@ -633,7 +657,7 @@ class DocumentTest < Test::Unit::TestCase
     end
 
     should "assign an id for the document" do
-      @doc.id.should be_instance_of(Mongo::ObjectID)
+      @doc.id.should be_instance_of(BSON::ObjectID)
     end
 
     should "save attributes" do
@@ -701,7 +725,7 @@ class DocumentTest < Test::Unit::TestCase
     end
 
     should "assign an id for the document" do
-      @doc.id.should be_instance_of(Mongo::ObjectID)
+      @doc.id.should be_instance_of(BSON::ObjectID)
     end
 
     should "save attributes" do
@@ -908,11 +932,32 @@ class DocumentTest < Test::Unit::TestCase
     end
   end
 
+  context "#persisted?" do
+    setup do
+      @doc = @document.new(:first_name => 'John', :last_name => 'Nunemaker', :age => '27')
+    end
+
+    should "be false if new" do
+      @doc.should_not be_persisted
+    end
+
+    should "be false if destroyed" do
+      @doc.save
+      @doc.destroy
+      @doc.should be_destroyed
+      @doc.should_not be_persisted
+    end
+
+    should "be true if not new or destroyed" do
+      @doc.save
+      @doc.should be_persisted
+    end
+  end
+
   context "Single collection inheritance" do
     setup do
       class ::DocParent
         include MongoMapper::Document
-        key :_type, String
         key :name, String
       end
       DocParent.collection.remove
@@ -932,6 +977,10 @@ class DocumentTest < Test::Unit::TestCase
       Object.send :remove_const, 'DocDaughter' if defined?(::DocDaughter)
       Object.send :remove_const, 'DocSon'      if defined?(::DocSon)
       Object.send :remove_const, 'DocGrandSon' if defined?(::DocGrandSon)
+    end
+
+    should "automatically add _type key to store class" do
+      DocParent.keys.should include(:_type)
     end
 
     should "use the same collection in the subclass" do
@@ -1061,6 +1110,11 @@ class DocumentTest < Test::Unit::TestCase
       }.should change { DocParent.count }.by(-2)
     end
 
+    should "set type from class and ignore _type in attributes" do
+      doc = DocSon.create(:_type => 'DocDaughter', :name => 'John')
+      DocParent.first.should be_instance_of(DocSon)
+    end
+
     should "be able to reload parent inherited class" do
       brian = DocParent.create(:name => 'Brian')
       brian.name = 'B-Dawg'
@@ -1142,7 +1196,7 @@ class DocumentTest < Test::Unit::TestCase
 
   context "database has keys not defined in model" do
     setup do
-      @id = Mongo::ObjectID.new
+      @id = BSON::ObjectID.new
       @document.collection.insert({
         :_id            => @id,
         :first_name     => 'John',

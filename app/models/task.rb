@@ -52,11 +52,11 @@ class Task
     '$gte' => Time.zone.now.tomorrow.beginning_of_day.utc } } } }
 
   named_scope :due_this_week, lambda { { :conditions => { :due_at => {
-    '$gte' => (Time.zone.now.tomorrow.beginning_of_day.utc + 1.day) - 1.second,
+    '$gte' => (Time.zone.now.tomorrow.beginning_of_day.utc + 1.day),
     '$lt' => Time.zone.now.next_week.utc } } } }
 
   named_scope :due_next_week, lambda { { :conditions => { :due_at => {
-    '$gte' => Time.zone.now.next_week.beginning_of_week.utc - 1.second,
+    '$gte' => Time.zone.now.next_week.beginning_of_week.utc,
     '$lt' => Time.zone.now.next_week.end_of_week } } } }
 
   named_scope :due_later, lambda { { :conditions => { :due_at => {
@@ -121,23 +121,21 @@ class Task
     end
   end
 
-  # - 1.second thing is because for some reason 1 second is being added to all end_of... times
-  # I think this is to do with mongo UTC times but not entirely sure
   def due_at=( due )
     self[:due_at] =
       case due
       when 'overdue'
-        Time.zone.now.yesterday.end_of_day - 1.second
+        Time.zone.now.yesterday.end_of_day
       when 'due_today'
-        Time.zone.now.end_of_day - 1.second
+        Time.zone.now.end_of_day
       when 'due_tomorrow'
-        Time.zone.now.tomorrow.end_of_day - 1.second
+        Time.zone.now.tomorrow.end_of_day
       when 'due_this_week'
-        Time.zone.now.end_of_week - 1.second
+        Time.zone.now.end_of_week
       when 'due_next_week'
-        Time.zone.now.next_week.end_of_week - 1.second
+        Time.zone.now.next_week.end_of_week
       when 'due_later'
-        (Time.zone.now.end_of_day - 1.second) + 5.years
+        Time.zone.now.end_of_day + 5.years
       else
         if %w(overdue due_today due_tomorrow due_this_week due_next_week due_later).include?(due) and
           !due.is_a?(Time) and Chronic.parse(due)
