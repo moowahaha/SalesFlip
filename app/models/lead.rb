@@ -5,7 +5,7 @@ class Lead
   include Permission
   include Trackable
   include Activities
-  include SphinxIndex
+  include FullSearch
 
   key :user_id,       ObjectId, :required => true, :index => true
   key :assignee_id,   ObjectId, :index => true
@@ -42,7 +42,7 @@ class Lead
   key :identifier,    Integer
   timestamps!
 
-  sphinx_index :first_name, :last_name, :email, :phone, :notes, :company, :alternative_email,
+  search_keys :first_name, :last_name, :email, :phone, :notes, :company, :alternative_email,
     :mobile, :address, :referred_by, :website, :twitter, :linked_in, :facebook, :xing
 
   attr_accessor :do_not_notify

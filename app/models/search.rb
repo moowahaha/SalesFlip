@@ -13,14 +13,11 @@ class Search
 
   def results
     unless company.blank?
-      @results ||= Lead.scoped(:conditions => { :id => Lead.search("@company #{company}").
-                               map(&:id) }).not_deleted +
-        Account.scoped(:conditions => { :id => Account.search("@name #{company}").map(&:id) }).
-        not_deleted
+      @results ||= Lead.search(company, :keys_to_search => 'company').not_deleted +
+        Account.search(company, :keys_to_search => 'name').not_deleted
     else
       @results ||= (collections.blank? ? %w(Lead, Contact, Account) : collections).map do |klass|
-        klass = klass.constantize
-        klass.scoped(:conditions => { :id => klass.search(terms).map(&:id) }).not_deleted
+        klass.constantize.search(terms).not_deleted
       end.inject { |sum,n| sum += n }
     end
   end

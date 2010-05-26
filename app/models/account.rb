@@ -5,7 +5,7 @@ class Account
   include Permission
   include Trackable
   include Activities
-  include SphinxIndex
+  include FullSearch
 
   key :user_id,           ObjectId, :index => true, :required => true
   key :assignee_id,       ObjectId, :index => true
@@ -36,7 +36,7 @@ class Account
 
   validates_uniqueness_of :email, :allow_blank => true
 
-  sphinx_index :name, :email, :phone, :website, :fax
+  search_keys :name, :email, :phone, :website, :fax
 
   alias :full_name :name
 

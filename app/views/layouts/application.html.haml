@@ -1,7 +1,8 @@
 !!!
 %html
   %head
-    = javascript_include_tag 'right.js', 'right-calendar.js', 'right-autocompleter.js', 'application.js', :cache => true
+    = javascript_include_tag 'right.js', 'right-calendar.js', 'right-autocompleter.js', 'searchhi_slim', 'application.js', :cache => true
+    = yield(:javascripts)
     = stylesheet_link_tag 'compiled/application.css'
     = title_tag 'SalesFlip'
     = description_tag 'An unobtrusive, slim CRM built with MongoMapper and RightJS'

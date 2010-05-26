@@ -22,7 +22,7 @@ Rails::Initializer.run do |config|
   config.gem 'haml'
   config.gem 'inherited_resources', :version => '1.0.3'
   config.gem 'warden'
-  config.gem 'devise'
+  config.gem 'devise', :version => '1.0.6'
   config.gem 'mongo', :version => '0.19.1'
   config.gem 'carrierwave'
   config.gem 'compass', :version => "0.10.0.pre5", :source => "http://gems.github.com"
