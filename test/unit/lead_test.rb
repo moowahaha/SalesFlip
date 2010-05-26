@@ -206,6 +206,13 @@ class LeadTest < ActiveSupport::TestCase
         assert_equal 0, ActionMailer::Base.deliveries.length
       end
 
+      should 'not notify the assignee if the lead is a new record' do
+        ActionMailer::Base.deliveries.clear
+        @lead.assignee_id = @user.id
+        @lead.save!
+        assert_equal 0, ActionMailer::Base.deliveries.length
+      end
+
       should 'set the assignee_id' do
         @lead.assignee_id = @user.id
         @lead.save!

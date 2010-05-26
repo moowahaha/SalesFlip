@@ -83,7 +83,8 @@ class SoftwareMarketplatzParser
     lead.notes.gsub!(/<a href="/, '<a target="_blank" href="http://www.software-marktplatz.de/')
     lead.do_not_notify = true
     lead.do_not_log = true
-    if l = Lead.first(:first_name => lead.first_name, :last_name => lead.last_name, :website => lead.website)
+    if l = Lead.first(:first_name => lead.first_name, :last_name => lead.last_name, :website => lead.website) ||
+      l = Lead.first(:company => /#{lead.company}/)
       puts "#{l.email} exists"
     else
       lead.save
@@ -125,6 +126,6 @@ class SoftwareMarketplatzParser
   end
 
   def doc
-    @doc ||= Hpricot(open("http://#{uri.host}#{uri.path}"))
+    @doc ||= Hpricot(open("http://www.software-marktplatz.de/f_liste.php?start=100&FIRMA=&PLZ=&LAND=d&TYP=&AWGEBIET_SELECT=&AWGEBIET=&AWBRANCHE_SELECT=&AWBRANCHE=&AUSWAHL1=&AUSWAHL2=&VERSION="))
   end
 end

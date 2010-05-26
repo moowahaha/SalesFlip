@@ -93,7 +93,7 @@ class Lead
   end
 
   def assignee_id=( assignee_id )
-    @reassigned = assignee_id
+    @reassigned = assignee_id unless new_record?
     self[:assignee_id] = assignee_id
   end
 

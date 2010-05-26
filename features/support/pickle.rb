@@ -29,3 +29,4 @@ Pickle.configure do |config|
   config.map '1000JobBoersen',  :to => 'company: "jobboersen"'
 end
 require 'pickle/path/world'
+require 'pickle/email/world'

@@ -115,7 +115,7 @@ class Task
   end
 
   def assignee_id=( assignee_id )
-    if !assignee_id.blank? and assignee_id != self.assignee_id
+    if !assignee_id.blank? and assignee_id != self.assignee_id and !new_record?
       @reassigned = true
       self[:assignee_id] = assignee_id
     end

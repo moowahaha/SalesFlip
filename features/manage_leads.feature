@@ -6,10 +6,12 @@ Feature: Manage leads
   Scenario: Accepting a lead
     Given I am registered and logged in as annika
     And a lead: "erich" exists with user: annika
+    And all emails have been delivered
     And I am on the leads page
     When I press "accept"
     Then I should be on the lead's page
     And the lead: "erich" should be assigned to annika
+    And 0 emails should be delivered
 
   Scenario: Accepting a lead from the show page
     Given I am registered and logged in as annika
@@ -22,6 +24,7 @@ Feature: Manage leads
   Scenario: Creating a lead
     Given I am registered and logged in as annika
     And I am on the leads page
+    And all emails have been delivered
     And I follow "new"
     And I fill in "lead_first_name" with "Erich"
     And I fill in "lead_last_name" with "Feldmeier"
@@ -29,6 +32,7 @@ Feature: Manage leads
     Then I should be on the leads page
     And I should see "Erich Feldmeier"
     And a created activity should exist for lead with first_name "Erich"
+    And 0 emails should be delivered
 
   Scenario: Logging activity
     Given I am registered and logged in as annika
@@ -185,6 +189,7 @@ Feature: Manage leads
     Given I am registered and logged in as annika
     And a lead exists with user: annika
     And I am on the lead's page
+    And all emails have been delivered
     And I follow "add_task"
     And I follow "preset_date"
     And I fill in "task_name" with "Call to get offer details"
@@ -194,6 +199,7 @@ Feature: Manage leads
     Then I should be on the lead's page
     And a task should have been created
     And I should see "Call to get offer details"
+    And 0 emails should be delivered
 
   Scenario: Marking a lead as completed
     Given I am registered and logged in as annika
