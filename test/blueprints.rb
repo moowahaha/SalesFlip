@@ -36,6 +36,10 @@ Freelancer.blueprint do
   password_confirmation { 'password' }
 end
 
+Freelancer.blueprint(:carsten_werner) do
+  email { 'carsten.werner@1000jobboersen.de' }
+end
+
 User.blueprint do
   company { Company.make }
   email

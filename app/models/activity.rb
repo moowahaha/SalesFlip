@@ -32,7 +32,7 @@ class Activity
 
   def self.create_activity( user, subject, action )
     unless subject.is_a?(Task) and action == 'Viewed'
-      user.activities.create :subject => subject, :action => action
+      Activity.create :subject => subject, :action => action, :user => user
     end
   end
 

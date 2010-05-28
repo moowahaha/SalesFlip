@@ -27,6 +27,7 @@ Pickle.configure do |config|
   config.map 'erich',           :to => 'lead: "erich"'
   config.map 'florian',         :to => 'contact: "florian"'
   config.map '1000JobBoersen',  :to => 'company: "jobboersen"'
+  config.map 'Carsten Werner',  :to => 'freelancer: "carsten_werner"'
 end
 require 'pickle/path/world'
 require 'pickle/email/world'

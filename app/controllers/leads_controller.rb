@@ -73,6 +73,6 @@ protected
   end
 
   def build_resource
-    @lead ||= begin_of_association_chain.leads.build({ :updater => current_user }.merge!(params[:lead] || {}))
+    @lead ||= Lead.new({ :updater => current_user, :user => current_user }.merge!(params[:lead] || {}))
   end
 end

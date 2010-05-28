@@ -34,6 +34,22 @@ Feature: Manage leads
     And a created activity should exist for lead with first_name "Erich"
     And 0 emails should be delivered
 
+  Scenario: Creating a lead as a freelancer
+    Given Carsten Werner exists
+    And Carsten Werner is confirmed
+    And I am logged in as Carsten Werner
+    And I am on the leads page
+    And all emails have been delivered
+    And I follow "new"
+    And I fill in "lead_first_name" with "Erich"
+    And I fill in "lead_last_name" with "Feldmeier"
+    When I press "lead_submit"
+    Then I should be on the leads page
+    And 1 leads should exist with first_name: "Erich", last_name: "Feldmeier"
+    And I should see "Erich Feldmeier"
+    And a created activity should exist for lead with first_name "Erich"
+    And 0 emails should be delivered
+
   Scenario: Logging activity
     Given I am registered and logged in as annika
     And a user: "benny" exists
