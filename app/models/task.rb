@@ -24,6 +24,8 @@ class Task
   belongs_to :assignee, :class_name => 'User'
   belongs_to :completed_by, :class_name => 'User'
 
+  after_create :assign_unassigned_lead
+
   has_many :activities, :as => :subject, :dependent => :destroy
 
   named_scope :incomplete, :conditions => { :completed_at => nil }
@@ -186,5 +188,12 @@ class Task
 
   def log_reassignment
     Activity.log(self.user, self, 'Re-assigned') if @reassigned and valid?
+  end
+
+protected
+  def assign_unassigned_lead
+    if asset and asset.is_a?(Lead) and asset.assignee.blank?
+      asset.update_attributes :assignee => self.user
+    end
   end
 end

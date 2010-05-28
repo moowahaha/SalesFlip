@@ -218,6 +218,24 @@ Feature: Manage leads
     And I should see "Call to get offer details"
     And 0 emails should be delivered
 
+  Scenario: Adding a task to an unassigned lead
+    Given I am registered and logged in as annika
+    And Benny exists
+    And a lead exists with user: Benny, assignee_id: nil
+    And I am on the lead's page
+    And all emails have been delivered
+    And I follow "add_task"
+    And I follow "preset_date"
+    And I fill in "task_name" with "Call to get offer details"
+    And I select "As soon as possible" from "task_due_at"
+    And I select "Call" from "task_category"
+    When I press "task_submit"
+    Then I should be on the lead's page
+    And a task should have been created
+    And I should see "Call to get offer details"
+    And 0 emails should be delivered
+    And the lead should be assigned to Annika
+
   Scenario: Marking a lead as completed
     Given I am registered and logged in as annika
     And a lead exists with user: annika

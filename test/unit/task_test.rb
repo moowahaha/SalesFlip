@@ -288,6 +288,19 @@ class TaskTest < ActiveSupport::TestCase
       @task = Task.make_unsaved
     end
 
+    context 'when created against an unassigned lead' do
+      setup do
+        @lead = Lead.make(:erich, :assignee_id => nil)
+        @user = User.make(:benny)
+      end
+
+      should 'assign the lead to the user who created the task' do
+        @lead.tasks.create! :user => @user, :name => 'test', :due_at => Time.zone.now,
+          :category => Task.categories.first
+        assert_equal @lead.reload.assignee, @user
+      end
+    end
+
     should 'be valid with all required attributes' do
       assert @task.valid?
     end
