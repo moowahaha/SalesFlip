@@ -14,7 +14,7 @@ module FullSearch
       where = []
       (options[:keys_to_search] || @keys_to_search).each do |key|
         next if key.match(/_id|created_at|updated_at/)
-        where << "(this.#{key} != null && this.#{key}.match(/#{query_string}/))"
+        where << "(this.#{key} != null && this.#{key}.match(/#{query_string}/i))"
       end
       scoped(:conditions => { '$where' => where.join(' || ') })
     end
