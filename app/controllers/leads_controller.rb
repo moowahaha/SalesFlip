@@ -2,7 +2,7 @@ class LeadsController < InheritedResources::Base
   before_filter :resource, :only => [:convert, :promote, :reject]
 
   respond_to :html
-  respond_to :xml, :only => [:create]
+  respond_to :xml, :only => [ :new, :create, :index, :show ]
 
   has_scope :with_status, :type => :array
   has_scope :unassigned, :type => :boolean
