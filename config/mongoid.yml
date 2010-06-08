@@ -1,0 +1,33 @@
+defaults: &defaults
+  host: localhost
+  # slaves:
+  #   - host: slave1.local
+  #     port: 27018
+  #   - host: slave2.local
+  #     port: 27019
+  use_object_ids: true
+
+development:
+  <<: *defaults
+  database: salesflip_development
+
+test:
+  <<: *defaults
+  database: salesflip_test
+
+cucumber:
+  <<: *defaults
+  database: salesflip_cucumber
+
+staging:
+  <<: *defaults
+  database: salesflip_staging
+
+# set these environment variables on your prod server
+production:
+  <<: *defaults
+  host: swan.mongohq.com
+  port: 27043
+  username: site
+  password: p5ot31n
+  database: jobboersen

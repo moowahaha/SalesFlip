@@ -1,4 +1,4 @@
-ActionController::Routing::Routes.draw do |map|
+Salesflip::Application.routes.draw do |map|
 
   root :to => 'pages#index'
 

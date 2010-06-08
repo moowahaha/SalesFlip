@@ -1,12 +1,12 @@
 class Account
+  include Mongoid::Document
+  include Mongoid::Timestamps
   include HasConstant
   include ParanoidDelete
   include Permission
   include Trackable
-  include Activities
+  #include Activities
   include SphinxIndex
-  include Mongoid::Document
-  include Mongoid::Timestamps
 
   field :name
   field :email

@@ -8,10 +8,15 @@ class ApplicationController < ActionController::Base
 
   before_filter :authenticate_user!
   before_filter :configuration_check
+  before_filter :bson_ids
   after_filter :log_viewed_item, :only => :show
 
 protected
-
+  def bson_ids
+    params.each do |key, value|
+      params[key] = BSON::ObjectID.from_string(value.to_s) if key.to_s.match(/_id$/)
+    end
+  end
 
   def render_optional_error_file(status_code)
     status = interpret_status(status_code)
