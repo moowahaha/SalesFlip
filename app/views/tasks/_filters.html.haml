@@ -1,13 +1,20 @@
 .gold.box
   %ul.filters
     %li.first
-      = link_to t('pending'), tasks_path(:incomplete => params[:incomplete] ? false : true), :id => 'pending', :class => active_if( params[:incomplete] && !params[:assigned] )
-    %li= link_to t('assigned'), tasks_path(:assigned => params[:assigned] ? false : true, :incomplete => params[:incomplete] ? false : true), :id => 'assigned',:class => active_if( params[:assigned] )
-    %li.last= link_to t('completed'), tasks_path(:completed => params[:completed] ? false : true), :id => 'completed', :class => active_if( params[:completed] )
+      = link_to t('pending'), tasks_path(:incomplete => true, :for => current_user.id), :id => 'pending', :class => active_if( params[:incomplete] && !params[:assigned_by] )
+    %li= link_to t('assigned'), tasks_path(:assigned_by => current_user.id, :incomplete => true), :id => 'assigned',:class => active_if( params[:assigned_by] )
+    %li.last= link_to t('completed'), tasks_path(:completed => true, :for => current_user.id), :id => 'completed', :class => active_if( params[:completed] )
   - form_tag '', :method => :get do
-    = hidden_field_tag :incomplete, params[:incomplete]
-    = hidden_field_tag :assigned, params[:assigned]
-    = hidden_field_tag :completed, params[:completed]
+    - if params[:incomplete]
+      = hidden_field_tag :incomplete, params[:incomplete]
+    - if params[:assigned]
+      = hidden_field_tag :assigned, params[:assigned]
+    - if params[:completed]
+      = hidden_field_tag :completed, params[:completed]
+    - if params[:for]
+      = hidden_field_tag :for, params[:for]
+    - if params[:assigned_by]
+      = hidden_field_tag :assigned_by, params[:assigned_by]
     = render :partial => 'tasks/due_filter' if params[:completed].blank?
     = render :partial => 'tasks/complete_filter' unless params[:completed].blank?
     .clear= submit_tag t('filter'), :id => 'filter'

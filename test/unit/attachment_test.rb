@@ -1,6 +1,10 @@
 require 'test_helper.rb'
 
 class AttachmentTest < ActiveSupport::TestCase
+  context 'Class' do
+    should_require_key :attachment
+  end
+
   context 'Instance' do
     setup do
       @attachment = Attachment.make_unsaved(:erich_offer_pdf)

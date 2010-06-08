@@ -2,12 +2,17 @@ class LeadsController < InheritedResources::Base
   before_filter :resource, :only => [:convert, :promote, :reject]
 
   respond_to :html
-  respond_to :xml, :only => [:create]
+  respond_to :xml, :only => [ :new, :create, :index, :show ]
 
   has_scope :with_status, :type => :array
   has_scope :unassigned, :type => :boolean
   has_scope :assigned_to
   has_scope :source_is, :type => :array
+
+  def new
+    @lead = build_resource
+    @lead.assignee_id = current_user.id
+  end
 
   def create
     create! do |success, failure|
@@ -68,6 +73,6 @@ protected
   end
 
   def build_resource
-    @lead ||= begin_of_association_chain.leads.build({ :assignee_id => current_user.id }.merge!(params[:lead] || {}))
+    @lead ||= Lead.new({ :updater => current_user, :user => current_user }.merge!(params[:lead] || {}))
   end
 end

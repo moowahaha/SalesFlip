@@ -27,6 +27,7 @@ class ActivityTest < ActiveSupport::TestCase
         Activity.log(@lead.user, @lead, 'Viewed')
         activity = Activity.last(:order => 'created_at')
         updated_at = activity.updated_at
+        sleep 1
         activity2 = Activity.log(@lead.user, @lead, 'Viewed')
         assert_equal 1, Activity.count
         assert updated_at != activity2.updated_at
@@ -36,6 +37,7 @@ class ActivityTest < ActiveSupport::TestCase
         Activity.log(@lead.user, @lead, 'Commented')
         activity = Activity.last(:order => 'created_at')
         updated_at = activity.updated_at
+        sleep 1
         activity2 = Activity.log(@lead.user, @lead, 'Commented')
         assert_equal 1, Activity.count
         assert updated_at != activity2.updated_at
@@ -45,6 +47,7 @@ class ActivityTest < ActiveSupport::TestCase
         Activity.log(@lead.user, @lead, 'Updated')
         activity = Activity.last(:order => 'created_at')
         updated_at = activity.updated_at
+        sleep 1
         activity2 = Activity.log(@lead.user, @lead, 'Updated')
         assert_equal 1, Activity.count
         assert updated_at != activity2.updated_at
@@ -60,20 +63,6 @@ class ActivityTest < ActiveSupport::TestCase
   end
 
   context 'Named Scopes' do
-    
-    context "for_subject" do
-      should "return all activities for a given subject" do
-        @contact = Contact.make
-        @contact.update_attributes(:email => 'a@a.com')
-        @contact.update_attributes(:email => 'b@b.com')
-        @task = Task.make
-        @lead = Lead.make
-        assert_equal 2, Activity.for_subject(@contact).size
-      end
-      
-    end
-    
-    
     context 'limit' do
       setup do
         12.times do

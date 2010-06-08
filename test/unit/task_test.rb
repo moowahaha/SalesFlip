@@ -103,6 +103,16 @@ class TaskTest < ActiveSupport::TestCase
       @task = Task.make(:call_erich)
     end
 
+    context 'assigned_by' do
+      setup do
+        @task2 = Task.make(:assignee => User.make, :user_id => @task.user.id)
+      end
+
+      should 'return all tasks assigned to anyone except the task creator' do
+        assert_equal [@task2], Task.assigned_by(@task.user)
+      end
+    end
+
     context 'overdue' do
       setup do
         @task.update_attributes :due_at => 'due_next_week'
@@ -241,6 +251,11 @@ class TaskTest < ActiveSupport::TestCase
         assert_equal [@task], Task.for(@benny)
       end
 
+      should 'not return tasks which were created by the supplied user, but are assigned to someone else' do
+        @task.update_attributes :assignee => User.make(:benny)
+        assert_equal [], Task.for(@task.user)
+      end
+
       should 'not return tasks not created by or assigned to the supplied user' do
         @benny = User.make(:benny)
         assert_equal [], Task.for(@benny)
@@ -271,6 +286,19 @@ class TaskTest < ActiveSupport::TestCase
   context "Instance" do
     setup do
       @task = Task.make_unsaved
+    end
+
+    context 'when created against an unassigned lead' do
+      setup do
+        @lead = Lead.make(:erich, :assignee_id => nil)
+        @user = User.make(:benny)
+      end
+
+      should 'assign the lead to the user who created the task' do
+        @lead.tasks.create! :user => @user, :name => 'test', :due_at => Time.zone.now,
+          :category => Task.categories.first
+        assert_equal @lead.reload.assignee, @user
+      end
     end
 
     should 'be valid with all required attributes' do
@@ -395,17 +423,17 @@ class TaskTest < ActiveSupport::TestCase
 
     context 'due_in_words' do
       should 'return overdue when due_at is at the end of a day and in the past' do
-        @task.due_at = Time.zone.now.yesterday.end_of_day - 1.second
+        @task.due_at = Time.zone.now.yesterday.end_of_day
         assert_equal 'overdue', @task.due_at_in_words
       end
 
       should 'return "due_today" when due_at is at the end of today' do
-        @task.due_at = Time.zone.now.end_of_day - 1.second
+        @task.due_at = Time.zone.now.end_of_day
         assert_equal 'due_today', @task.due_at_in_words
       end
 
       should 'return "due_tomorrow" when due_at is at the end of tomorrow' do
-        @task.due_at = Time.zone.now.tomorrow.end_of_day - 1.second
+        @task.due_at = Time.zone.now.tomorrow.end_of_day
         assert_equal 'due_tomorrow', @task.due_at_in_words
       end
 
@@ -415,12 +443,12 @@ class TaskTest < ActiveSupport::TestCase
       #end
 
       should 'return "due_next_week" when due_at is at the end of a day sometime during the following week' do
-        @task.due_at = Time.zone.now.next_week.end_of_week - 1.second
+        @task.due_at = Time.zone.now.next_week.end_of_week
         assert_equal 'due_next_week', @task.due_at_in_words
       end
 
       should 'return "due_later" when due_at is at the end of a day and further away than one week' do
-        @task.due_at = (Time.zone.now.next_week.end_of_week + 1.day) - 1.second
+        @task.due_at = Time.zone.now.next_week.end_of_week + 1.day
         assert_equal 'due_later', @task.due_at_in_words
       end
 

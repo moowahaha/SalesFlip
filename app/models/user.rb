@@ -17,12 +17,24 @@ class User
   has_many_related :contacts
   has_many_related :activities
   has_many_related :searches
+  has_many_related :invitations, :as => :inviter, :dependent => :destroy
+  has_one_related :invitation, :as => :invited
 
   belongs_to_related :company
 
-  before_validation_on_create :set_api_key, :create_company
+  before_validate :set_api_key, :create_company, :on => :create
+  after_create :update_invitation, :add_user_to_postfix
 
   validates_presence_of :company
+
+  def invitation_code=( invitation_code )
+    if @invitation = Invitation.find_by_code(invitation_code)
+      self.company_id = @invitation.inviter.company_id
+      self.username = @invitation.email.split('@').first if self.username.blank?
+      self.email = @invitation.email if self.email.blank?
+      self._type = @invitation.user_type
+    end
+  end
 
   def deleted_items_count
     [Lead, Contact, Account, Comment].map do |model|
@@ -75,5 +87,15 @@ protected
     if company.save
       self.company_id = company.id
     end
+  end
+
+  def update_invitation
+    @invitation.update_attributes :invited_id => self.id if @invitation
+  end
+
+  def add_user_to_postfix
+    Alias.create :mail => "@#{self.api_key}.salesflip.com",
+      :destination => 'catch.all@salesflip.com'
+    Domain.create :domain => "#{self.api_key}.salesflip.com"
   end
 end

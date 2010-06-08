@@ -1,15 +1,16 @@
 %h3.toggler.open= t('account')
 .toggle
   %fieldset
-    .100= form.input :name
+    .50.a= form.input :name
+    .50.z= form.input :account_type, :collection => Account.account_types
 
 %h3.toggler= t('contact_info')
 .toggle
   %fieldset
     .66.a= form.input :email
     .33.z= form.input :phone
-    .33.a= form.input :billing_address, :as => :text, :input_html => {:rows => 3}
-    .33= form.input :shipping_address, :as => :text, :input_html => {:rows => 3}
+    .33.a= form.input :billing_address, :as => :text, :input_html => { :rows => 3 }
+    .33= form.input :shipping_address, :as => :text, :input_html => { :rows => 3 }
     .33.z= form.input :fax
     .clear
     .100= form.input :website
@@ -18,7 +19,7 @@
 %h3.toggler= "#{t('tracking')} &amp; #{t('simple_form.labels.permissions')}"
 .toggle
   %fieldset
-    .25.a= form.input :assignee_id, :collection => current_user.company.users.map {|u| [u.email,u.id] }
+    .25.a= form.input :assignee_id, :collection => current_user.company.users.map {|u| [u.email, u.id] }
     .25.a= form.input :access, :collection => t('access_levels')
     = render :partial => 'shared/permissions_form', :locals => { :form => form, :p1 => '25', :p2 => '25 z' }
 

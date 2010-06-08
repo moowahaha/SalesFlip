@@ -1,4 +1,17 @@
+require 'csv'
+
 namespace(:one_time) do
+  desc "Import Mandy's leads"
+  task :import_mandys_leads => :environment do
+    CSV.open('doc/mandys_leads.csv', 'r', '|') do |row|
+      user = User.find_by_email('mandy.cash@1000jobboersen.de')
+      lead = user.leads.build :assignee => user, :do_not_log => true, :do_not_notify => true
+      %w(salutation first_name last_name company phone email).each_with_index do |key, index|
+        lead.send("#{key}=", row[index] ? row[index].strip : nil)
+      end
+      lead.save!
+    end
+  end
 
   desc 'Add identifiers to all accounts, leads and contacts'
   task :add_identifiers => :environment do
@@ -45,7 +58,6 @@ namespace(:one_time) do
   task :helios_import => :environment do
     headings = ["title", "first_name", "last_name", "salutation", "job_title", "company",
       "department", "address", "postal_code", "city", "country", "phone", "email"]
-    require 'csv'
     CSV.open('doc/helios.csv', 'r', '|') do |row|
       u = User.find_by_email('mattbeedle@googlemail.com')
       l = u.leads.build :source => 'Helios'

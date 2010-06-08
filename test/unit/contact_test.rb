@@ -2,7 +2,7 @@ require 'test_helper.rb'
 
 class ContactTest < ActiveSupport::TestCase
   context "Class" do
-    should_have_key :identifier
+    should_have_key :identifier, :city, :postal_code, :country, :job_title, :department
     should_have_constant :accesses, :titles, :permissions, :salutations, :sources
     should_act_as_paranoid
     should_be_trackable
@@ -31,6 +31,28 @@ class ContactTest < ActiveSupport::TestCase
         @account.name = nil
         contact = Contact.create_for(@lead, @account)
         assert_equal 0, Contact.count
+      end
+
+      should 'copy all lead attributes that can be copied' do
+        5.times do
+          Identifier.next_contact
+        end
+        @lead.update_attributes :phone => '1234567890', :salutation => 'Mr',
+          :department => 'a test department', :source => 'Website', :address => 'an address',
+          :website => 'www.test.com', :linked_in => 'linkedin', :facebook => 'facebook',
+          :xing => 'xing', :do_not_call => true
+        contact = Contact.create_for(@lead, @account)
+        assert_equal '1234567890', contact.phone
+        assert_equal 'Mr', contact.salutation
+        assert_equal 'a test department', contact.department
+        assert_equal 'Website', contact.source
+        assert_equal 'an address', contact.address
+        assert_equal 'www.test.com', contact.website
+        assert_equal 'linkedin', contact.linked_in
+        assert_equal 'facebook', contact.facebook
+        assert_equal 'xing', contact.xing
+        assert contact.identifier != @lead.identifier
+        assert contact.do_not_call
       end
     end
   end

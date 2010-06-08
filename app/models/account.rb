@@ -5,8 +5,8 @@ class Account
   include ParanoidDelete
   include Permission
   include Trackable
-  #include Activities
   include SphinxIndex
+  include Activities
 
   field :name
   field :email
@@ -17,10 +17,10 @@ class Account
   field :billing_address
   field :shipping_address
   field :identifier,        :type => Integer
+  field :account_type,      :type => Integer
 
-  index :user_id, :assignee_id, :name, :email, :access
-
-  has_constant :accesses, lambda { I18n.t(:access_levels) }
+  has_constant :accesses, lambda { I18n.t('access_levels') }
+  has_constant :account_types, lambda { I18n.t('account_types') }
 
   belongs_to_related :user
   belongs_to_related :assignee, :class_name => 'User'
@@ -30,19 +30,19 @@ class Account
 
   validates_presence_of :user, :assignee, :name
 
-  before_validation_on_create :set_identifier
+  before_create :set_identifier
 
   named_scope :for_company, lambda { |company| { :where => { :user_id => company.users.map(&:id) } } }
 
   validates_uniqueness_of :email, :allow_blank => true
 
-  sphinx_index :name, :email, :phone, :website, :fax
+  search_keys :name, :email, :phone, :website, :fax
 
   alias :full_name :name
 
   def self.find_or_create_for( object, name_or_id, options = {} )
-    account = Account.find_by_id(Mongo::ObjectID.from_string(name_or_id.to_s))
-  rescue Mongo::InvalidObjectID => e
+    account = Account.find_by_id(BSON::ObjectID.from_string(name_or_id.to_s))
+  rescue BSON::InvalidObjectID => e
     account = Account.find_by_name(name_or_id)
     account = create_for(object, name_or_id, options) unless account
     account

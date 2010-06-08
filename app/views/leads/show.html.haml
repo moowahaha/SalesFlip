@@ -58,6 +58,7 @@
   .box.gold
     %h3= t('contact_info')
     %dl.info
+      = show_attribute(@lead, 'identifier')
       = show_attribute(@lead, 'company')
       = show_attribute(@lead, 'job_title')
       = show_attribute(@lead, 'department')
@@ -78,5 +79,4 @@
       = show_attribute(@lead, 'referred_by')
   #recent_activity.box.ice
     %h3= t('recent_activity_for', :name => @lead.full_name )
-    - Activity.for_subject(@lead).limit(6).each do |activity|
-      = render :partial => "shared/activity_for", :locals => {:activity => activity}
+    = render :partial => 'shared/activity_for', :collection => @lead.activities.limit(6), :as => :activity

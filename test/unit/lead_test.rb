@@ -113,14 +113,49 @@ class LeadTest < ActiveSupport::TestCase
         assert !Lead.permitted_for(@erich.user).include?(@markus)
       end
 
+      should 'return private leads when assigned to this user' do
+        @markus.update_attributes :permission => 'Private', :assignee => @erich.user
+        assert Lead.permitted_for(@erich.user).include?(@markus)
+      end
+
       should 'return shared leads where the user is in the permitted user list' do
-        @markus.update_attributes :permission => 'Shared', :permitted_user_ids => [@erich.user.id]
+        @markus.update_attributes :permission => 'Shared', :permitted_user_ids => [@markus.user.id, @erich.user.id]
         assert Lead.permitted_for(@erich.user).include?(@markus)
       end
 
       should 'NOT return shared leads where the user is not in the permitted user list' do
         @markus.update_attributes :permission => 'Shared', :permitted_user_ids => [@markus.user.id]
         assert !Lead.permitted_for(@erich.user).include?(@markus)
+      end
+
+      context 'when freelancer' do
+        setup do
+          @freelancer = Freelancer.make
+        end
+
+        should 'not return all public leads' do
+          assert Lead.permitted_for(@freelancer).blank?
+        end
+
+        should 'return all leads belonging to the user' do
+          @erich.update_attributes :user_id => @freelancer.id, :permission => 'Private'
+          assert Lead.permitted_for(@freelancer).include?(@erich)
+        end
+
+        should 'NOT return private leads belonging to another user' do
+          @markus.update_attributes :permission => 'Private'
+          assert Lead.permitted_for(@freelancer).blank?
+        end
+
+        should 'return shared leads where the user is in the permitted user list' do
+          @markus.update_attributes :permission => 'Shared', :permitted_user_ids => [@markus.user_id, @freelancer.id]
+          assert Lead.permitted_for(@freelancer).include?(@markus)
+        end
+
+        should 'NOT return shared leads where the user is not in the permitted user list' do
+          @markus.update_attributes :permission => 'Shared', :permitted_user_ids => [@markus.user_id]
+          assert !Lead.permitted_for(@erich.user).include?(@markus)
+        end
       end
     end
   end
@@ -168,6 +203,13 @@ class LeadTest < ActiveSupport::TestCase
         @lead.save!
         ActionMailer::Base.deliveries.clear
         @lead.update_attributes :assignee_id => nil
+        assert_equal 0, ActionMailer::Base.deliveries.length
+      end
+
+      should 'not notify the assignee if the lead is a new record' do
+        ActionMailer::Base.deliveries.clear
+        @lead.assignee_id = @user.id
+        @lead.save!
         assert_equal 0, ActionMailer::Base.deliveries.length
       end
 
@@ -248,7 +290,7 @@ class LeadTest < ActiveSupport::TestCase
       end
     end
 
-    context 'promote' do
+    context 'promote!' do
       setup do
         @lead.save!
       end
@@ -315,6 +357,12 @@ class LeadTest < ActiveSupport::TestCase
         @lead.promote!('')
         assert_equal 1, Contact.count
         assert_equal 'Converted', @lead.reload.status
+      end
+
+      should 'save the lead if additional attributes where added before callling promote' do
+        @lead.updater_id = @user.id
+        @lead.promote!('A company', :permission => 'Object')
+        assert_equal @user.id, @lead.reload.updater_id
       end
     end
 

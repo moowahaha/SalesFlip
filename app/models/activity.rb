@@ -14,6 +14,7 @@ class Activity
 
   named_scope :for_subject, lambda {|model| {
     :where => { :subject_id => model.id, :subject_type => model.class.to_s } } }
+  validates_presence_of :subject
 
   named_scope :already_notified, lambda {|user| {
     :where => { :notified_user_ids => user.id } } }
@@ -32,7 +33,7 @@ class Activity
 
   def self.create_activity( user, subject, action )
     unless subject.is_a?(Task) and action == 'Viewed'
-      user.activities.create :subject => subject, :action => action
+      Activity.create :subject => subject, :action => action, :user => user
     end
   end
 
@@ -46,26 +47,5 @@ class Activity
       create_activity(user, subject, action)
     end
     activity
-  end
-end
-
-module MongoMapper
-  module Plugins
-    module NamedScope
-      class Scope
-        def visible_to( user )
-          delete_if do |activity|
-            (activity.subject.permission_is?('Private') and activity.subject.user != user) or
-            (activity.subject.permission_is?('Shared') and not
-             activity.subject.permitted_user_ids.include?(user.id) and
-             activity.subject.user != user)
-          end
-        end
-
-        def not_restored
-          delete_if { |activity| activity.subject.deleted_at.nil? }
-        end
-      end
-    end
   end
 end

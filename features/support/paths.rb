@@ -69,6 +69,10 @@ module NavigationHelpers
       new_search_path
     when /the search results page/
       search_path
+
+    when /the accept invitation page/
+      invitation = model!('invitation')
+      new_user_path(:invitation_code => invitation.code)
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
     #

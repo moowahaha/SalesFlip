@@ -14,10 +14,16 @@ class TasksController < InheritedResources::Base
   has_scope :completed_last_week,   :type => :boolean
   has_scope :completed_this_month,  :type => :boolean
   has_scope :completed_last_month,  :type => :boolean
+  has_scope :for do |controller, scope, value|
+    scope.for(User.find(value))
+  end
+  has_scope :assigned_by do |controller, scope, value|
+    scope.assigned_by(User.find(value))
+  end
 
   def create
     create! do |success, failure|
-      success.html { return_to_or_default tasks_path(:incomplete => true) }
+      success.html { return_to_or_default tasks_path(:incomplete => true, :for => current_user.id) }
     end
   end
 
@@ -50,9 +56,9 @@ protected
   def collection
     if params[:scopes]
       @tasks ||= Task.grouped_by_scope(params[:scopes].map {|k,v| k.to_sym },
-                                       :target => apply_scopes(Task).for(current_user))
+                                       :target => apply_scopes(Task).order('due_at', 'asc'))
     else
-      @tasks ||= apply_scopes(Task).for(current_user)
+      @tasks ||= apply_scopes(Task).order('due_at', 'asc')
     end
   end
 

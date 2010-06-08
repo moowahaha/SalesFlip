@@ -6,7 +6,7 @@ class Contact
   include Permission
   include Trackable
   include Activities
-  include SphinxIndex
+  include FullSearch
 
   field :first_name
   field :last_name
@@ -30,13 +30,17 @@ class Contact
   field :do_not_call,         :type => Boolean
   field :deleted_at,          :type => Time
   field :identifier,          :type => Integer
+  field :city
+  field :country
+  field :postal_code
+  field :job_title
 
   validates_presence_of :user, :last_name
   validates_uniqueness_of :email, :allow_blank => true
 
-  before_validate :set_identifier, :on => :create
+  before_create :set_identifier
 
-  sphinx_index :first_name, :last_name, :department, :email, :alt_email, :phone, :mobile,
+  search_keys :first_name, :last_name, :department, :email, :alt_email, :phone, :mobile,
     :fax, :website, :linked_in, :facebook, :twitter, :xing, :address
 
   has_constant :accesses, lambda { I18n.t('access_levels') }
@@ -52,6 +56,9 @@ class Contact
   has_many_related :tasks, :as => :asset, :dependent => :destroy
   has_many_related :comments, :as => :commentable, :dependent => :delete_all
   has_many_related :leads, :dependent => :destroy
+  has_many :tasks, :as => :asset, :dependent => :destroy
+  has_many :comments, :as => :commentable, :dependent => :delete_all
+  has_many :leads, :dependent => :delete_all
 
   named_scope :for_company, lambda { |company| { :where => { :user_id => company.users.map(&:id) } } }
 
@@ -65,9 +72,16 @@ class Contact
   end
 
   def self.create_for( lead, account )
-    contact = account.contacts.build :user => lead.updater_or_user, :first_name => lead.first_name,
-      :last_name => lead.last_name, :permission => account.permission,
+    contact = account.contacts.build :user => lead.updater_or_user, :permission => account.permission,
       :permitted_user_ids => account.permitted_user_ids
+    Lead.keys.map(&:first).delete_if do |k|
+      %w(identifier _id user_id permission permitted_user_ids _sphinx_id created_at updated_at deleted_at tracker_ids updater_id).
+        include?(k)
+    end.each do |key|
+      if contact.keys.map(&:first).include?(key)
+        contact.send("#{key}=", lead.send(key))
+      end
+    end
     if account.valid? and contact.valid?
       contact.save
       contact.leads << lead

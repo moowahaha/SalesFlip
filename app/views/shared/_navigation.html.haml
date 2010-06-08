@@ -1,7 +1,7 @@
 %ul#navigation
   - if user_signed_in?
     %li= link_to t('navigation.dashboard'), root_path
-    %li= link_to t('navigation.tasks'), tasks_path
+    %li= link_to t('navigation.tasks'), tasks_path(:for => current_user.id, :incomplete => true), :id => 'tasks'
     %li= link_to t('navigation.leads'), leads_path, :id => 'leads'
     %li= link_to t('navigation.accounts'), accounts_path, :id => 'accounts'
     %li= link_to t('navigation.contacts'), contacts_path, :id => 'contacts'

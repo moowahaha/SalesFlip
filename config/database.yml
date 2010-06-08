@@ -1,25 +1,25 @@
-# SQLite version 3.x
-#   gem install sqlite3-ruby (not necessary on OS X Leopard)
+# This is not actually being used, just set up to get pickle working properly
+base: &base
+  adapter: sqlite3
+  pool: 5
+  timeout: 5000
+
 development:
-  adapter: sqlite3
-  database: db/development.sqlite3
-  pool: 5
-  timeout: 5000
+  database: db/lean_crm_development.sqlite3
+  <<: *base
 
-# Warning: The database defined as "test" will be erased and
-# re-generated from your development database when you run "rake".
-# Do not set this db to the same as development or production.
-test: &TEST
-  adapter: sqlite3
-  database: db/test.sqlite3
-  pool: 5
-  timeout: 5000
-
-production:
-  adapter: sqlite3
-  database: db/production.sqlite3
-  pool: 5
-  timeout: 5000
+test:
+  database: db/lean_crm_test.sqlite3
+  <<: *base
 
 cucumber:
-  <<: *TEST
+  database: db/lean_crm_cucumber.sqlite3
+  <<: *base
+
+production:
+  database: maildb
+  encoding: utf8
+  user: mail
+  password: 8arcelona
+  adapter: mysql
+  socket: /tmp/mysql.sock

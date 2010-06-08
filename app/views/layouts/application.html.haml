@@ -1,11 +1,12 @@
 !!!
 %html
   %head
-    = javascript_include_tag 'right.js', 'right-calendar.js', 'application.js', :cache => true
+    = javascript_include_tag 'right.js', 'right-calendar.js', 'right-autocompleter.js', 'searchhi_slim', 'application.js', :cache => true
+    = yield(:javascripts)
     = stylesheet_link_tag 'compiled/application.css'
     = title_tag 'SalesFlip'
     = description_tag 'An unobtrusive, slim CRM built with MongoMapper and RightJS'
-    = keywords_tag 'lean crm unobtrusive mongomapper rightjs'
+    = keywords_tag 'SalesFlip salesflip CRM unobtrusive mongomapper rightjs'
     %meta{ :content => "text/html; charset=utf-8", "http-equiv" => "Content-Type" }
   - body do
     #header

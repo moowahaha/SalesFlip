@@ -26,16 +26,15 @@ class Comment
 
   def attachments_attributes=( attribs )
     @attachments_to_add = []
-    attribs.each do |k,v|
-      attachments << Attachment.new(v) unless new_record?
-      @attachments_to_add << Attachment.new(v) if new_record?
-    end
+    attribs.each do |hash|
+      @attachments_to_add << hash
+    end if attribs
   end
 
 protected
   def add_attachments
     @attachments_to_add.each do |a|
-      self.attachments << a
+      self.attachments.create(a)
     end if @attachments_to_add
   end
 end

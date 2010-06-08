@@ -114,7 +114,11 @@ class ActiveSupport::TestCase
     Sham.reset
     Dir[Rails.root + 'app/models/**/*.rb'].each do |model_path|
       model_name = File.basename(model_path).gsub(/\.rb$/, '')
-      klass = model_name.classify.constantize
+      if model_name == 'alias'
+        klass = Alias
+      else
+        klass = model_name.classify.constantize
+      end
       klass.delete_all if klass.respond_to?('delete_all')
     end
     Configuration.make

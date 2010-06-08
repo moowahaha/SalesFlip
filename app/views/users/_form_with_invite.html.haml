@@ -1,0 +1,9 @@
+= hidden_field_tag :invitation_code, params[:invitation_code]
+%fieldset
+  = f.hidden_field :invitation_code, :value => invitation.code
+  .50.a= f.input :email, :required => true
+  .50.z= f.input :username
+  .clear
+  .50.a= f.input :password, :required => true
+  .50.z= f.input :password_confirmation, :required => true
+= f.button :submit

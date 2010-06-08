@@ -17,13 +17,13 @@ module Trackable
     end
 
     def tracker_ids=( ids )
-      self[:tracker_ids] = ids.map { |id| Mongo::ObjectID.from_string(id.to_s) } if ids
+      self[:tracker_ids] = ids.map { |id| BSON::ObjectID.from_string(id.to_s) } if ids
     end
 
     def remove_tracker_ids=( ids )
-      ids = ids.map { |id| Mongo::ObjectID.from_string(id.to_s) }
+      ids = ids.map { |id| BSON::ObjectID.from_string(id.to_s) }
       self[:tracker_ids] = (self.tracker_ids - ids).map do |id|
-        Mongo::ObjectID.from_string(id.to_s)
+        BSON::ObjectID.from_string(id.to_s)
       end
     end
   end

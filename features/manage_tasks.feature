@@ -18,7 +18,8 @@ Feature: Manage tasks
     And a task exists with user: annika, name: "Task for Annika"
     And user: "benny" exists
     And a task exists with user: benny, name: "Task for Benny"
-    When I go to the tasks page
+    And I am on the dashboard page
+    When I follow "tasks"
     Then I should see "Task for Annika"
     And I should not see "Task for Benny"
 
@@ -26,7 +27,7 @@ Feature: Manage tasks
     Given I am registered and logged in as annika
     And user: "benny" exists with email: "benjamin.pochhammer@1000jobboersen.de"
     And a task: "call_erich" exists with user: annika
-    And I am on the tasks page
+    And I follow "tasks"
     And I follow the edit link for the task
     And I follow "preset_date"
     When I select "benjamin.pochhammer@1000jobboersen.de" from "task_assignee_id"
@@ -52,12 +53,14 @@ Feature: Manage tasks
     And a task exists with user: annika, assignee: annika, name: "annika's task"
     And a task exists with user: benny, assignee: benny, name: "benny's task"
     And a task exists with user: benny, assignee: annika, name: "task for annika"
+    And a task exists with user: annika, assignee: benny, name: "a task for benny"
     When I am on the tasks page
     And I follow "assigned"
     Then I should not see "Erich"
-    And I should see "annika's task"
+    And I should not see "annika's task"
     And I should not see "benny's task"
-    And I should see "task for annika"
+    And I should not see "task for annika"
+    And I should see "a task for benny"
 
   Scenario: Filtering overdue pending tasks
     Given I am registered and logged in as annika

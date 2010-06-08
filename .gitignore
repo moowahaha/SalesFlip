@@ -3,6 +3,7 @@ log/cucumber.log
 log/test.log
 log/development.log
 log/*.log
+log/*
 tmp/*
 tmp
 tmp/sass-cache
@@ -13,3 +14,6 @@ sphinx/*
 sphinx
 *.sqlite3
 log/*
+*.sqlite3-journal
+.autotest
+.bundle

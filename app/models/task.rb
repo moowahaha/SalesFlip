@@ -28,6 +28,12 @@ class Task
   named_scope :for, lambda { |user| { :where =>
     { '$where' => "this.user_id == '#{user.id}' || this.assignee_id == '#{user.id}'" } } }
 
+  after_create :assign_unassigned_lead
+
+  named_scope :assigned_by, lambda { |user| { :where =>
+    { '$where' => "this.user_id == '#{user.id}' && this.assignee_id != null && this.assignee_id != '#{user.id}'" }
+  } }
+
   named_scope :pending, :where => { :completed_at => nil, :assignee_id => nil }
 
   named_scope :assigned, :where => { :assignee_id => { '$ne' => nil } }
@@ -75,6 +81,7 @@ class Task
 
   before_update :log_reassignment
   after_create  :log_creation
+  after_create  :assign_unassigned_lead
   after_update  :log_update
   after_save    :notify_assignee
 
@@ -108,14 +115,12 @@ class Task
   end
 
   def assignee_id=( assignee_id )
-    if !assignee_id.blank? and assignee_id != self.assignee_id
+    if !assignee_id.blank? and assignee_id != self.assignee_id and !new_record?
       @reassigned = true
       self[:assignee_id] = assignee_id
     end
   end
 
-  # - 1.second thing is because for some reason 1 second is being added to all end_of... times
-  # I think this is to do with mongo UTC times but not entirely sure
   def due_at=( due )
     self[:due_at] =
       case due
@@ -181,5 +186,12 @@ class Task
 
   def log_reassignment
     Activity.log(self.user, self, 'Re-assigned') if @reassigned and valid?
+  end
+
+protected
+  def assign_unassigned_lead
+    if asset and asset.is_a?(Lead) and asset.assignee.blank?
+      asset.update_attributes :assignee => self.user
+    end
   end
 end

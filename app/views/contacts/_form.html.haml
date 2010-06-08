@@ -5,17 +5,25 @@
   .33.z= form.input :last_name, :required => true
   .clear
   .50.a= form.input :account_id, :collection => Account.all(:order => 'name asc').map {|a| [a.name, a.id] }
-  .50.z= link_to t('add_account'), new_account_path(:return_to => request.request_uri), :id => 'new_account', :class=> 'inline-add'
+  .50.z= link_to t('add_account'), new_account_path(:return_to => request.request_uri), :id => 'new_account', :class => 'inline-add'
 %h3.toggler= t('contact_info')
 .toggle
   %fieldset
-    .66.a= form.input :email
-    .33.z= form.input :phone
+    .33.a= form.input :email
+    .33= form.input :phone
+    .33.z= form.input :department
     .clear
     .33.a= form.input :address, :as => :text, :input_html => { :rows => 4 }
+    .33= form.input :city
+    .33.z= form.input :postal_code
+    .clear
+    .33.a
+      %label{ :for => 'contact_country' }= t('country')
+      = localized_country_select :contact, :country, TOP_COUNTRIES
     .33=   form.input :alt_email
     .33.z= form.input :mobile
-    .33= form.input :fax
+    .clear
+    .33.a= form.input :fax
     .33
       .boolean
         =  form.check_box :do_not_call

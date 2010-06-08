@@ -6,7 +6,7 @@ class Lead
   include Permission
   include Trackable
   include Activities
-  include SphinxIndex
+  include FullSearch
 
   field :first_name
   field :last_name
@@ -40,7 +40,7 @@ class Lead
 
   validates_presence_of :user, :last_name
 
-  sphinx_index :first_name, :last_name, :email, :phone, :notes, :company, :alternative_email,
+  search_keys :first_name, :last_name, :email, :phone, :notes, :company, :alternative_email,
     :mobile, :address, :referred_by, :website, :twitter, :linked_in, :facebook, :xing
 
   attr_accessor :do_not_notify
@@ -51,7 +51,8 @@ class Lead
   has_many_related :comments, :as => :commentable, :dependent => :delete_all
   has_many_related :tasks, :as => :asset, :dependent => :delete_all
 
-  before_validate :set_initial_state, :set_identifier
+  before_validate :set_initial_state
+  before_create :set_identifier
   after_save :notify_assignee, :unless => :do_not_notify
 
   has_constant :titles, lambda { I18n.t('titles') }
@@ -90,7 +91,7 @@ class Lead
   end
 
   def assignee_id=( assignee_id )
-    @reassigned = assignee_id
+    @reassigned = assignee_id unless new_record?
     self[:assignee_id] = assignee_id
   end
 
@@ -116,6 +117,6 @@ protected
   end
 
   def set_identifier
-    self.identifier = Identifier.next_lead if self.new_record?
+    self.identifier = Identifier.next_lead
   end
 end

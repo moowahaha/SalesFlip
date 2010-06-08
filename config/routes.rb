@@ -4,7 +4,7 @@ Salesflip::Application.routes.draw do |map|
 
   match 'profile', :to => 'users#profile'
 
-  #devise_for :users, :admins
+  devise_for :users, :admins
 
   resources :users, :comments, :tasks, :accounts, :contacts, :attachments, :deleted_items,
     :searches

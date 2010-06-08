@@ -6,10 +6,12 @@ Feature: Manage leads
   Scenario: Accepting a lead
     Given I am registered and logged in as annika
     And a lead: "erich" exists with user: annika
+    And all emails have been delivered
     And I am on the leads page
     When I press "accept"
     Then I should be on the lead's page
     And the lead: "erich" should be assigned to annika
+    And 0 emails should be delivered
 
   Scenario: Accepting a lead from the show page
     Given I am registered and logged in as annika
@@ -22,6 +24,7 @@ Feature: Manage leads
   Scenario: Creating a lead
     Given I am registered and logged in as annika
     And I am on the leads page
+    And all emails have been delivered
     And I follow "new"
     And I fill in "lead_first_name" with "Erich"
     And I fill in "lead_last_name" with "Feldmeier"
@@ -29,6 +32,23 @@ Feature: Manage leads
     Then I should be on the leads page
     And I should see "Erich Feldmeier"
     And a created activity should exist for lead with first_name "Erich"
+    And 0 emails should be delivered
+
+  Scenario: Creating a lead as a freelancer
+    Given Carsten Werner exists
+    And Carsten Werner is confirmed
+    And I am logged in as Carsten Werner
+    And I am on the leads page
+    And all emails have been delivered
+    And I follow "new"
+    And I fill in "lead_first_name" with "Erich"
+    And I fill in "lead_last_name" with "Feldmeier"
+    When I press "lead_submit"
+    Then I should be on the leads page
+    And 1 leads should exist with first_name: "Erich", last_name: "Feldmeier"
+    And I should see "Erich Feldmeier"
+    And a created activity should exist for lead with first_name "Erich"
+    And 0 emails should be delivered
 
   Scenario: Logging activity
     Given I am registered and logged in as annika
@@ -41,7 +61,7 @@ Feature: Manage leads
   Scenario: Creating a lead via XML
     Given I am registered and logged in as annika
     When I POST attributes for lead: "erich" to the leads page
-    Then 1 leads should exist
+    Then 1 leads should exist with assignee_id: nil
 
   Scenario: Adding a comment
     Given I am registered and logged in as annika
@@ -53,16 +73,17 @@ Feature: Manage leads
     And I should see "This is a good lead"
     And 1 comments should exist
 
-  Scenario: Adding an comment with an attachment
-    Given I am registered and logged in as annika
-    And a lead exists with user: annika
-    And I am on the lead's page
-    And I fill in "comment_text" with "Sent offer"
-    And I attach the file at "test/upload-files/erich_offer.pdf" to "Attachment"
-    When I press "comment_submit"
-    Then I should be on the lead page
-    And I should see "Sent offer"
-    And I should see "erich_offer.pdf"
+  # TODO seems to be a webrat bug breaking this feature
+  #Scenario: Adding an comment with an attachment
+  #  Given I am registered and logged in as annika
+  #  And a lead exists with user: annika
+  #  And I am on the lead's page
+  #  And I fill in "comment_text" with "Sent offer"
+  #  And I attach the file at "test/upload-files/erich_offer.pdf" to "Attachment"
+  #  When I press "comment_submit"
+  #  Then I should be on the lead page
+  #  And I should see "Sent offer"
+  #  And I should see "erich_offer.pdf"
 
   Scenario: Editing a lead
     Given I am registered and logged in as annika
@@ -94,6 +115,16 @@ Feature: Manage leads
   #  Then I should be on the leads page
   #  And lead "erich" should have been deleted
   #  And a new "Deleted" activity should have been created for "Lead" with "first_name" "Erich" and user: "annika"
+
+  Scenario: Leads index when freelance user
+    Given a user: "annika" exists
+    And I have accepted an invitation from annika
+    And a lead: "erich" exists with user: annika
+    And a lead: "markus" exists with user: freelancer
+    When I am on the leads page
+    Then I should not see "Erich"
+    And I should see "Markus"
+    And I should not see "filter"
 
   Scenario: Filtering leads
     Given I am registered and logged in as annika
@@ -130,9 +161,9 @@ Feature: Manage leads
   Scenario: Filtering leads by source
     Given I am registered and logged in as annika
     And a lead exists with user: annika, status: "New", first_name: "Erich", source: "Website"
-    And a lead exists with user: annika, status: "New", first_name: "Markus", source: "Helios"
+    And a lead exists with user: annika, status: "New", first_name: "Markus", source: "Imported"
     And I go to the leads page
-    When I check "source_helios"
+    When I check "source_imported"
     And I press "filter"
     Then I should see "Markus"
     And I should not see "Erich"
@@ -175,6 +206,7 @@ Feature: Manage leads
     Given I am registered and logged in as annika
     And a lead exists with user: annika
     And I am on the lead's page
+    And all emails have been delivered
     And I follow "add_task"
     And I follow "preset_date"
     And I fill in "task_name" with "Call to get offer details"
@@ -184,6 +216,25 @@ Feature: Manage leads
     Then I should be on the lead's page
     And a task should have been created
     And I should see "Call to get offer details"
+    And 0 emails should be delivered
+
+  Scenario: Adding a task to an unassigned lead
+    Given I am registered and logged in as annika
+    And Benny exists
+    And a lead exists with user: Benny, assignee_id: nil
+    And I am on the lead's page
+    And all emails have been delivered
+    And I follow "add_task"
+    And I follow "preset_date"
+    And I fill in "task_name" with "Call to get offer details"
+    And I select "As soon as possible" from "task_due_at"
+    And I select "Call" from "task_category"
+    When I press "task_submit"
+    Then I should be on the lead's page
+    And a task should have been created
+    And I should see "Call to get offer details"
+    And 0 emails should be delivered
+    And the lead should be assigned to Annika
 
   Scenario: Marking a lead as completed
     Given I am registered and logged in as annika
@@ -230,9 +281,9 @@ Feature: Manage leads
     And an account should exist with name: "World Dating"
     And a contact should exist with first_name: "Erich"
     And a lead should exist with first_name: "Erich", status: 2
+    And a new "Created" activity should have been created for "Contact" with "first_name" "Erich" and user: "annika"
     And a new "Converted" activity should have been created for "Lead" with "first_name" "Erich" and user: "annika"
     And a new "Created" activity should have been created for "Account" with "name" "World Dating" and user: "annika"
-    And a new "Created" activity should have been created for "Contact" with "first_name" "Erich" and user: "annika"
 
   Scenario: Converting a lead to an existing account
     Given I am registered and logged in as annika

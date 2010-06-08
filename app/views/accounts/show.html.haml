@@ -30,6 +30,7 @@
   .box.gold
     %h3= t('contact_info_for', :name => @account.name)
     %dl.info
+      = show_attribute(@account, 'identifier')
       = show_attribute(@account, 'email', mail_to(@account.email, nil, :bcc => current_user.dropbox_email))
       = show_attribute(@account, 'phone')
       = show_attribute(@account, 'fax')
@@ -39,6 +40,5 @@
   
   #recent_activity.box.ice
     %h3= t('recent_activity_for', :name => @account.full_name )
-    - Activity.for_subject(@account).limit(6).each do |activity|
-      = render :partial => "shared/activity_for", :locals => {:activity => activity}
+    = render :partial => 'shared/activity_for', :collection => @account.activities.limit(6), :as => :activity
   

@@ -1,21 +1,21 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
 
-  def add_new(text,path)
+  def add_new( text, path )
     "<a href='#{path}' id='new'><b>+</b>#{text}</a>"
   end
   
-  def show_attribute(object,attribute,custom=false)
+  def show_attribute( object, attribute, custom = false )
     if object.send(attribute).present?
       att = ""
       att << "<dt>#{I18n.t("simple_form.labels.#{attribute}")}</dt>"
       att << "<dd>"
-      custom ? att << custom : att << object.send(attribute)
+      custom ? att << custom : att << object.send(attribute).to_s
       att << "</dd>"
     end
   end
   
-  def rating_for(object)
+  def rating_for( object )
     rating = "<span class='rating'>"
     if object.rating.present?
       object.rating.times       { rating << "<span class='on'>&#9733;</span>" }

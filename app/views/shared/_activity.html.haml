@@ -5,9 +5,18 @@
     - if activity.subject.deleted_at || activity.subject.is_a?(Task)
       = activity.subject.name
     - elsif activity.subject.is_a?(Comment)
-      = link_to activity.subject.name, activity.subject.commentable
+      - if activity.subject.commentable.permitted_for?(current_user)
+        = link_to activity.subject.name, activity.subject.commentable
+      - else
+        = activity.subject.name
     - elsif activity.subject.is_a?(Task)
-      = link_to activity.subject.name, activity.subject.asset
+      - if activity.subject.asset.permitted_for?(current_user)
+        = link_to activity.subject.name, activity.subject.asset
+      - else
+        = activity.subject.name
     - else
-      = link_to activity.subject.name, activity.subject
+      - if activity.subject.permitted_for?(current_user)
+        = link_to activity.subject.name, activity.subject
+      - else
+        = activity.subject.name
   %small.timestamp= t('done_ago', :time => l(activity.updated_at, :format => :short))

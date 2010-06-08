@@ -18,6 +18,8 @@ en:
   logout: Logout
   recycle_bin_empty: Recycle Bin
   recycle_bin: "Recycle Bin ({{count}})"
+  users: Users
+  invitations: Invitations
 
   #--------------------------------------------------------------
   # Time
@@ -84,6 +86,7 @@ en:
   #--------------------------------------------------------------
   simple_form:
     labels:
+      identifier: Identifier
       address: Address
       account_name: Account Name
       account_id: Account
@@ -138,7 +141,7 @@ en:
   search: Search
   no_search_results: "There are no matches, <a href=\"{{link}}\">search again</a>"
   results: Results
-  search_results_for: "Search Results for \"{{terms}}\""
+  search_results_for: "Search Results for \"{{terms}}\" ({{total}} items found)"
   by_company: "By Company"
   search_people: Search People
   search_companies: Search Companies
@@ -221,7 +224,7 @@ en:
     - Website
     - Word of Mouth
     - Other
-    - Helios
+    - Imported
   salutations:
     - Mr
     - Ms
@@ -232,7 +235,18 @@ en:
     - Lord
     - Madam
     - Earl
- 
+  account_types:
+    - Analyst
+    - Competitor
+    - Customer
+    - Integrator
+    - Investor
+    - Partner
+    - Press
+    - Prospect
+    - Reseller
+    - Other
+
   #--------------------------------------------------------------
   # Task
   #--------------------------------------------------------------
@@ -269,7 +283,19 @@ en:
   # Users
   #--------------------------------------------------------------
   add_user: Add User
-  
+  confirmed_at: Confirmed At
+  username: Username
+  user_type: User Type
+
+  #--------------------------------------------------------------
+  # Invitations
+  #--------------------------------------------------------------
+  email: Email
+  state: State
+  pending: Pending
+  accepted: Accepted
+  new_invitation: Invite Someone!
+
   #--------------------------------------------------------------
   # Emails
   #--------------------------------------------------------------
@@ -283,6 +309,10 @@ en:
       subject: "SalesFlip: Tracked items update for {{date}}"
     lead_assignment:
       subject: "SalesFlip: You have been assigned a lead"
+    invitation:
+      subject: "SalesFlip: You have been invited to join {{company}}'s company"
+      body:
+        top: "Here is your invitation link, please signup here.  You will then receive a confirmation email before you are able to log in"
   
   
   #--------------------------------------------------------------

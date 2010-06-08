@@ -9,6 +9,7 @@
           = hidden_field_tag :return_to, request.request_uri
           %span.boolean= check_box_tag 'task[completed_by_id]', current_user.id, false, :id => "task_#{task.id}"
           %label{ :for => "task_#{task.id}" }= task.name
+          = "(#{task.due_at_in_words})"
           %span.save
             = form.button :submit, t('save')
           -#%small.asset= task_asset_link(task) unless task.asset.nil?

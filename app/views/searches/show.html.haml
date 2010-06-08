@@ -1,4 +1,6 @@
-%h2.title= t('search_results_for', :terms => @search.terms)
+- content_for :javascripts do
+  = javascript_include_tag 'search'
+%h2.title= t('search_results_for', :terms => @search.terms.blank? ? @search.company : @search.terms, :total => @search.results.length)
 - unless @search.results.blank?
   - @search.results.each do |result|
     %div{ :class => result.class }
