@@ -51,7 +51,7 @@ class Lead
   has_many_related :comments, :as => :commentable, :dependent => :delete_all
   has_many_related :tasks, :as => :asset, :dependent => :delete_all
 
-  before_validation_on_create :set_initial_state, :set_identifier
+  before_validate :set_initial_state, :set_identifier
   after_save :notify_assignee, :unless => :do_not_notify
 
   has_constant :titles, lambda { I18n.t('titles') }
@@ -59,11 +59,11 @@ class Lead
   has_constant :sources, lambda { I18n.t('lead_sources') }
   has_constant :salutations, lambda { I18n.t('salutations') }
 
-  named_scope :with_status, lambda { |statuses| { :conditions => {
+  named_scope :with_status, lambda { |statuses| { :where => {
     :status => statuses.map {|status| Lead.statuses.index(status) } } } }
-  named_scope :unassigned, :conditions => { :assignee_id => nil }
-  named_scope :assigned_to, lambda { |user_id| { :conditions => { :assignee_id => user_id } } }
-  named_scope :for_company, lambda { |company| { :conditions => { :user_id => company.users.map(&:id) } } }
+  named_scope :unassigned, :where => { :assignee_id => nil }
+  named_scope :assigned_to, lambda { |user_id| { :where => { :assignee_id => user_id } } }
+  named_scope :for_company, lambda { |company| { :where => { :user_id => company.users.map(&:id) } } }
 
   def full_name
     "#{first_name} #{last_name}"
@@ -100,7 +100,7 @@ protected
   end
 
   def set_initial_state
-    I18n.locale_around(:en) { self.status = 'New' unless self.status }
+    I18n.locale_around(:en) { self.status = 'New' unless self.status } if self.new_record?
   end
 
   def log_update
@@ -116,6 +116,6 @@ protected
   end
 
   def set_identifier
-    self.identifier = Identifier.next_lead
+    self.identifier = Identifier.next_lead if self.new_record?
   end
 end

@@ -23,53 +23,53 @@ class Task
 
   validates_presence_of :user, :name, :due_at, :category
 
-  named_scope :incomplete, :conditions => { :completed_at => nil }
+  named_scope :incomplete, :where => { :completed_at => nil }
 
-  named_scope :for, lambda { |user| { :conditions =>
+  named_scope :for, lambda { |user| { :where =>
     { '$where' => "this.user_id == '#{user.id}' || this.assignee_id == '#{user.id}'" } } }
 
-  named_scope :pending, :conditions => { :completed_at => nil, :assignee_id => nil }
+  named_scope :pending, :where => { :completed_at => nil, :assignee_id => nil }
 
-  named_scope :assigned, :conditions => { :assignee_id => { '$ne' => nil } }
+  named_scope :assigned, :where => { :assignee_id => { '$ne' => nil } }
 
-  named_scope :completed, :conditions => { :completed_at => { '$ne' => nil } }
+  named_scope :completed, :where => { :completed_at => { '$ne' => nil } }
 
-  named_scope :overdue, lambda { { :conditions => { :due_at => {
+  named_scope :overdue, lambda { { :where => { :due_at => {
     '$lt' => Time.zone.now.midnight.utc } } } }
 
-  named_scope :due_today, lambda { { :conditions => { :due_at => {
+  named_scope :due_today, lambda { { :where => { :due_at => {
     '$gte' => Time.zone.now.midnight.utc, '$lt' => Time.zone.now.end_of_day.utc } } } }
 
-  named_scope :due_tomorrow, lambda { { :conditions => { :due_at => {
+  named_scope :due_tomorrow, lambda { { :where => { :due_at => {
     '$lte' => Time.zone.now.tomorrow.end_of_day.utc,
     '$gte' => Time.zone.now.tomorrow.beginning_of_day.utc } } } }
 
-  named_scope :due_this_week, lambda { { :conditions => { :due_at => {
-    '$gte' => (Time.zone.now.tomorrow.end_of_day.utc + 1.day) - 1.second,
+  named_scope :due_this_week, lambda { { :where => { :due_at => {
+    '$gte' => (Time.zone.now.tomorrow.end_of_day.utc + 1.day),
     '$lt' => Time.zone.now.next_week.utc } } } }
 
-  named_scope :due_next_week, lambda { { :conditions => { :due_at => {
-    '$gte' => Time.zone.now.next_week.beginning_of_week.utc - 1.second,
+  named_scope :due_next_week, lambda { { :where => { :due_at => {
+    '$gte' => Time.zone.now.next_week.beginning_of_week.utc,
     '$lt' => Time.zone.now.next_week.end_of_week } } } }
 
-  named_scope :due_later, lambda { { :conditions => { :due_at => {
+  named_scope :due_later, lambda { { :where => { :due_at => {
     '$gt' => Time.zone.now.next_week.end_of_week } } } }
 
-  named_scope :completed_today, lambda { { :conditions => { :completed_at => {
+  named_scope :completed_today, lambda { { :where => { :completed_at => {
     '$gte' => Time.zone.now.midnight.utc, '$lt' => Time.zone.now.midnight.tomorrow.utc } } } }
 
-  named_scope :completed_yesterday, lambda { { :conditions => { :completed_at => {
+  named_scope :completed_yesterday, lambda { { :where => { :completed_at => {
     '$gte' => Time.zone.now.midnight.yesterday.utc, '$lt' => Time.zone.now.midnight.utc } } } }
 
-  named_scope :completed_last_week, lambda { { :conditions => { :completed_at => {
+  named_scope :completed_last_week, lambda { { :where => { :completed_at => {
     '$gte' => Time.zone.now.beginning_of_week.utc - 7.days,
     '$lt' => Time.zone.now.beginning_of_week.utc } } } }
 
-  named_scope :completed_this_month, lambda { { :conditions => { :completed_at => {
+  named_scope :completed_this_month, lambda { { :where => { :completed_at => {
     '$gte' => Time.zone.now.beginning_of_month.utc,
     '$lt' => Time.zone.now.beginning_of_week.utc - 7.days } } } }
 
-  named_scope :completed_last_month, lambda { { :conditions => { :completed_at => {
+  named_scope :completed_last_month, lambda { { :where => { :completed_at => {
     '$gte' => (Time.zone.now.beginning_of_month.utc - 1.day).beginning_of_month.utc,
     '$lt' => Time.zone.now.beginning_of_month.utc } } } }
 
@@ -120,17 +120,17 @@ class Task
     self[:due_at] =
       case due
       when 'overdue'
-        Time.zone.now.yesterday.end_of_day - 1.second
+        Time.zone.now.yesterday.end_of_day
       when 'due_today'
-        Time.zone.now.end_of_day - 1.second
+        Time.zone.now.end_of_day
       when 'due_tomorrow'
-        Time.zone.now.tomorrow.end_of_day - 1.second
+        Time.zone.now.tomorrow.end_of_day
       when 'due_this_week'
-        Time.zone.now.end_of_week - 1.second
+        Time.zone.now.end_of_week
       when 'due_next_week'
-        Time.zone.now.next_week.end_of_week - 1.second
+        Time.zone.now.next_week.end_of_week
       when 'due_later'
-        (Time.zone.now.end_of_day - 1.second) + 5.years
+        Time.zone.now.end_of_day + 5.years
       else
         if %w(overdue due_today due_tomorrow due_this_week due_next_week due_later).include?(due) and
           !due.is_a?(Time) and Chronic.parse(due)

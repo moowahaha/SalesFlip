@@ -34,7 +34,7 @@ class Contact
   validates_presence_of :user, :last_name
   validates_uniqueness_of :email, :allow_blank => true
 
-  before_validation_on_create :set_identifier
+  before_validate :set_identifier, :on => :create
 
   sphinx_index :first_name, :last_name, :department, :email, :alt_email, :phone, :mobile,
     :fax, :website, :linked_in, :facebook, :twitter, :xing, :address
@@ -53,7 +53,7 @@ class Contact
   has_many_related :comments, :as => :commentable, :dependent => :delete_all
   has_many_related :leads, :dependent => :destroy
 
-  named_scope :for_company, lambda { |company| { :conditions => { :user_id => company.users.map(&:id) } } }
+  named_scope :for_company, lambda { |company| { :where => { :user_id => company.users.map(&:id) } } }
 
   def full_name
     "#{first_name} #{last_name}"

@@ -32,7 +32,7 @@ class Account
 
   before_validation_on_create :set_identifier
 
-  named_scope :for_company, lambda { |company| { :conditions => { :user_id => company.users.map(&:id) } } }
+  named_scope :for_company, lambda { |company| { :where => { :user_id => company.users.map(&:id) } } }
 
   validates_uniqueness_of :email, :allow_blank => true
 

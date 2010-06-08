@@ -13,12 +13,12 @@ class Activity
   validates_presence_of :subject, :user
 
   named_scope :for_subject, lambda {|model| {
-    :conditions => { :subject_id => model.id, :subject_type => model.class.to_s } } }
+    :where => { :subject_id => model.id, :subject_type => model.class.to_s } } }
 
   named_scope :already_notified, lambda {|user| {
-    :conditions => { :notified_user_ids => user.id } } }
+    :where => { :notified_user_ids => user.id } } }
   named_scope :not_notified, lambda { |user| {
-    :conditions => { :notified_user_ids => { '$ne' => user.id } } } }
+    :where => { :notified_user_ids => { '$ne' => user.id } } } }
 
   has_constant :actions, lambda { I18n.t(:activity_actions) }
 
