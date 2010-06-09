@@ -1,6 +1,6 @@
 class Search
   include Mongoid::Document
-  include Mongoid::Timetamps
+  include Mongoid::Timestamps
 
   field :terms
   field :collections, :type => Array

@@ -1,4 +1,5 @@
-require 'machinist/mongo_mapper'
+# encoding: utf-8
+require 'machinist/mongoid'
 require 'sham'
 require 'faker'
 

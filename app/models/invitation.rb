@@ -1,20 +1,18 @@
 class Invitation
-  include MongoMapper::Document
+  include Mongoid::Document
+  include Mongoid::Timestamps
   include HasConstant
 
-  key :email,       String,   :required => true
-  key :inviter_id,  ObjectId
-  key :invited_id,  ObjectId
-  key :code,        String,   :required => true
-  key :user_type,   Integer,  :required => true
-  timestamps!
+  field :email
+  field :code
+  field :user_type,   :type => Integer
 
-  belongs_to :invited,  :class_name => 'User'
-  belongs_to :inviter,  :class_name => 'User'
+  belongs_to_related :invited,  :class_name => 'User'
+  belongs_to_related :inviter,  :class_name => 'User'
 
-  validates_presence_of :inviter
+  validates_presence_of :inviter, :email, :code, :user_type
 
-  before_validation_on_create :generate_code
+  before_validate :generate_code, :on => :create
   after_create :send_invitation
 
   has_constant :user_types, lambda { %w(User Freelancer) }
@@ -24,7 +22,7 @@ class Invitation
 
 protected
   def generate_code
-    self.code = UUID.new.generate
+    self.code = UUID.new.generate if code.blank?
   end
 
   def send_invitation

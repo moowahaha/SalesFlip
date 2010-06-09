@@ -1,6 +1,9 @@
+# encoding: utf-8
 ENV["RAILS_ENV"] = "test"
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
+
+require File.expand_path(File.dirname(__FILE__) + "/blueprints")
 
 class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
@@ -10,6 +13,7 @@ class ActiveSupport::TestCase
   fixtures :all
 
   # Add more helper methods to be used by all tests here...
+
   def self.should_have_constant(*args)
     klass = self.name.gsub(/Test$/, '').constantize
     args.each do |arg|
@@ -27,14 +31,14 @@ class ActiveSupport::TestCase
       assert klass.new.respond_to?('deleted_at')
       assert klass.respond_to?('not_deleted')
       assert klass.respond_to?('deleted')
-      assert_equal [], klass.not_deleted
-      assert_equal [], klass.deleted
+      assert klass.not_deleted.blank?
+      assert klass.deleted.blank?
       obj = klass.make
-      assert_equal [obj], klass.not_deleted
+      assert klass.not_deleted.include?(obj)
       obj.destroy
       assert obj.deleted_at
-      assert_equal [obj], klass.deleted
-      assert_equal [], klass.not_deleted
+      assert klass.deleted.include?(obj)
+      assert klass.not_deleted.blank?
     end
   end
 
@@ -54,7 +58,7 @@ class ActiveSupport::TestCase
     klass = self.name.gsub(/Test$/, '').constantize
     args.each do |arg|
       should "have_key '#{arg}'" do
-        assert klass.keys.map(&:first).include?(arg.to_s)
+        assert klass.fields.map(&:first).include?(arg.to_s)
       end
     end
   end
@@ -66,7 +70,7 @@ class ActiveSupport::TestCase
         obj = klass.new
         obj.send("#{arg.to_sym}=", nil)
         obj.valid?
-        assert obj.errors.on(arg.to_sym)
+        assert !obj.errors[arg.to_sym].blank?
       end
     end
   end
@@ -77,7 +81,9 @@ class ActiveSupport::TestCase
       should "have_many '#{arg}'" do
         has = false
         klass.associations.each do |name, assoc|
-          has = true if assoc.type == :many and name == arg.to_s
+          if assoc.association.to_s.match(/ReferencesMany|EmbedsMany/) and name == arg.to_s
+            has = true
+          end
         end
         assert has
       end
@@ -90,7 +96,9 @@ class ActiveSupport::TestCase
       should "have_one '#{arg}'" do
         has = false
         klass.associations.each do |name, assoc|
-          has = true if assoc.type == :has_one and name == arg.to_s
+          if assoc.association.to_s.match(/HasOneRelated/) and name == arg.to_s
+            has = true
+          end
         end
         assert has
       end
@@ -103,16 +111,27 @@ class ActiveSupport::TestCase
       should "belong_to '#{arg}'" do
         has = false
         klass.associations.each do |name, assoc|
-          has = true if assoc.type == :belongs_to and name == arg.to_s
+          if assoc.association.to_s.match(/ReferencedIn|EmbeddedIn/) and name == arg.to_s
+            has = true
+          end
         end
         assert has
       end
     end
   end
 
+  def self.should_have_uploader(*args)
+    klass = self.name.gsub(/Test$/, '').constantize
+    args.each do |arg|
+      should "have_uploader '#{arg}'" do
+        assert klass.new.send(arg).is_a?(CarrierWave::Uploader::Base)
+      end
+    end
+  end
+
   setup do
     Sham.reset
-    Dir[Rails.root + 'app/models/**/*.rb'].each do |model_path|
+    Dir[Rails.root.to_s + '/app/models/**/*.rb'].each do |model_path|
       model_name = File.basename(model_path).gsub(/\.rb$/, '')
       if model_name == 'alias'
         klass = Alias
@@ -122,5 +141,20 @@ class ActiveSupport::TestCase
       klass.delete_all if klass.respond_to?('delete_all')
     end
     Configuration.make
+  end
+
+  def assert_add_job_email_sent(posting)
+    assert_sent_email do |email|
+      email.subject == "Neue Stellenanzeige von #{posting.job.company_name}" and
+      email.body    =~ /#{posting.job.position}/ and
+      email.to.include? posting.board.api_email
+    end
+  end
+ 
+  def assert_delete_job_email_sent(posting)
+    assert_sent_email do |email|
+      email.subject == "Löschen der Stellenanzeige #{posting.job.position} von #{posting.job.company_name}" and
+      email.body =~ /#{posting.job.position}/ and email.to.include? posting.board.api_email
+    end
   end
 end

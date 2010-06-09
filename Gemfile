@@ -1,6 +1,7 @@
 source :gemcutter
 
 gem 'rails', :git => 'git://github.com/mattbeedle/rails.git'
+#gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'sqlite3-ruby', :require => 'sqlite3'
 
@@ -14,7 +15,6 @@ gem 'mongo_ext'
 gem 'bson_ext'
 gem 'compass', :git => 'git://github.com/chriseppstein/compass.git'
 gem 'uuid'
-gem 'faker'
 gem 'has_scope'
 gem 'navvy'
 #gem 'whenever'
@@ -23,11 +23,17 @@ gem 'mail'
 gem 'beanstalk-client'
 gem 'will_paginate', '3.0.pre'
 gem 'riddle'
-gem 'smurf'
 gem 'carrierwave', :git => 'git://github.com/jnicklas/carrierwave.git'
 gem 'memcached'
 gem 'mongo_session_store', :git => 'git://github.com/mattbeedle/mongo_session_store.git'
-gem 'wirble'
+
+group :production do
+  gem 'smurf'
+end
+
+group :development do
+  gem 'wirble'
+end
 
 group :test do
   gem 'pickle'
@@ -43,4 +49,5 @@ group :test do
   gem 'mocha'
   gem 'faker'
   gem 'shoulda', :git => 'git://github.com/bmaddy/shoulda', :branch => 'rails3'
+  #gem 'shoulda', :git => 'git://github.com/thoughtbot/shoulda.git', :branch => 'rails3'
 end

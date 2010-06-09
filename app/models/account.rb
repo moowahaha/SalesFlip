@@ -5,7 +5,7 @@ class Account
   include ParanoidDelete
   include Permission
   include Trackable
-  include SphinxIndex
+  include FullSearch
   include Activities
 
   field :name

@@ -1,10 +1,11 @@
 Salesflip::Application.routes.draw do |map|
+  devise_for :admins
+
+  devise_for :users
 
   root :to => 'pages#index'
 
   match 'profile', :to => 'users#profile'
-
-  devise_for :users, :admins
 
   resources :users, :comments, :tasks, :accounts, :contacts, :attachments, :deleted_items,
     :searches
