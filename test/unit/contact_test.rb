@@ -96,7 +96,7 @@ class ContactTest < ActiveSupport::TestCase
       @contact.save!
       c = Contact.make_unsaved(:florian, :email => @contact.email)
       assert !c.valid?
-      assert c.errors.on(:email)
+      assert c.errors[:email]
     end
 
     context 'permitted_for' do
@@ -193,13 +193,13 @@ class ContactTest < ActiveSupport::TestCase
     should 'require at least one permitted user if permission is "Shared"' do
       @contact.permission = 'Shared'
       assert !@contact.valid?
-      assert @contact.errors.on(:permitted_user_ids)
+      assert @contact.errors[:permitted_user_ids]
     end
 
     should 'require last name' do
       @contact.last_name = nil
       assert !@contact.valid?
-      assert @contact.errors.on(:last_name)
+      assert @contact.errors[:last_name]
     end
 
     should 'be valid with all required attributes' do

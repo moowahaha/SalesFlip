@@ -16,7 +16,9 @@ class UsersController < InheritedResources::Base
 
 protected
   def invitation
-    @invitation ||= Invitation.find_by_code(params[:invitation_code]) if params[:invitation_code]
+    if params[:invitation_code]
+      @invitation ||= Invitation.first(:conditions => { :code => params[:invitation_code] })
+    end
   end
 
   def build_resource

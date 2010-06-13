@@ -4,8 +4,8 @@ module ParanoidDelete
     base.class_eval do
       field :deleted_at, :type => Time
 
-      named_scope :not_deleted, :conditions => { :deleted_at => nil }
-      named_scope :deleted, :conditions => { :deleted_at => { '$ne' => nil } }
+      named_scope :not_deleted, :where => { :deleted_at => nil }
+      named_scope :deleted, :where => { :deleted_at => { '$ne' => nil } }
 
       alias_method_chain :destroy, :paranoid
     end

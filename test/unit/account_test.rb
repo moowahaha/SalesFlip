@@ -137,7 +137,7 @@ class AccountTest < ActiveSupport::TestCase
       @account.save!
       a = Account.make_unsaved(:careermee, :email => 'test@test.com')
       assert !a.valid?
-      assert a.errors.on(:email)
+      assert a.errors[:email]
     end
 
     context 'permitted_for' do
@@ -210,19 +210,19 @@ class AccountTest < ActiveSupport::TestCase
     should 'require at least one permitted user if permission is "Shared"' do
       @account.permission = 'Shared'
       assert !@account.valid?
-      assert @account.errors.on(:permitted_user_ids)
+      assert @account.errors[:permitted_user_ids]
     end
 
     should 'require name' do
       @account.name = nil
       assert !@account.valid?
-      assert @account.errors.on(:name)
+      assert @account.errors[:name]
     end
 
     should 'require user' do
       @account.user_id = nil
       assert !@account.valid?
-      assert @account.errors.on(:user_id)
+      assert @account.errors[:user_id]
     end
 
     should 'be valid' do

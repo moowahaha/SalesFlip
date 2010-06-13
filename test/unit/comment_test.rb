@@ -31,13 +31,13 @@ class CommentTest < ActiveSupport::TestCase
     should 'not be valid without user' do
       @comment.user_id = nil
       assert !@comment.valid?
-      assert @comment.errors.on(:user_id)
+      assert @comment.errors[:user_id]
     end
 
     should 'not be valid without commentable' do
       @comment.commentable = nil
       assert !@comment.valid?
-      assert @comment.errors.on(:commentable)
+      assert @comment.errors[:commentable]
     end
   end
 end

@@ -2,7 +2,7 @@
 # four configuration values can also be set straight in your models.
 Devise.setup do |config|
   # Configure the e-mail address which will be shown in DeviseMailer.
-  config.mailer_sender = "service@salesflip"
+  config.mailer_sender = "do-not-reply@salesflip.com"
 
   # ==> ORM configuration
   # Load and configure the ORM. Supports :active_record (default), :mongoid
@@ -27,19 +27,18 @@ Devise.setup do |config|
   # config.http_authentication_realm = "Application"
 
   # ==> Configuration for :database_authenticatable
-  # Invoke `rake secret` and use the printed value to setup a pepper to generate
-  # the encrypted password. By default no pepper is used.
-  # config.pepper = "rake secret output"
+  # For bcrypt, this is the cost for hashing the password and defaults to 10. If
+  # using other encryptors, it sets how many times you want the password re-encrypted.
+  config.stretches = 10
 
-  # Configure how many times you want the password re-encrypted. Default is 10.
-  # config.stretches = 10
-
-  # Define which will be the encryption algorithm. Supported algorithms are :sha1
-  # (default), :sha512 and :bcrypt. Devise also supports encryptors from others
-  # authentication tools as :clearance_sha1, :authlogic_sha512 (then you should set
-  # stretches above to 20 for default behavior) and :restful_authentication_sha1
+  # Define which will be the encryption algorithm. Devise also supports encryptors
+  # from others authentication tools as :clearance_sha1, :authlogic_sha512 (then
+  # you should set stretches above to 20 for default behavior) and :restful_authentication_sha1
   # (then you should set stretches to 10, and copy REST_AUTH_SITE_KEY to pepper)
-  # config.encryptor = :sha1
+  config.encryptor = :bcrypt
+
+  # Setup a pepper to generate the encrypted password.
+  config.pepper = "5d487648f483edc1f7f3724b2c33f730ca7e0105a2807e10fab2a962b409a9d699c7e0f8f48984015d5891cf240eeab372cd83eaf6af3623c69b902a06488553"
 
   # ==> Configuration for :confirmable
   # The time you want to give your user to confirm his account. During this time

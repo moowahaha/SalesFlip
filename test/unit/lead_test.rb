@@ -369,19 +369,19 @@ class LeadTest < ActiveSupport::TestCase
     should 'require last name' do
       @lead.last_name = nil
       assert !@lead.valid?
-      assert @lead.errors.on(:last_name)
+      assert @lead.errors[:last_name]
     end
 
     should 'require user id' do
       @lead.user_id = nil
       assert !@lead.valid?
-      assert @lead.errors.on(:user_id)
+      assert @lead.errors[:user_id]
     end
 
     should 'require at least one permitted user if permission is "Shared"' do
       @lead.permission = 'Shared'
       assert !@lead.valid?
-      assert @lead.errors.on(:permitted_user_ids)
+      assert @lead.errors[:permitted_user_ids]
     end
 
     should 'be valid' do

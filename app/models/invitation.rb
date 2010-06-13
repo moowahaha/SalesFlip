@@ -12,7 +12,7 @@ class Invitation
 
   validates_presence_of :inviter, :email, :code, :user_type
 
-  before_validate :generate_code, :on => :create
+  before_validation :generate_code, :on => :create
   after_create :send_invitation
 
   has_constant :user_types, lambda { %w(User Freelancer) }

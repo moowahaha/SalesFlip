@@ -308,25 +308,25 @@ class TaskTest < ActiveSupport::TestCase
     should 'not be valid without user_id' do
       @task.user_id = nil
       assert !@task.valid?
-      assert @task.errors.on(:user_id)
+      assert @task.errors[:user_id]
     end
 
     should 'not be valid without name' do
       @task.name = nil
       assert !@task.valid?
-      assert @task.errors.on(:name)
+      assert @task.errors[:name]
     end
 
     should 'not be valid without due_at' do
       @task.due_at = nil
       assert !@task.valid?
-      assert @task.errors.on(:due_at)
+      assert @task.errors[:due_at]
     end
 
     should 'not be valid without category' do
       @task.category = nil
       assert !@task.valid?
-      assert @task.errors.on(:category)
+      assert @task.errors[:category]
     end
 
     context 'activity logging' do

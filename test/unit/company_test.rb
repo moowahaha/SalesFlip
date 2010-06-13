@@ -13,7 +13,7 @@ class CompanyTest < ActiveSupport::TestCase
       Company.make(:jobboersen)
       @company = Company.make_unsaved(:jobboersen)
       assert !@company.valid?
-      assert @company.errors.on(:name)
+      assert @company.errors[:name]
     end
   end
 end

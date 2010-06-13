@@ -25,7 +25,7 @@ protected
 
   def resource
     @contact ||= Contact.for_company(current_user.company).permitted_for(current_user).
-      find_by_id(params[:id])
+      find(params[:id])
   end
 
   def begin_of_association_chain

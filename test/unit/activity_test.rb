@@ -181,7 +181,7 @@ class ActivityTest < ActiveSupport::TestCase
     should 'be invalid without subject' do
       @activity.subject = nil
       assert !@activity.valid?
-      assert @activity.errors.on(:subject)
+      assert @activity.errors[:subject]
     end
   end
 end

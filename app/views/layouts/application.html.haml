@@ -42,7 +42,6 @@
                   %label{ :for => 'search_collections_account' }= t('accounts')
                 .100= form.input :company, :label => t('search_companies')
                 .clear
-                
                 .clear
                 .act
                   = form.submit t('search')
@@ -50,7 +49,6 @@
                     %span
                       or
                       = link_to t('go_back'), :back
-                  
           = yield :sidebar
           - if action_is('index')
             #recent_items.box.ice

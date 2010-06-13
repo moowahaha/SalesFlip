@@ -15,7 +15,7 @@ class SearchTest < ActiveSupport::TestCase
       @search.terms = nil
       @search.company = nil
       assert !@search.valid?
-      assert @search.errors.on(:terms)
+      assert @search.errors[:terms]
       @search.company = 'asfefa'
       assert @search.valid?
     end
@@ -24,7 +24,7 @@ class SearchTest < ActiveSupport::TestCase
       @search.terms = nil
       @search.company = nil
       assert !@search.valid?
-      assert @search.errors.on(:company)
+      assert @search.errors[:company]
       @search.terms = 'asfef'
       assert @search.valid?
     end

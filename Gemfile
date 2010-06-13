@@ -1,7 +1,7 @@
 source :gemcutter
 
-gem 'rails', :git => 'git://github.com/mattbeedle/rails.git'
-#gem 'rails', :git => 'git://github.com/rails/rails.git'
+#gem 'rails', :git => 'git://github.com/mattbeedle/rails.git'
+gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'sqlite3-ruby', :require => 'sqlite3'
 
@@ -26,6 +26,7 @@ gem 'riddle'
 gem 'carrierwave', :git => 'git://github.com/jnicklas/carrierwave.git'
 gem 'memcached'
 gem 'mongo_session_store', :git => 'git://github.com/mattbeedle/mongo_session_store.git'
+gem 'simple_form'
 
 group :production do
   gem 'smurf'

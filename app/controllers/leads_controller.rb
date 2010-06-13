@@ -36,7 +36,7 @@ class LeadsController < InheritedResources::Base
 
   def convert
     @account = current_user.accounts.new(:name => @lead.company)
-    @contact = Contact.find_by_email(@lead.email) if @lead.email
+    @contact = Contact.first(:conditions => { :email => @lead.email }) if @lead.email
   end
 
   def promote
@@ -65,7 +65,7 @@ protected
 
   def resource
     @lead ||= Lead.for_company(current_user.company).permitted_for(current_user).
-      find_by_id(params[:id])
+      find(params[:id])
   end
 
   def begin_of_association_chain

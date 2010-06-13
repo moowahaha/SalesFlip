@@ -2,7 +2,7 @@ module Trackable
   def self.included( base )
     base.class_eval do
       field :tracker_ids, :type => Array
-      named_scope :tracked_by, lambda { |user| { :conditions => { :tracker_ids => user.id } } }
+      named_scope :tracked_by, lambda { |user| { :where => { :tracker_ids => user.id } } }
     end
     base.send(:include, InstanceMethods)
   end

@@ -24,13 +24,13 @@ class User
 
   belongs_to_related :company
 
-  before_validate :set_api_key, :create_company, :on => :create
+  before_validation :set_api_key, :create_company, :on => :create
   after_create :update_invitation, :add_user_to_postfix
 
   validates_presence_of :company
 
   def invitation_code=( invitation_code )
-    if @invitation = Invitation.find_by_code(invitation_code)
+    if @invitation = Invitation.first(:conditions => { :code => invitation_code })
       self.company_id = @invitation.inviter.company_id
       self.username = @invitation.email.split('@').first if self.username.blank?
       self.email = @invitation.email if self.email.blank?
@@ -92,7 +92,7 @@ protected
   end
 
   def update_invitation
-    @invitation.update_attributes :invited_id => self.id if @invitation
+    @invitation.update_attributes :invited_id => self.id unless @invitation.nil?
   end
 
   def add_user_to_postfix

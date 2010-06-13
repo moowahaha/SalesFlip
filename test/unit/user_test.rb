@@ -232,32 +232,32 @@ class UserTest < ActiveSupport::TestCase
     should 'not be valid with email less than 6 characters long' do
       @user.email = 'a@b.c'
       assert !@user.valid?
-      assert @user.errors.on(:email)
+      assert @user.errors[:email]
     end
 
     should 'not be valid with email more than 100 characters long' do
       @user.email = 101.times.map { 'a' }.join('')
       assert !@user.valid?
-      assert @user.errors.on(:email)
+      assert @user.errors[:email]
     end
 
     should 'not be valid with invalid email' do
       @user.email = 'matt'
       assert !@user.valid?
-      assert @user.errors.on(:email)
+      assert @user.errors[:email]
     end
 
     context 'when new record' do
       should 'not be valid without password' do
         @user.password = nil
         assert !@user.valid?
-        assert @user.errors.on(:password)
+        assert @user.errors[:password]
       end
 
       should 'not be valid without password confirmation' do
         @user.password_confirmation = nil
         assert !@user.valid?
-        assert @user.errors.on(:password)
+        assert @user.errors[:password]
       end
     end
   end

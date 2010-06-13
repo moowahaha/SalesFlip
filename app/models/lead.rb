@@ -51,7 +51,7 @@ class Lead
   has_many_related :comments, :as => :commentable, :dependent => :delete_all
   has_many_related :tasks, :as => :asset, :dependent => :delete_all
 
-  before_validate :set_initial_state
+  before_validation :set_initial_state
   before_create :set_identifier
   after_save :notify_assignee, :unless => :do_not_notify
 
@@ -73,7 +73,7 @@ class Lead
 
   def promote!( account_name, options = {} )
     @recently_converted = true
-    if email and (contact = Contact.find_by_email(email))
+    if email and (contact = Contact.first(:conditions => { :email => email }))
       I18n.locale_around(:en) { update_attributes :status => 'Converted', :contact_id => contact.id }
     else
       account = Account.find_or_create_for(self, account_name, options)

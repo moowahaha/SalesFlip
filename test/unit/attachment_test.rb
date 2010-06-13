@@ -17,7 +17,7 @@ class AttachmentTest < ActiveSupport::TestCase
     should 'not be valid without subject' do
       @attachment.subject = nil
       assert !@attachment.valid?
-      assert @attachment.errors.on(:subject)
+      assert @attachment.errors[:subject]
     end
   end
 end
