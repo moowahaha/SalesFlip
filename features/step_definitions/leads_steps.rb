@@ -3,8 +3,8 @@ Given /^I am registered and logged in as annika$/ do
   fill_in_registration_form(:email => 'annika.fleischer@1000jobboersen.de')
   click_button 'user_submit'
   visit user_confirmation_path(:confirmation_token =>
-                               User.last(:order => 'created_at').confirmation_token)
-  store_model('user', 'annika', User.last(:order => 'created_at'))
+                               User.last.confirmation_token)
+  store_model('user', 'annika', User.last)
 end
 
 Given /^I have accepted an invitation from annika$/ do
@@ -36,8 +36,8 @@ Given /^I am registered and logged in as benny$/ do
   fill_in_registration_form(:email => 'benjamin.pochhammer@1000jobboersen.de')
   click_button 'user_submit'
   visit user_confirmation_path(:confirmation_token =>
-                               User.last(:order => 'created_at').confirmation_token)
-  store_model('user', 'benny', User.last(:order => 'created_at'))
+                               User.last.confirmation_token)
+  store_model('user', 'benny', User.last)
 end
 
 Given /^I login as #{capture_model}$/ do |user|
