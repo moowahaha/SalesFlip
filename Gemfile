@@ -1,6 +1,5 @@
 source :gemcutter
 
-#gem 'rails', :git => 'git://github.com/mattbeedle/rails.git'
 gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'sqlite3-ruby', :require => 'sqlite3'
@@ -8,10 +7,10 @@ gem 'sqlite3-ruby', :require => 'sqlite3'
 gem 'haml'
 gem 'inherited_resources'
 gem 'warden'
-gem 'devise', :git => 'git://github.com/plataformatec/devise.git', :branch => 'master'
+gem 'devise', :git => 'git://github.com/plataformatec/devise.git'
 gem 'mongoid', :git => 'http://github.com/durran/mongoid.git'
 gem 'mongo'
-gem 'mongo_ext'
+gem 'bson'
 gem 'bson_ext'
 gem 'compass', :git => 'git://github.com/chriseppstein/compass.git'
 gem 'uuid'
@@ -38,7 +37,8 @@ end
 
 group :test do
   gem 'pickle'
-  gem 'capybara'#, :git => 'git://github.com/jnicklas/capybara.git'
+  gem 'pickle-mongoid'
+  gem 'capybara'
   gem 'cucumber-rails'
   gem 'cucumber'
   gem 'spork'
@@ -49,6 +49,5 @@ group :test do
   gem 'fakeweb'
   gem 'mocha'
   gem 'faker'
-  gem 'shoulda', :git => 'git://github.com/bmaddy/shoulda', :branch => 'rails3'
-  #gem 'shoulda', :git => 'git://github.com/thoughtbot/shoulda.git', :branch => 'rails3'
+  gem 'shoulda'
 end

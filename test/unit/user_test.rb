@@ -92,7 +92,7 @@ class UserTest < ActiveSupport::TestCase
     should 'create company from company name' do
       @user = User.new User.plan(:annika, :company_name => 'A test company')
       @user.save!
-      assert Company.find_by_name('A test company')
+      assert Company.first(:conditions => { :name => 'A test company' })
       assert_equal 'A test company', @user.company.name
     end
 

@@ -18,7 +18,7 @@ class ContactTest < ActiveSupport::TestCase
       should 'create a contact from the supplied lead and account' do
         Contact.create_for(@lead, @account)
         assert_equal 1, Contact.count
-        assert Contact.find_by_first_name_and_last_name(@lead.first_name, @lead.last_name)
+        assert Contact.where(:first_name => @lead.first_name, :last_name => @lead.last_name).first
         assert_equal 1, @account.contacts.count
       end
 
@@ -65,8 +65,10 @@ class ContactTest < ActiveSupport::TestCase
       end
 
       should 'only return contacts for the supplied company' do
-        assert_equal [@contact], Contact.for_company(@contact.user.company)
-        assert_equal [@contact2], Contact.for_company(@contact2.user.company)
+        assert_equal @contact, Contact.for_company(@contact.user.company).first
+        assert_equal 1, Contact.for_company(@contact.user.company).count
+        assert_equal @contact2, Contact.for_company(@contact2.user.company).first
+        assert_equal 1, Contact.for_company(@contact2.user.company).count
       end
     end
   end
@@ -88,7 +90,7 @@ class ContactTest < ActiveSupport::TestCase
       @contact2 = Account.make_unsaved
       assert @contact2.identifier.nil?
       @contact2.save!
-      assert_equal 2, @contact2.identifier
+      assert_equal 2, @contact2.reload.identifier
     end
 
     should 'validate uniqueness of email' do

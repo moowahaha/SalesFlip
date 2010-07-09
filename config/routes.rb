@@ -1,14 +1,12 @@
-Salesflip::Application.routes.draw do |map|
-  devise_for :admins
-
-  devise_for :users
+Salesflip::Application.routes.draw do
+  devise_for :admins, :users
 
   root :to => 'pages#index'
 
   match 'profile', :to => 'users#profile'
 
   resources :users, :comments, :tasks, :accounts, :contacts, :attachments, :deleted_items,
-    :searches
+    :searches, :invitations
 
   resources :leads do
     member do

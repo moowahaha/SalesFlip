@@ -60,6 +60,7 @@ module LovelyLayouts
       contents = capture(&block)
 
       concat(content_tag(:body, contents, options))
+      nil
     end
 
 

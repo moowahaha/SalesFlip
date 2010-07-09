@@ -11,12 +11,12 @@ module FullSearch
     end
 
     def search( query_string, options = {} )
-      where = []
+      conditions = []
       (options[:keys_to_search] || @keys_to_search).each do |key|
         next if key.match(/_id|created_at|updated_at/)
-        where << "(this.#{key} != null && this.#{key}.match(/#{query_string}/i))"
+        conditions << "(this.#{key} != null && this.#{key}.match(/#{query_string}/i))"
       end
-      scoped(:conditions => { '$where' => where.join(' || ') })
+      where(conditions.join(' || '))
     end
   end
 end

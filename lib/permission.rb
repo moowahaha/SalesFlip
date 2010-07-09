@@ -2,18 +2,18 @@ module Permission
   def self.included( base )
     base.class_eval do
       field :permission,          :type => Integer, :default => 0
-      field :permitted_user_ids,  :type => Array
+      field :permitted_user_ids,  :type => Array,   :default => []
 
       named_scope :permitted_for, lambda { |user|
         if user.instance_of?(User)
-          { :conditions => {
+          { :where => {
             '$where' => "this.user_id == '#{user.id}' || this.permission == '#{Contact.permissions.index('Public')}' || " +
             "this.assignee_id == '#{user.id}' || " +
             "(this.permission == '#{Contact.permissions.index('Shared')}' && contains(this.permitted_user_ids, '#{user.id}')) || " +
             "(this.permission == '#{Contact.permissions.index('Private')}' && this.assignee_id == '#{user.id}')"
           } }
         else
-          { :conditions => {
+          { :where => {
           '$where' => "this.user_id == '#{user.id}' || " +
             "(this.assignee_id == '#{user.id}' && this.permission == '#{Contact.permissions.index('Public')}') || " +
             "(this.assignee_id == '#{user.id}' && this.permission == '#{Contact.permissions.index('Private')}') || " +
@@ -32,7 +32,7 @@ module Permission
 
   module InstanceMethods
     def require_permitted_users
-      if I18n.locale_around(:en) { permission_is?('Shared') } and permitted_user_ids.length < 1
+      if I18n.locale_around(:en) { permission_is?('Shared') } and permitted_user_ids.blank?
         errors.add :permitted_user_ids, I18n.t('activerecord.errors.messages.blank')
       end
     end

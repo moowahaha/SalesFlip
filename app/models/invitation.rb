@@ -17,7 +17,7 @@ class Invitation
 
   has_constant :user_types, lambda { %w(User Freelancer) }
 
-  named_scope :by_company, lambda { |company| { :conditions => {
+  named_scope :by_company, lambda { |company| { :where => {
     :inviter_id => company.users.map(&:id) } } }
 
 protected
@@ -26,6 +26,6 @@ protected
   end
 
   def send_invitation
-    InvitationMailer.deliver_invitation(self)
+    InvitationMailer.invitation(self).deliver
   end
 end

@@ -1,14 +1,18 @@
 module Pickle
+  class Config
+    def predicates
+      @predicates ||= Pickle::Adapter.model_classes.map do |k|
+        k.public_instance_methods.select{|m| m =~ /\?$/} + k.fields.map(&:first)
+      end.flatten.uniq
+    end
+  end
+
   class Adapter
     def self.model_classes
       @@model_classes ||=
-      Dir[Rails.root + 'app/models/**/*.rb'].map do |model_path|
+      Dir[Rails.root.to_s + '/app/models/**/*.rb'].map do |model_path|
         model_name = File.basename(model_path).gsub(/\.rb$/, '')
-        if model_name == 'alias'
-          klass = Alias
-        else
-          klass = model_name.classify.constantize
-        end
+        klass = model_name.classify.constantize
       end.reject { |klass| !klass.respond_to?('collection') }
     end
   end

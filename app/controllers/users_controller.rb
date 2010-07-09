@@ -32,6 +32,6 @@ protected
   end
 
   def collection
-    @users ||= current_user.company.users.order('username', 'asc')
+    @users ||= current_user.company.users.order_by([:username, :asc])
   end
 end

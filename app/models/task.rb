@@ -88,7 +88,7 @@ class Task
   def self.daily_email
     (Task.overdue + Task.due_today).flatten.sort_by(&:due_at).group_by(&:user).
       each do |user, tasks|
-      TaskMailer.deliver_daily_task_summary(user, tasks)
+      TaskMailer.daily_task_summary(user, tasks).deliver
     end
   end
 
@@ -105,8 +105,8 @@ class Task
   def completed_by_id=( user_id )
     if user_id and not completed?
       @recently_completed = true
-      self[:completed_at] = Time.zone.now
-      self[:completed_by_id] = user_id
+      write_attribute :completed_at, Time.zone.now
+      write_attribute :completed_by_id, user_id
     end
   end
 
@@ -117,12 +117,12 @@ class Task
   def assignee_id=( assignee_id )
     if !assignee_id.blank? and assignee_id != self.assignee_id and !new_record?
       @reassigned = true
-      self[:assignee_id] = assignee_id
+      write_attribute :assignee_id, assignee_id
     end
   end
 
   def due_at=( due )
-    self[:due_at] =
+    write_attribute :due_at,
       case due
       when 'overdue'
         Time.zone.now.yesterday.end_of_day
@@ -170,7 +170,7 @@ class Task
   end
 
   def notify_assignee
-    TaskMailer.deliver_assignment_notification(self) if @reassigned
+    TaskMailer.assignment_notification(self).deliver if @reassigned
   end
 
   def log_creation

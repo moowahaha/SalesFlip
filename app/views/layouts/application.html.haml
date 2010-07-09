@@ -8,11 +8,11 @@
     = description_tag 'An unobtrusive, slim CRM built with MongoMapper and RightJS'
     = keywords_tag 'SalesFlip salesflip CRM unobtrusive mongomapper rightjs'
     %meta{ :content => "text/html; charset=utf-8", "http-equiv" => "Content-Type" }
-  - body do
+  = body do
     #header
       .pad
         %h1
-          - link_to root_path do
+          = link_to root_path do
             %strong.logo SalesFlip:
             = @configuration.company_name if @configuration
         = render :partial => "layouts/nav" if current_user
@@ -61,5 +61,4 @@
                       = "on " + link_to(item.commentable.full_name, item.commentable)
                     - else
                       = item.deleted_at.blank? ? link_to(item.name, item) : item.name
-                    -#%small= l item.updated_at, :format => :short
       .clear

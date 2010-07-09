@@ -71,11 +71,11 @@ class Contact
   def self.create_for( lead, account )
     contact = account.contacts.build :user => lead.updater_or_user, :permission => account.permission,
       :permitted_user_ids => account.permitted_user_ids
-    Lead.keys.map(&:first).delete_if do |k|
+    Lead.fields.map(&:first).delete_if do |k|
       %w(identifier _id user_id permission permitted_user_ids _sphinx_id created_at updated_at deleted_at tracker_ids updater_id).
         include?(k)
     end.each do |key|
-      if contact.keys.map(&:first).include?(key)
+      if contact.fields.map(&:first).include?(key)
         contact.send("#{key}=", lead.send(key))
       end
     end

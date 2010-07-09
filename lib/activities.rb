@@ -40,7 +40,7 @@ module Activities
       conditions = ["(this.subject_type == 'Lead' && this.subject_id == '#{self.id}')"]
       conditions << "((this.subject_type == 'Comment' || this.subject_type == 'Email') && '#{comments.map(&:id)}'.indexOf(this.subject_id) != -1)"
       conditions << "(this.subject_type == 'Task' && '#{tasks.map(&:id)}'.indexOf(this.subject_id) != -1)"
-      Activity.scoped(:conditions => { '$where' => conditions.join(' || ') })
+      Activity.where(conditions.join(' || '))
     end
   end
 end

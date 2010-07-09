@@ -7,7 +7,7 @@ class AccountTest < ActiveSupport::TestCase
     should_be_trackable
     should_have_key :user_id, :assignee_id, :name, :email, :access, :website, :phone, :fax,
       :billing_address, :shipping_address, :identifier, :account_type
-    should_require_key :user_id, :name
+    should_require_key :user, :name
     should_belong_to :user, :assignee
     should_have_many :contacts, :tasks, :comments
 
@@ -106,8 +106,10 @@ class AccountTest < ActiveSupport::TestCase
       end
 
       should 'only return accounts for the supplied company' do
-        assert_equal [@account], Account.for_company(@account.user.company)
-        assert_equal [@account2], Account.for_company(@account2.user.company)
+        assert_equal @account, Account.for_company(@account.user.company).first
+        assert_equal 1, Account.for_company(@account.user.company).count
+        assert_equal @account2, Account.for_company(@account2.user.company).first
+        assert_equal 1, Account.for_company(@account2.user.company).count
       end
     end
   end

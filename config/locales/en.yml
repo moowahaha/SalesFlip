@@ -17,25 +17,25 @@ en:
   login: Login
   logout: Logout
   recycle_bin_empty: Recycle Bin
-  recycle_bin: "Recycle Bin ({{count}})"
+  recycle_bin: "Recycle Bin (%{count})"
   users: Users
   invitations: Invitations
 
   #--------------------------------------------------------------
   # Time
   #--------------------------------------------------------------
-  added_ago: "added on {{time}}"
-  added_ago_by: "added by {{by}} on {{time}}"
-  assigned_ago_by: "assigned to {{for}} on {{time}} by {{by}}"
-  assigned_to: "Assigned to {{user}}"
-  created_ago: "created {{time}} ago"
-  done_ago: "done on {{time}}"
-  removed_ago: "removed on {{time}}"
-  posted_ago: "Posted on {{time}}"
-  updated_ago: "updated on {{time}} ago"
-  wrote_ago: "wrote on {{time}}"
-  email_sent_ago: "sent via email on {{time}}"
-  via_email: "&#9993; via Email &gt; Re:{{subject}}"
+  added_ago: "added on %{time}"
+  added_ago_by: "added by %{by} on %{time}"
+  assigned_ago_by: "assigned to %{for} on %{time} by %{by}"
+  assigned_to: "Assigned to %{user}"
+  created_ago: "created %{time} ago"
+  done_ago: "done on %{time}"
+  removed_ago: "removed on %{time}"
+  posted_ago: "Posted on %{time}"
+  updated_ago: "updated on %{time} ago"
+  wrote_ago: "wrote on %{time}"
+  email_sent_ago: "sent via email on %{time}"
+  via_email: "&#9993; via Email &gt; Re:%{subject}"
   last_year: Last Year
   last_month: Last Month
   last_week: Last Week
@@ -139,9 +139,9 @@ en:
   # Search
   #--------------------------------------------------------------
   search: Search
-  no_search_results: "There are no matches, <a href=\"{{link}}\">search again</a>"
+  no_search_results: "There are no matches, <a href=\"%{link}\">search again</a>"
   results: Results
-  search_results_for: "Search Results for \"{{terms}}\" ({{total}} items found)"
+  search_results_for: "Search Results for \"%{terms}\" (%{total} items found)"
   by_company: "By Company"
   search_people: Search People
   search_companies: Search Companies
@@ -164,17 +164,17 @@ en:
 
   my_profile: My Profile
   recent_items: Recent Items
-  recent_activity_for: "Recent Activity for {{name}}"
+  recent_activity_for: "Recent Activity for %{name}"
   #--------------------------------------------------------------
   # Comments
   #--------------------------------------------------------------
   add_comment: Add Comment
-  add_comment_for: "Add a Comment for {{name}}"
+  add_comment_for: "Add a Comment for %{name}"
   edit_comment: Edit this Comment
   comment: Comment
   comment_updated: Comment was successfully updated
   comments: Comments
-  comments_for: "Comments for {{name}}"
+  comments_for: "Comments for %{name}"
   save_comment: Save Comment
   update_comment: Update Comment
   wrote: wrote
@@ -184,11 +184,11 @@ en:
   #--------------------------------------------------------------
   add_contact: Add Contact
   contact_info: Contact Info
-  contact_info_for: "Contact {{name}}"
+  contact_info_for: "Contact %{name}"
   delete_contact: Delete Contact
   edit_contact: Edit Contact
-  info_for: "Info for {{name}}"
-  no_contact_info: "No contact info for {{name}}"
+  info_for: "Info for %{name}"
+  no_contact_info: "No contact info for %{name}"
   #--------------------------------------------------------------
   # Leads
   #--------------------------------------------------------------
@@ -206,7 +206,7 @@ en:
   rejected: Rejected
   tracking_info: Tracking Info
   web_and_social_media: "Web &amp; Social Media"
-  contact_already_exists: "Contact {{contact}} already exists. Press convert to add this lead to that contact"
+  contact_already_exists: "Contact %{contact} already exists. Press convert to add this lead to that contact"
   lead_statuses:
     - New
     - Contacted
@@ -269,9 +269,9 @@ en:
     - Money
     - Presentation
     - Trip
-  task_reassigned: "Task has been re-assigned to {{user}}"
-  no_tasks_for_lead: "You have no tasks for this lead. <a href='{{link}}'>Add one now</a>"
-  no_tasks_for: "You have no tasks for this {{object}}. <a href='{{link}}'>Add one now</a>"
+  task_reassigned: "Task has been re-assigned to %{user}"
+  no_tasks_for_lead: "You have no tasks for this lead. <a href='%{link}'>Add one now</a>"
+  no_tasks_for: "You have no tasks for this %{object}. <a href='%{link}'>Add one now</a>"
 
   #--------------------------------------------------------------
   # Deleted Items
@@ -300,17 +300,17 @@ en:
   # Emails
   #--------------------------------------------------------------
   emails:
-    do_not_reply: "do-not-reply@{{host}}"
+    do_not_reply: "do-not-reply@%{host}"
     task_reassigned:
       subject: You have been assigned a new task
     daily_task_summary:
-      subject: "SalesFlip: Daily task summary for {{date}}"
+      subject: "SalesFlip: Daily task summary for %{date}"
     tracked_items_update:
-      subject: "SalesFlip: Tracked items update for {{date}}"
+      subject: "SalesFlip: Tracked items update for %{date}"
     lead_assignment:
       subject: "SalesFlip: You have been assigned a lead"
     invitation:
-      subject: "SalesFlip: You have been invited to join {{company}}'s company"
+      subject: "SalesFlip: You have been invited to join %{company}'s company"
       body:
         top: "Here is your invitation link, please signup here.  You will then receive a confirmation email before you are able to log in"
   
@@ -331,15 +331,15 @@ en:
   #--------------------------------------------------------------
   # Tasks
   #--------------------------------------------------------------
-  tasks_for: "Tasks for {{name}}"
+  tasks_for: "Tasks for %{name}"
   
   #--------------------------------------------------------------
   # Errors
   #--------------------------------------------------------------
   error_404: The page you are looking for cannot be found.
-  error_404_note: "Check if the URL is correct or {{link}}"
+  error_404_note: "Check if the URL is correct or %{link}"
   error_422: "The change you wanted was rejected."
-  error_422_note: "You may not have necessary permissions. {{link}}"
+  error_422_note: "You may not have necessary permissions. %{link}"
   error_500: A system error has occurred.
-  error_500_note: "{{link}} or {{email}}"
+  error_500_note: "%{link} or %{email}"
   contact_the_admin: contact the administrator

@@ -92,12 +92,12 @@ class Lead
 
   def assignee_id=( assignee_id )
     @reassigned = assignee_id unless new_record?
-    self[:assignee_id] = assignee_id
+    write_attribute :assignee_id, assignee_id
   end
 
 protected
   def notify_assignee
-    UserMailer.deliver_lead_assignment_notification(self) if @reassigned and not assignee.blank?
+    UserMailer.lead_assignment_notification(self).deliver if @reassigned and not assignee.blank?
   end
 
   def set_initial_state

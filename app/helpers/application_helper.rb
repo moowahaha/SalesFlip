@@ -2,7 +2,7 @@
 module ApplicationHelper
 
   def add_new( text, path )
-    "<a href='#{path}' id='new'><b>+</b>#{text}</a>"
+    "<a href='#{path}' id='new'><b>+</b>#{text}</a>".html_safe
   end
   
   def show_attribute( object, attribute, custom = false )

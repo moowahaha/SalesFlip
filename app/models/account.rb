@@ -28,11 +28,11 @@ class Account
   has_many_related :tasks, :as => :asset
   has_many_related :comments, :as => :commentable
 
-  validates_presence_of :user, :assignee, :name
+  validates_presence_of :user, :name
 
   before_create :set_identifier
 
-  named_scope :for_company, lambda { |company| { :where => { :user_id => company.users.map(&:id) } } }
+  named_scope :for_company, lambda { |company| { :where => { :user_id.in => company.users.map(&:id) } } }
 
   validates_uniqueness_of :email, :allow_blank => true
 
