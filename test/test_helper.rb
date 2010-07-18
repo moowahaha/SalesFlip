@@ -131,16 +131,15 @@ class ActiveSupport::TestCase
 
   setup do
     Sham.reset
-    Dir[Rails.root.to_s + '/app/models/**/*.rb'].each do |model_path|
-      model_name = File.basename(model_path).gsub(/\.rb$/, '')
-      if model_name == 'alias'
-        klass = Alias
-      else
-        klass = model_name.classify.constantize
+    Mongoid.database.collections.each do |collection|
+      begin
+        collection.drop
+      rescue
       end
-      klass.delete_all if klass.respond_to?('delete_all')
     end
     Configuration.make
+    FakeWeb.allow_net_connect = false
+    ActionMailer::Base.deliveries.clear
   end
 
   def assert_add_job_email_sent(posting)
