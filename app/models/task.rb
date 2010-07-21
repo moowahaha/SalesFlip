@@ -62,7 +62,7 @@ class Task
     '$lt' => Time.zone.now.next_week.end_of_week } } } }
 
   named_scope :due_later, lambda { { :conditions => { :due_at => {
-    '$gt' => Time.zone.now.next_week.end_of_week } } } }
+    '$gte' => Time.zone.now.next_week.end_of_week } } } }
 
   named_scope :completed_today, lambda { { :conditions => { :completed_at => {
     '$gte' => Time.zone.now.midnight.utc, '$lt' => Time.zone.now.midnight.tomorrow.utc } } } }
