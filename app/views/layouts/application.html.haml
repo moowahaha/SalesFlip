@@ -29,7 +29,7 @@
         #sidebar
           - if user_signed_in?
             #search
-              - simple_form_for @search || Search.new do |form|
+              = simple_form_for @search || Search.new do |form|
                 .100= form.input :terms, :label => t('search_people')
                 .boolean
                   = check_box_tag 'search[collections][]', 'Lead', (params[:search] && params[:search][:collections].include?('Lead')) || (!@search && params[:search].blank?) || (@search and @search.collections.include?('Lead')), :id => 'search_collections_lead'
