@@ -2,6 +2,7 @@ class Comment
   include Mongoid::Document
   include Mongoid::Timestamps
   include HasConstant
+  include HasConstant::Orm::Mongoid
   include Activities
   include Permission
   include ParanoidDelete

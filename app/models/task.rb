@@ -2,6 +2,7 @@ class Task
   include Mongoid::Document
   include Mongoid::Timestamps
   include HasConstant
+  include HasConstant::Orm::Mongoid
   include Permission
   include MultiParameterAttributes
 

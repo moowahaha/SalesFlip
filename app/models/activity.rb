@@ -2,6 +2,7 @@ class Activity
   include Mongoid::Document
   include Mongoid::Timestamps
   include HasConstant
+  include HasConstant::Orm::Mongoid
 
   field :action,            :type => Integer
   field :info

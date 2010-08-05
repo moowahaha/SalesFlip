@@ -28,7 +28,7 @@ module ApplicationHelper
   end
   
   def activity_icon(string)
-    case string
+    icon = case string
     when "created"; "&#9998;";
     when "updated"; "&#9998;";
     when "re-assigned"; "&#10132;";
@@ -39,6 +39,7 @@ module ApplicationHelper
     else
       "&#9670;"
     end
+    icon.html_safe
   end
   
 end

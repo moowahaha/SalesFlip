@@ -2,6 +2,7 @@ class Lead
   include Mongoid::Document
   include Mongoid::Timestamps
   include HasConstant
+  include HasConstant::Orm::Mongoid
   include ParanoidDelete
   include Permission
   include Trackable

@@ -1,7 +1,8 @@
 class Company
   include Mongoid::Document
+  include Mongoid::Timestamps
 
-  key :name
+  field :name
 
   has_many_related :users
 

@@ -65,7 +65,7 @@ protected
 
   def resource
     @lead ||= Lead.for_company(current_user.company).permitted_for(current_user).
-      find(params[:id])
+      where(:_id => BSON::ObjectID.from_string(params[:id])).first
   end
 
   def begin_of_association_chain

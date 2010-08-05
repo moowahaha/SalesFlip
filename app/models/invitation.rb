@@ -2,6 +2,7 @@ class Invitation
   include Mongoid::Document
   include Mongoid::Timestamps
   include HasConstant
+  include HasConstant::Orm::Mongoid
 
   field :email
   field :code
