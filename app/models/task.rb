@@ -4,7 +4,6 @@ class Task
   include HasConstant
   include HasConstant::Orm::Mongoid
   include Permission
-  include MultiParameterAttributes
 
   field :name
   field :due_at,          :type => Time
@@ -24,61 +23,65 @@ class Task
 
   validates_presence_of :user, :name, :due_at, :category
 
-  named_scope :incomplete, :where => { :completed_at => nil }
-
-  named_scope :for, lambda { |user| { :where =>
-    { '$where' => "this.user_id == '#{user.id}' || this.assignee_id == '#{user.id}'" } } }
-
   after_create :assign_unassigned_lead
 
-  named_scope :assigned_by, lambda { |user| { :where =>
-    { '$where' => "this.user_id == '#{user.id}' && this.assignee_id != null && this.assignee_id != '#{user.id}'" }
-  } }
+  named_scope :incomplete, :where => { :completed_at => nil }
+
+  def self.for( user )
+    any_of({ :user_id => user.id, :assignee_id => user.id }, { :assignee_id => user.id },
+           { :user_id => user.id, :assignee_id => nil })
+  end
+
+  # '$where' => "this.user_id == '#{user.id}' && this.assignee_id != null && this.assignee_id != '#{user.id}'"
+  named_scope :assigned_by, lambda { |user| { :where => {
+    :user_id => user.id, :assignee_id.ne => nil, :assignee_id.ne => user.id } } }
 
   named_scope :pending, :where => { :completed_at => nil, :assignee_id => nil }
 
-  named_scope :assigned, :where => { :assignee_id => { '$ne' => nil } }
+  named_scope :assigned, :where => { :assignee_id.ne => nil }
 
-  named_scope :completed, :where => { :completed_at => { '$ne' => nil } }
+  named_scope :completed, :where => { :completed_at.ne => nil }
 
-  named_scope :overdue, lambda { { :where => { :due_at => {
-    '$lt' => Time.zone.now.midnight.utc } } } }
+  named_scope :overdue, lambda { { :where => { :due_at.lte => Time.zone.now.midnight.utc } } }
 
-  named_scope :due_today, lambda { { :where => { :due_at => {
-    '$gte' => Time.zone.now.midnight.utc, '$lt' => Time.zone.now.end_of_day.utc } } } }
+  named_scope :due_today, lambda { { :where => {
+    :due_at.gt => Time.zone.now.midnight.utc,
+    :due_at.lte => Time.zone.now.end_of_day.utc } } }
 
-  named_scope :due_tomorrow, lambda { { :where => { :due_at => {
-    '$lte' => Time.zone.now.tomorrow.end_of_day.utc,
-    '$gte' => Time.zone.now.tomorrow.beginning_of_day.utc } } } }
+  named_scope :due_tomorrow, lambda { { :where => {
+    :due_at.lte => Time.zone.now.tomorrow.end_of_day.utc,
+    :due_at.gte => Time.zone.now.tomorrow.beginning_of_day.utc } } }
 
-  named_scope :due_this_week, lambda { { :where => { :due_at => {
-    '$gte' => (Time.zone.now.tomorrow.end_of_day.utc + 1.day),
-    '$lt' => Time.zone.now.next_week.utc } } } }
+  named_scope :due_this_week, lambda { { :where => {
+    :due_at.gte => Time.zone.now.tomorrow.end_of_day.utc + 1.day,
+    :due_at.lte => Time.zone.now.next_week.utc } } }
 
-  named_scope :due_next_week, lambda { { :where => { :due_at => {
-    '$gte' => Time.zone.now.next_week.beginning_of_week.utc,
-    '$lt' => Time.zone.now.next_week.end_of_week } } } }
+  named_scope :due_next_week, lambda { { :where => {
+    :due_at.gte => Time.zone.now.next_week.beginning_of_week.utc,
+    :due_at.lte => Time.zone.now.next_week.end_of_week } } }
 
-  named_scope :due_later, lambda { { :where => { :due_at => {
-    '$gt' => Time.zone.now.next_week.end_of_week } } } }
+  named_scope :due_later, lambda { { :where => {
+    :due_at.gt => Time.zone.now.next_week.end_of_week } } }
 
-  named_scope :completed_today, lambda { { :where => { :completed_at => {
-    '$gte' => Time.zone.now.midnight.utc, '$lt' => Time.zone.now.midnight.tomorrow.utc } } } }
+  named_scope :completed_today, lambda { { :where => {
+    :completed_at.gte => Time.zone.now.midnight.utc,
+    :completed_at.lte => Time.zone.now.midnight.tomorrow.utc } } }
 
-  named_scope :completed_yesterday, lambda { { :where => { :completed_at => {
-    '$gte' => Time.zone.now.midnight.yesterday.utc, '$lt' => Time.zone.now.midnight.utc } } } }
+  named_scope :completed_yesterday, lambda { { :where => {
+    :completed_at.gte => Time.zone.now.midnight.yesterday.utc,
+    :completed_at.lte => Time.zone.now.midnight.utc } } }
 
-  named_scope :completed_last_week, lambda { { :where => { :completed_at => {
-    '$gte' => Time.zone.now.beginning_of_week.utc - 7.days,
-    '$lt' => Time.zone.now.beginning_of_week.utc } } } }
+  named_scope :completed_last_week, lambda { { :where => {
+    :completed_at.gte => Time.zone.now.beginning_of_week.utc - 7.days,
+    :completed_at.lte => Time.zone.now.beginning_of_week.utc } } }
 
-  named_scope :completed_this_month, lambda { { :where => { :completed_at => {
-    '$gte' => Time.zone.now.beginning_of_month.utc,
-    '$lt' => Time.zone.now.beginning_of_week.utc - 7.days } } } }
+  named_scope :completed_this_month, lambda { { :where => {
+    :completed_at.gte => Time.zone.now.beginning_of_month.utc,
+    :completed_at.lte => Time.zone.now.beginning_of_week.utc - 7.days } } }
 
-  named_scope :completed_last_month, lambda { { :where => { :completed_at => {
-    '$gte' => (Time.zone.now.beginning_of_month.utc - 1.day).beginning_of_month.utc,
-    '$lt' => Time.zone.now.beginning_of_month.utc } } } }
+  named_scope :completed_last_month, lambda { { :where => {
+    :completed_at.gte => (Time.zone.now.beginning_of_month.utc - 1.day).beginning_of_month.utc,
+    :completed_at.lte => Time.zone.now.beginning_of_month.utc } } }
 
   before_update :log_reassignment
   after_create  :log_creation

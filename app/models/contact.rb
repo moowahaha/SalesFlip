@@ -58,7 +58,7 @@ class Contact
   has_many_related :comments, :as => :commentable, :dependent => :delete_all
   has_many_related :leads, :dependent => :destroy
 
-  named_scope :for_company, lambda { |company| { :where => { :user_id => company.users.map(&:id) } } }
+  named_scope :for_company, lambda { |company| { :where => { :user_id.in => company.users.map(&:id) } } }
 
   def full_name
     "#{first_name} #{last_name}"

@@ -5,8 +5,8 @@
       - if task.completed?
         %label= task.name
       - else
-        - simple_form_for task do |form|
-          = hidden_field_tag :return_to, request.request_uri
+        = simple_form_for task do |form|
+          = hidden_field_tag :return_to, request.fullpath
           %span.boolean= check_box_tag 'task[completed_by_id]', current_user.id, false, :id => "task_#{task.id}"
           %label{ :for => "task_#{task.id}" }= task.name
           = "(#{task.due_at_in_words})"
@@ -15,10 +15,10 @@
           -#%small.asset= task_asset_link(task) unless task.asset.nil?
         %span.actions
           %b.divider= "|"
-          = link_to t('edit'), edit_task_path(task,:return_to => request.request_uri), :id => "edit_#{dom_id task}"
+          = link_to t('edit'), edit_task_path(task,:return_to => request.fullpath), :id => "edit_#{dom_id task}"
           %b.divider= "|"
-          - simple_form_for task, :html => { :method => :delete } do |form|
-            = hidden_field_tag :return_to, request.request_uri
-            = form.button :submit, t('delete_icon'), :class => 'delete', :id => "delete_#{dom_id task}"
+          = simple_form_for task, :html => { :method => :delete } do |form|
+            = hidden_field_tag :return_to, request.fullpath
+            = form.button :submit, raw(t('delete_icon')), :class => 'delete', :id => "delete_#{dom_id task}"
       = task_asset_info( task,link_to(task.asset.name, task.asset) ) if !task.asset.nil?
 .clear

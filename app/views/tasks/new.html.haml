@@ -1,4 +1,4 @@
 %h2.title= t('add_task')
-- simple_form_for @task do |form|
+= simple_form_for @task do |form|
   = render :partial => 'form', :locals => { :form => form }
   = form.button :submit

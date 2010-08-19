@@ -19,7 +19,7 @@ class LeadTest < ActiveSupport::TestCase
       end
 
       should 'only return leads for the supplied company' do
-        assert_equal [@lead], Lead.for_company(@lead.user.company)
+        assert_equal [@lead], Lead.for_company(@lead.user.company).to_a
       end
     end
 
@@ -71,8 +71,8 @@ class LeadTest < ActiveSupport::TestCase
       end
 
       should 'return leads with any of the supplied statuses' do
-        assert_equal [@new], Lead.with_status('New')
-        assert_equal [@rejected], Lead.with_status('Rejected')
+        assert_equal [@new], Lead.with_status('New').to_a
+        assert_equal [@rejected], Lead.with_status('Rejected').to_a
         assert Lead.with_status(['New', 'Rejected']).include?(@new)
         assert Lead.with_status(['New', 'Rejected']).include?(@rejected)
         assert_equal 2, Lead.with_status(['New', 'Rejected']).count
@@ -162,7 +162,7 @@ class LeadTest < ActiveSupport::TestCase
 
   context 'Instance' do
     setup do
-      @lead = Lead.make_unsaved(:erich)
+      @lead = Lead.make_unsaved(:erich, :user => User.make)
       @user = User.make(:benny)
     end
 
@@ -223,6 +223,7 @@ class LeadTest < ActiveSupport::TestCase
     context 'activity logging' do
       setup do
         @lead.save!
+        @lead.reload
       end
 
       should 'not log a "created" activity when do_not_log is set' do
@@ -236,7 +237,7 @@ class LeadTest < ActiveSupport::TestCase
       end
 
       should 'log an activity when updated' do
-        @lead = Lead.find_by_id(@lead.id)
+        @lead = Lead.find(@lead.id)
         @lead.update_attributes :first_name => 'test'
         assert @lead.activities.any? {|a| a.action == 'Updated' }
       end
@@ -248,13 +249,13 @@ class LeadTest < ActiveSupport::TestCase
       end
 
       should 'log an activity when destroyed' do
-        @lead = Lead.find_by_id(@lead.id)
+        @lead = Lead.find(@lead.id)
         @lead.destroy
         assert @lead.activities.any? {|a| a.action == 'Deleted' }
       end
 
       should 'log an activity when converted' do
-        @lead = Lead.find_by_id(@lead.id)
+        @lead = Lead.find(@lead.id)
         @lead.promote!('A new company')
         assert @lead.activities.any? {|a| a.action == 'Converted' }
       end
@@ -297,7 +298,7 @@ class LeadTest < ActiveSupport::TestCase
 
       should 'create a new account and contact when a new account is specified' do
         @lead.promote!('Super duper company')
-        assert account = Account.find_by_name('Super duper company')
+        assert account = Account.first(:conditions => { :name => 'Super duper company' })
         assert account.contacts.any? {|c| c.first_name == @lead.first_name &&
           c.last_name == @lead.last_name }
       end
@@ -309,8 +310,8 @@ class LeadTest < ActiveSupport::TestCase
 
       should 'assign lead to contact' do
         @lead.promote!('company name')
-        assert Account.find_by_name('company name').contacts.first.leads.include?(@lead)
-        assert_equal @lead.reload.contact, Account.find_by_name('company name').contacts.first
+        assert Account.first(:conditions => { :name => 'company name' }).contacts.first.leads.include?(@lead)
+        assert_equal @lead.reload.contact, Account.first(:conditions => { :name => 'company name' }).contacts.first
       end
 
       should 'be able to specify a "Private" permission level' do
@@ -373,9 +374,9 @@ class LeadTest < ActiveSupport::TestCase
     end
 
     should 'require user id' do
-      @lead.user_id = nil
+      @lead.user = nil
       assert !@lead.valid?
-      assert @lead.errors[:user_id]
+      assert @lead.errors[:user]
     end
 
     should 'require at least one permitted user if permission is "Shared"' do

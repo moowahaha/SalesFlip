@@ -19,7 +19,7 @@ class Invitation
   has_constant :user_types, lambda { %w(User Freelancer) }
 
   named_scope :by_company, lambda { |company| { :where => {
-    :inviter_id => company.users.map(&:id) } } }
+    :inviter_id.in => company.users.map(&:id) } } }
 
 protected
   def generate_code

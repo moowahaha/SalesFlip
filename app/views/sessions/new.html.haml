@@ -1,6 +1,6 @@
 %h2 Sign In
 
-- simple_form_for resource_name, resource, :url => session_path(resource_name) do |f|
+= simple_form_for resource_name, resource, :url => session_path(resource_name) do |f|
   %fieldset
     = f.input :email, :grid => '100'
     = f.input :password, :grid => '100'

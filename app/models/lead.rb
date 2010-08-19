@@ -62,10 +62,10 @@ class Lead
   has_constant :salutations, lambda { I18n.t('salutations') }
 
   named_scope :with_status, lambda { |statuses| { :where => {
-    :status => statuses.map {|status| Lead.statuses.index(status) } } } }
+    :status.in => statuses.map { |status| Lead.statuses.index(status) } } } }
   named_scope :unassigned, :where => { :assignee_id => nil }
   named_scope :assigned_to, lambda { |user_id| { :where => { :assignee_id => user_id } } }
-  named_scope :for_company, lambda { |company| { :where => { :user_id => company.users.map(&:id) } } }
+  named_scope :for_company, lambda { |company| { :where => { :user_id.in => company.users.map(&:id) } } }
 
   def full_name
     "#{first_name} #{last_name}"

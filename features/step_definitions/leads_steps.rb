@@ -49,13 +49,13 @@ Given /^I login as #{capture_model}$/ do |user|
 end
 
 Given /^erich is shared with annika$/ do
-  lead = Lead.find_by_first_name('Erich')
-  user = User.find_by_email('annika.fleischer@1000jobboersen.de')
+  lead = Lead.where(:first_name => 'Erich').first
+  user = User.where(:email => 'annika.fleischer@1000jobboersen.de').first
   lead.update_attributes :permitted_user_ids => [user.id], :permission => 'Shared'
 end
 
 Given /^markus is not shared with annika$/ do
-  lead = Lead.find_by_first_name('Markus')
+  lead = Lead.where(:first_name => 'Markus')
   lead.update_attributes :permitted_user_ids => [lead.user_id], :permission => 'Shared'
 end
 
@@ -108,8 +108,8 @@ end
 
 Then /^a new "([^\"]*)" activity should have been created for "([^\"]*)" with "([^\"]*)" "([^\"]*)" and user: "([^\"]*)"$/ do |action, model, field, value, modifier|
   user = model!(modifier)
-  activity = Activity.first(:action => Activity.actions.index(action), :subject_type => model,
-                            :user_id => user.id)
+  activity = Activity.first(:conditions => { :action => Activity.actions.index(action),
+                            :subject_type => model, :user_id => user.id })
   assert activity.subject.send(field) == value
 end
 

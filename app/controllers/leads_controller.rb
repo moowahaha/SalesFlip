@@ -59,13 +59,13 @@ class LeadsController < InheritedResources::Base
 protected
   def collection
     @leads ||= apply_scopes(Lead).for_company(current_user.company).not_deleted.
-      permitted_for(current_user).order_by([[:status, :asc], [:created_at, :desc]]).
+      permitted_for(current_user).desc(:status).desc(:created_at).
       paginate(:per_page => 10, :page => params[:page] || 1)
   end
 
   def resource
     @lead ||= Lead.for_company(current_user.company).permitted_for(current_user).
-      where(:_id => BSON::ObjectID.from_string(params[:id])).first
+      where(:_id => params[:id]).first
   end
 
   def begin_of_association_chain
@@ -73,6 +73,9 @@ protected
   end
 
   def build_resource
+    if params[:lead] && (ids = params[:lead][:permitted_user_ids])
+      params[:lead][:permitted_user_ids] = ids.to_a
+    end
     @lead ||= Lead.new({ :updater => current_user, :user => current_user }.merge!(params[:lead] || {}))
   end
 end

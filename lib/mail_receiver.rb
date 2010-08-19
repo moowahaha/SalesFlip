@@ -12,8 +12,7 @@ rescue
 end
 
 mongo = db_config['production']
-Mongoid.connection = Mongo::Connection.new(mongo['host'] || 'localhost',
-                                               mongo['port'] || 27017)
+Mongoid.connection = Mongo::Connection.new(mongo['host'] || 'localhost', mongo['port'] || 27017)
 Mongoid.database = mongo['database']
 if mongo['username'] && mongo['password']
   Mongoid.database.authenticate(mongo['username'], mongo['password'])

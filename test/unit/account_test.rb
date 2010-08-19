@@ -116,7 +116,7 @@ class AccountTest < ActiveSupport::TestCase
 
   context 'Instance' do
     setup do
-      @account = Account.make_unsaved(:careermee)
+      @account = Account.make_unsaved(:careermee, :user => User.make)
     end
 
     should 'be assigned an identifier on creation' do
@@ -178,8 +178,7 @@ class AccountTest < ActiveSupport::TestCase
 
     context 'activity logging' do
       setup do
-        @account.save
-        @account = Account.find(@account.id)
+        @account.save!
       end
 
       should 'log an activity when created' do
@@ -203,7 +202,7 @@ class AccountTest < ActiveSupport::TestCase
 
       should 'log an activity when restored' do
         @account.destroy
-        @account = Account.find(@account.id)
+        @account = Account.last
         @account.update_attributes :deleted_at => nil
         assert @account.activities.any? {|a| a.action == 'Restored' }
       end
@@ -222,7 +221,7 @@ class AccountTest < ActiveSupport::TestCase
     end
 
     should 'require user' do
-      @account.user_id = nil
+      @account.user = nil
       assert !@account.valid?
       assert @account.errors[:user_id]
     end

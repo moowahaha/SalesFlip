@@ -54,7 +54,7 @@ class Account
       permission = object.permission
       permitted = object.permitted_user_ids
     else
-      permission = options[:permission]
+      permission = options[:permission] || 0
       permitted = options[:permitted_user_ids]
     end
     account = object.updater_or_user.accounts.create :permission => permission,

@@ -2,31 +2,24 @@
   - if comment.is_a?(Email)
     .user
       = mail_to comment.from, nil, :bcc => current_user.dropbox_email
-      %span.icon= t 'icons.email'
+      %span.icon= raw t('icons.email')
       %strong
-        == #{t('subject')}:
-        = comment.subject
-      %small.acted= t 'email_sent_ago', :time => l(comment.created_at, :format => :short)
-    .quote= t 'icons.comment'
+        == raw #{t('subject')}:
+        = raw comment.subject
+      %small.acted= raw t('email_sent_ago', :time => l(comment.created_at, :format => :short))
+    .quote= raw t('icons.comment')
     .message
-      = comment.text.gsub(/\n/, '<br />')
+      = raw comment.text.gsub(/\n/, '<br />')
       .attachments
         - comment.attachments.each do |attachment|
           = link_to attachment.attachment_filename, attachment
   - else
     .user
       = link_to comment.user.email, comment.user
-      %small.acted= t 'wrote_ago', :time => l(comment.created_at, :format => :short)
-    .quote= t 'icons.comment'
+      %small.acted= raw t('wrote_ago', :time => l(comment.created_at, :format => :short))
+    .quote= raw t('icons.comment')
     .message
       = comment.text
       .attachments
         - comment.attachments.each do |attachment|
           = link_to attachment.attachment_filename, attachment
-    -# if comment.user == current_user
-      %ul.actions
-        %li= link_to t('edit_comment'), edit_comment_path(comment,:return_to => request.request_uri), :id => "edit_#{dom_id(comment)}"
-        %li
-          - simple_form_for comment, :html => { :method => :delete } do |form|
-            = hidden_field_tag :return_to, request.request_uri
-            = form.button :submit, t('delete_icon'), :class => 'delete', :id => "delete_comment_#{comment.id}"

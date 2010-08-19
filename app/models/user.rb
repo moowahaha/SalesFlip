@@ -47,11 +47,12 @@ class User
   def full_name
     username.present? ? username : email
   end
+  alias :name :full_name
 
   def recent_items
     Activity.where(:user_id => self.id,
-                   :action => I18n.locale_around(:en) { Activity.actions.index('Viewed') },
-                   :order => 'updated_at desc', :limit => 5).map(&:subject)
+                   :action => I18n.locale_around(:en) { Activity.actions.index('Viewed') }).
+                   desc(:updated_at).limit(5).map(&:subject)
   end
 
   def tracked_items
@@ -86,9 +87,7 @@ protected
 
   def create_company
     company = Company.new :name => self.company_name
-    if company.save
-      self.company_id = company.id
-    end
+    self.company = company if company.save
   end
 
   def update_invitation

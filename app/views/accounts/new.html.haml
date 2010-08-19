@@ -1,4 +1,4 @@
 %h2.title= t('add_account')
-- simple_form_for @account do |form|
+= simple_form_for @account do |form|
   = render :partial => 'form', :locals => { :form => form }
   = hidden_field_tag :return_to, params[:return_to]

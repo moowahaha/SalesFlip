@@ -34,7 +34,7 @@
       = form.label :do_not_call
     .clear
 
-%h3.toggler= t('web_and_social_media')
+%h3.toggler= raw t('web_and_social_media')
 .toggle
   %fieldset
     .100=  form.input :website
@@ -43,7 +43,7 @@
     .50.a= form.input :facebook
     .50.z= form.input :xing
 
-%h3.toggler= "#{t('tracking')} &amp; #{t('simple_form.labels.permissions')}"
+%h3.toggler= raw "#{t('tracking')} &amp; #{t('simple_form.labels.permissions')}"
 .toggle
   %fieldset
     .25.a= form.input :status, :as => :select, :collection => Lead.statuses.map(&:to_s), :include_blank => false

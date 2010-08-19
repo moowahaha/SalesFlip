@@ -9,7 +9,7 @@ module Trackable
 
   module InstanceMethods
     def trackers
-      User.where(:id.in => tracker_ids)
+      User.where(:_id.in => tracker_ids || [])
     end
 
     def tracked_by?( user )

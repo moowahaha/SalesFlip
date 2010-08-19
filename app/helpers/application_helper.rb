@@ -12,6 +12,7 @@ module ApplicationHelper
       att << "<dd>"
       custom ? att << custom : att << object.send(attribute).to_s
       att << "</dd>"
+      att.html_safe
     end
   end
   
@@ -24,7 +25,7 @@ module ApplicationHelper
       5.times {rating << "<span class='off'>&#9733;</span>"}
     end
     rating << "</span>"
-    rating
+    rating.html_safe
   end
   
   def activity_icon(string)

@@ -3,6 +3,7 @@ require 'test_helper.rb'
 class TaskTest < ActiveSupport::TestCase
   context "Class" do
     should_have_constant :categories
+    should_require_key :user, :due_at, :name, :category
 
     should 'allow multiparameter attributes for due_at' do
       time = Time.zone.now
@@ -24,8 +25,8 @@ class TaskTest < ActiveSupport::TestCase
       should 'return tasks grouped by the supplied scopes' do
         result = Task.grouped_by_scope(['due_next_week', 'overdue'])
         assert result.is_a?(Hash)
-        assert_equal [@task], result[:due_next_week]
-        assert_equal [@task2], result[:overdue]
+        assert_equal [@task], result[:due_next_week].to_a
+        assert_equal [@task2], result[:overdue].to_a
       end
 
       should 'scope tasks to the supplied scope' do
@@ -105,11 +106,12 @@ class TaskTest < ActiveSupport::TestCase
 
     context 'assigned_by' do
       setup do
-        @task2 = Task.make(:assignee => User.make, :user_id => @task.user.id)
+        @task2 = Task.make(:user_id => @task.user.id)
+        @task2.update_attributes :assignee => User.make
       end
 
       should 'return all tasks assigned to anyone except the task creator' do
-        assert_equal [@task2], Task.assigned_by(@task.user)
+        assert_equal [@task2], Task.assigned_by(@task.user).to_a
       end
     end
 
@@ -120,7 +122,7 @@ class TaskTest < ActiveSupport::TestCase
       end
 
       should 'return tasks which are due yesterday or earlier' do
-        assert_equal [@task2], Task.overdue
+        assert_equal [@task2], Task.overdue.to_a
       end
     end
 
@@ -131,7 +133,7 @@ class TaskTest < ActiveSupport::TestCase
       end
 
       should 'return tasks which are due today' do
-        assert_equal [@task2], Task.due_today
+        assert_equal [@task2], Task.due_today.to_a
       end
     end
 
@@ -142,7 +144,7 @@ class TaskTest < ActiveSupport::TestCase
       end
 
       should 'return tasks which are due tomorrow' do
-        assert_equal [@task2], Task.due_tomorrow
+        assert_equal [@task2], Task.due_tomorrow.to_a
       end
     end
 
@@ -153,7 +155,7 @@ class TaskTest < ActiveSupport::TestCase
       end
 
       should 'return tasks which are due next week' do
-        assert_equal [@task2], Task.due_next_week
+        assert_equal [@task2], Task.due_next_week.to_a
       end
     end
 
@@ -164,7 +166,7 @@ class TaskTest < ActiveSupport::TestCase
       end
 
       should 'return tasks which are due after next week' do
-        assert_equal [@task2], Task.due_later
+        assert_equal [@task2], Task.due_later.to_a
       end
     end
     
@@ -176,7 +178,7 @@ class TaskTest < ActiveSupport::TestCase
       end
 
       should 'return tasks which were completed today' do
-        assert_equal [@task2], Task.completed_today
+        assert_equal [@task2], Task.completed_today.to_a
       end
     end
 
@@ -188,7 +190,7 @@ class TaskTest < ActiveSupport::TestCase
       end
 
       should 'return tasks which were completed yesterday' do
-        assert_equal [@task2], Task.completed_yesterday
+        assert_equal [@task2], Task.completed_yesterday.to_a
       end
     end
 
@@ -200,7 +202,7 @@ class TaskTest < ActiveSupport::TestCase
       end
 
       should 'return tasks which where completed last week' do
-        assert_equal [@task2], Task.completed_last_week
+        assert_equal [@task2], Task.completed_last_week.to_a
       end
     end
 
@@ -212,7 +214,7 @@ class TaskTest < ActiveSupport::TestCase
       end
 
       should 'return tasks which where completed last month' do
-        assert_equal [@task2], Task.completed_last_month
+        assert_equal [@task2], Task.completed_last_month.to_a
       end
     end
 
@@ -224,50 +226,51 @@ class TaskTest < ActiveSupport::TestCase
       end
 
       should 'return all completed tasks' do
-        assert_equal [@task], Task.completed
+        assert_equal [@task], Task.completed.to_a
       end
     end
 
     context 'assigned' do
       setup do
         @benny = User.make(:benny)
-        @assigned = Task.make(:call_erich, :assignee => @benny)
+        @assigned = Task.make(:call_erich)
+        @assigned.update_attributes :assignee_id => @benny.id
         @unassigned = Task.make
       end
 
       should 'return all assigned tasks' do
-        assert_equal [@assigned], Task.assigned
+        assert_equal [@assigned], Task.assigned.to_a
       end
     end
 
     context 'for' do
       should 'return all tasks created by the supplied user' do
-        assert_equal [@task], Task.for(@task.user)
+        assert_equal [@task], Task.for(@task.user).to_a
       end
 
       should 'return all tasks assigned to the current user' do
         @benny = User.make(:benny)
         @task.update_attributes :assignee_id => @benny.id
-        assert_equal [@task], Task.for(@benny)
+        assert_equal [@task], Task.for(@benny).to_a
       end
 
       should 'not return tasks which were created by the supplied user, but are assigned to someone else' do
         @task.update_attributes :assignee => User.make(:benny)
-        assert_equal [], Task.for(@task.user)
+        assert_equal [], Task.for(@task.user).to_a
       end
 
       should 'not return tasks not created by or assigned to the supplied user' do
         @benny = User.make(:benny)
-        assert_equal [], Task.for(@benny)
+        assert_equal [], Task.for(@benny).to_a
       end
     end
 
     context 'incomplete' do
       should 'return tasks which have not been completed' do
-        assert_equal [@task], Task.incomplete
+        assert_equal [@task], Task.incomplete.to_a
         @task.completed_by_id = @task.user_id
         @task.save
-        assert_equal [], Task.incomplete
+        assert_equal [], Task.incomplete.to_a
       end
     end
 
@@ -278,7 +281,7 @@ class TaskTest < ActiveSupport::TestCase
       end
 
       should 'return tasks which are due before 00:00:00 tomorrow' do
-        assert_equal [@task], Task.due_today
+        assert_equal [@task], Task.due_today.to_a
       end
     end
   end
@@ -305,34 +308,9 @@ class TaskTest < ActiveSupport::TestCase
       assert @task.valid?
     end
 
-    should 'not be valid without user_id' do
-      @task.user_id = nil
-      assert !@task.valid?
-      assert @task.errors[:user_id]
-    end
-
-    should 'not be valid without name' do
-      @task.name = nil
-      assert !@task.valid?
-      assert @task.errors[:name]
-    end
-
-    should 'not be valid without due_at' do
-      @task.due_at = nil
-      assert !@task.valid?
-      assert @task.errors[:due_at]
-    end
-
-    should 'not be valid without category' do
-      @task.category = nil
-      assert !@task.valid?
-      assert @task.errors[:category]
-    end
-
     context 'activity logging' do
       setup do
         @task.save!
-        @task = Task.find(@task.id)
       end
 
       should 'log activity when created' do
@@ -385,7 +363,7 @@ class TaskTest < ActiveSupport::TestCase
     end
 
     should 'not send a notification email when the task is created if the assignee is blank' do
-      @task = Task.make_unsaved(:call_erich)
+      @task = Task.make_unsaved(:call_erich, :user => User.make)
       ActionMailer::Base.deliveries.clear
       @task.save!
       assert_equal 0, ActionMailer::Base.deliveries.length

@@ -14,37 +14,33 @@
       = t('rejected')
   %ul.actions
     %li
-      = link_to t('edit'), edit_lead_path(@lead, :return_to => request.request_uri), :id => "edit_#{dom_id @lead}"
+      = link_to t('edit'), edit_lead_path(@lead, :return_to => request.fullpath), :id => "edit_#{dom_id @lead}"
     - if @lead.assignee.nil?
       %li
-        - simple_form_for @lead, :html => {:class => "accept"} do |form|
+        = simple_form_for @lead, :html => {:class => "accept"} do |form|
           = form.hidden_field :do_not_notify, :value => true
           = form.hidden_field :assignee_id, :value => current_user.id
-          = hidden_field_tag :return_to, request.request_uri
+          = hidden_field_tag :return_to, request.fullpath
           = form.button :submit, t('accept').capitalize, :id => 'accept'
     %li
       - if @lead.tracked_by?(current_user)
-        - simple_form_for @lead, :html => {:class => "stop update"} do |form|
+        = simple_form_for @lead, :html => {:class => "stop update"} do |form|
           = hidden_field_tag 'lead[remove_tracker_ids][]', current_user.id
-          = hidden_field_tag :return_to, request.request_uri
+          = hidden_field_tag :return_to, request.fullpath
           = form.button :submit, t('stop_updating_me'), :id => 'stop_updating_me'
       - else @lead.tracked_by?(current_user)
-        - simple_form_for @lead, :html => {:class => "start update"} do |form|
+        = simple_form_for @lead, :html => {:class => "start update"} do |form|
           = hidden_field_tag 'lead[tracker_ids][]', current_user.id
-          = hidden_field_tag :return_to, request.request_uri
+          = hidden_field_tag :return_to, request.fullpath
           = form.button :submit, t('keep_me_updated'), :id => 'keep_me_updated'
     - unless @lead.status_is?('Converted') or @lead.status_is?('Rejected')
       %li= link_to t('convert'), convert_lead_path(@lead), :id=> 'convert_lead'
       %li
-        - simple_form_for @lead, :url => reject_lead_path(@lead), :html => { :method => :put } do |form|
+        = simple_form_for @lead, :url => reject_lead_path(@lead), :html => { :method => :put } do |form|
           = form.button :submit, t('reject'), :id => 'reject_lead'
-  -#
-    %li.delete
-      - simple_form_for @lead, :html => { :method => :delete } do |form|
-        = form.button :submit, t('delete'), :id => "delete_#{dom_id @lead}"
   %br/
   %small
-    = t('added_ago_by', :time => l(@lead.created_at, :format => :short), :by => @lead.user.username)
+    = raw t('added_ago_by', :time => l(@lead.created_at, :format => :short), :by => @lead.user.username)
     = " : #{t('assigned_to', :user => User.find(@lead.assignee_id).full_name) if @lead.assignee_id.present?}"
 - if @lead.notes.present?
   .notes= @lead.notes

@@ -1,7 +1,7 @@
 %dl.item
   %dd
     - if account.permitted_for?(current_user)
-      = link_to account.name, account, :id => account.name.downcase.gsub(/\s/, '-').gsub(/\w/, ''), :class => 'account'
+      = link_to account.name, account, :id => account.name.parameterize, :class => 'account'
     - else
       = account.name
     %small
@@ -12,17 +12,13 @@
     %em.timestamp
       - account_time = l account.created_at, :format => :short
       - if account.assignee_id.present?
-        = t('assigned_ago_by', :time => account_time, :by => account.user.username, :for => User.find(account.assignee_id).full_name)
+        = raw t('assigned_ago_by', :time => account_time, :by => account.user.username, :for => User.find(account.assignee_id).full_name)
       - else
-        = t('added_ago_by', :time => account_time, :by => account.user.username)
+        = raw t('added_ago_by', :time => account_time, :by => account.user.username)
       - if account.permitted_for?(current_user)
-        = " : #{link_to(pluralize(account.comments.not_deleted.size, t('comment')), account)}" if account.comments.not_deleted.any?
+        = raw " : #{link_to(pluralize(account.comments.not_deleted.size, t('comment')), account)}" if account.comments.not_deleted.any?
       - else
         = pluralize(account.comments.not_deleted.size, t('comment')) if account.comments.not_deleted.any?
     - if account.permitted_for?(current_user)
       %span.actions
         = link_to t('edit'), [:edit, account], :id => "edit_#{dom_id(account)}"
-      -#
-        %b.divider= "|"
-        - simple_form_for account, :html => { :method => :delete } do |form|
-          = form.button :submit, t('delete_icon'), :id => "delete_#{dom_id account}", :class=> 'delete'

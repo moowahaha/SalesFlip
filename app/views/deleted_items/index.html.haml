@@ -7,7 +7,7 @@
     %dd
       %span.item_name
         %label= item.name
-        %small= t('removed_ago', :time => l(item.deleted_at, :format => :short))
+        %small= raw t('removed_ago', :time => l(item.deleted_at, :format => :short))
         %span.actions
           - form_tag deleted_item_path(item), :method => :put do
             = submit_tag t('restore'), :id => "restore_#{item.name.to_s.to_dom_id}"

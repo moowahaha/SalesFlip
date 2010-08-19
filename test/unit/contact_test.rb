@@ -75,7 +75,7 @@ class ContactTest < ActiveSupport::TestCase
 
   context "Instance" do
     setup do
-      @contact = Contact.make_unsaved(:florian)
+      @contact = Contact.make_unsaved(:florian, :user => User.make(:annika))
     end
 
     should 'be assigned an identifier on creation' do
@@ -87,7 +87,7 @@ class ContactTest < ActiveSupport::TestCase
     should 'be assigned consecutive identifiers' do
       @contact.save!
       assert_equal 1, @contact.identifier
-      @contact2 = Account.make_unsaved
+      @contact2 = Contact.make_unsaved
       assert @contact2.identifier.nil?
       @contact2.save!
       assert_equal 2, @contact2.reload.identifier

@@ -6,5 +6,6 @@ class Company
 
   has_many_related :users
 
+  validates_presence_of :name
   validates_uniqueness_of :name
 end

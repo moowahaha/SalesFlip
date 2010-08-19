@@ -1,5 +1,5 @@
 .inline-comment.details
-  .avatar= image_tag "/images/avatars/mr.gif", :width => '27', :height => '27'
+  .avatar= raw image_tag("/images/avatars/mr.gif", :width => '27', :height => '27')
   .message
     - if comment.is_a?(Email)
       = mail_to comment.from, nil, :bcc => current_user.dropbox_email
@@ -8,17 +8,17 @@
 
     = comment.text.gsub(/\n/, '<br />')
     - comment.attachments.each do |attachment|
-      = link_to attachment.attachment_filename, attachment  
+      = link_to attachment.attachment_filename, attachment
     .footer
       %small.timestamp
-        = l(comment.created_at, :format => :short)
+        = raw l(comment.created_at, :format => :short)
       %span.right
         - if comment.is_a?(Email)
-          = t('via_email', :subject => comment.subject)
+          = raw t('via_email', :subject => comment.subject)
         - elsif comment.user == current_user
           %ul.actions
-            %li= link_to t('edit_comment'), edit_comment_path(comment,:return_to => request.request_uri), :id => "edit_#{dom_id(comment)}"
+            %li= link_to t('edit_comment'), edit_comment_path(comment,:return_to => request.fullpath), :id => "edit_#{dom_id(comment)}"
             %li
-              - simple_form_for comment, :html => { :method => :delete } do |form|
-                = hidden_field_tag :return_to, request.request_uri
+              = simple_form_for comment, :html => { :method => :delete } do |form|
+                = hidden_field_tag :return_to, request.fullpath
                 = form.button :submit, t('delete_icon'), :class => 'delete', :id => "delete_comment_#{comment.id}"

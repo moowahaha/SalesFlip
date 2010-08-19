@@ -1,5 +1,5 @@
 class AccountsController < InheritedResources::Base
-  before_filter :merge_updater_id, :only => [:update]
+  before_filter :merge_updater_id, :only => [ :update ]
 
   respond_to :html
   respond_to :xml
@@ -26,7 +26,7 @@ protected
 
   def resource
     @account ||= Account.for_company(current_user.company).permitted_for(current_user).
-      find(params[:id])
+      where(:_id => params[:id]).first
   end
 
   def begin_of_association_chain

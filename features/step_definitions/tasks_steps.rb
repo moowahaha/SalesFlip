@@ -14,7 +14,7 @@ Then /^I should see the following tasks:$/ do |expected_tasks_table|
 end
 
 Then /^the task "(.+)" should have been completed$/ do |name|
-  assert Task.find_by_name(name).completed?
+  assert Task.where(:name => name).first.completed?
 end
 
 Then /^a task re\-assignment email should have been sent to "([^\"]*)"$/ do |email_address|

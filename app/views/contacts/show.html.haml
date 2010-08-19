@@ -2,25 +2,22 @@
   %h2
     = @contact.full_name
     - if !@contact.account.nil?
-      %small= " @ #{link_to @contact.account.name, @contact.account}"
+      %small= raw " @ #{link_to @contact.account.name, @contact.account}"
   %ul.actions
     %li
       = link_to t('edit'), edit_contact_path(@contact), :id => "edit_#{dom_id(@contact)}"
     %li
-      - simple_form_for @contact do |form|
-        = hidden_field_tag :return_to, request.request_uri
+      = simple_form_for @contact do |form|
+        = hidden_field_tag :return_to, request.fullpath
         - if @contact.tracked_by?(current_user)
           = hidden_field_tag 'contact[remove_tracker_ids][]', current_user.id
           = form.button :submit, t('stop_updating_me'), :id => 'stop_updating_me'
         - else
           = hidden_field_tag 'contact[tracker_ids][]', current_user.id
           = form.button :submit, t('keep_me_updated'), :id => 'keep_me_updated'
-    -#%li.delete
-      - simple_form_for @contact, :html => { :method => :delete } do |form|
-        = form.button :submit, t('delete'), :id => "delete_#{dom_id @contact}"
   %br/
   %small
-    = t('added_ago_by', :time => l(@contact.created_at, :format => :short), :by => @contact.user.username)
+    = raw t('added_ago_by', :time => l(@contact.created_at, :format => :short), :by => @contact.user.username)
 = render :partial => "tasks/add_task", :locals => { :object => @contact }
 = render :partial => "comments/comments", :locals => { :object => @contact }
 

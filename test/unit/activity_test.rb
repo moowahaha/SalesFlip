@@ -3,7 +3,7 @@ require 'test_helper.rb'
 class ActivityTest < ActiveSupport::TestCase
   context 'Class' do
     should_have_constant :actions
-    should_require_key :user_id
+    should_require_key :user
 
     context 'log' do
       setup do
@@ -25,7 +25,7 @@ class ActivityTest < ActiveSupport::TestCase
 
       should 'find and update the last activity if action is "Viewed"' do
         Activity.log(@lead.user, @lead, 'Viewed')
-        activity = Activity.last(:order => 'created_at')
+        activity = Activity.last
         updated_at = activity.updated_at
         sleep 1
         activity2 = Activity.log(@lead.user, @lead, 'Viewed')
@@ -35,7 +35,7 @@ class ActivityTest < ActiveSupport::TestCase
 
       should 'find and update the last activity if action is "Commented"' do
         Activity.log(@lead.user, @lead, 'Commented')
-        activity = Activity.last(:order => 'created_at')
+        activity = Activity.last
         updated_at = activity.updated_at
         sleep 1
         activity2 = Activity.log(@lead.user, @lead, 'Commented')
@@ -45,7 +45,7 @@ class ActivityTest < ActiveSupport::TestCase
 
       should 'find and update the last activity if action is "Updated"' do
         Activity.log(@lead.user, @lead, 'Updated')
-        activity = Activity.last(:order => 'created_at')
+        activity = Activity.last
         updated_at = activity.updated_at
         sleep 1
         activity2 = Activity.log(@lead.user, @lead, 'Updated')
@@ -124,7 +124,7 @@ class ActivityTest < ActiveSupport::TestCase
 
       should 'only return activities where the subject deleted_at is not nil' do
         assert_equal 1, Activity.action_is('Deleted').not_restored.count
-        assert Activity.scoped({}).not_restored.map(&:subject).include?(@deleted)
+        assert Activity.not_restored.map(&:subject).include?(@deleted)
       end
     end
 
@@ -137,34 +137,34 @@ class ActivityTest < ActiveSupport::TestCase
       end
 
       should 'NOT return activities where subject permission is private and subject user is not owner' do
-        assert !Activity.scoped({}).visible_to(@benny).include?(@activity)
+        assert !Activity.visible_to(@benny).include?(@activity)
       end
 
       should 'return activities where subject permission is private and subject user is owner' do
-        assert Activity.scoped({}).visible_to(@annika).include?(@activity)
+        assert Activity.visible_to(@annika).include?(@activity)
       end
 
       should 'return activities where subject user is owner' do
         @contact.update_attributes :user_id => @benny.id, :permission => 'Public'
-        assert Activity.scoped({}).visible_to(@benny).include?(@activity)
+        assert Activity.visible_to(@benny).include?(@activity)
       end
 
       should 'return activities where subject permission is public' do
         @contact.update_attributes :permission => 'Public'
-        assert Activity.scoped({}).visible_to(@benny).include?(@activity)
-        assert Activity.scoped({}).visible_to(@annika).include?(@activity)
+        assert Activity.visible_to(@benny).include?(@activity)
+        assert Activity.visible_to(@annika).include?(@activity)
       end
 
       should 'return activities where subject permission is shared and user is in subjects permitted user list' do
         @contact.update_attributes :permission => 'Shared', :permitted_user_ids => [@benny.id]
-        assert Activity.scoped({}).visible_to(@benny).include?(@activity)
-        assert Activity.scoped({}).visible_to(@annika).include?(@activity)
+        assert Activity.visible_to(@benny).include?(@activity)
+        assert Activity.visible_to(@annika).include?(@activity)
       end
 
       should 'NOT return activities where subject permission is shared and user is NOT in subjects permitted user list' do
         @contact.update_attributes :permission => 'Shared', :permitted_user_ids => [@annika.id]
-        assert Activity.scoped({}).visible_to(@annika).include?(@activity)
-        assert !Activity.scoped({}).visible_to(@benny).include?(@activity)
+        assert Activity.visible_to(@annika).include?(@activity)
+        assert !Activity.visible_to(@benny).include?(@activity)
       end
     end
   end

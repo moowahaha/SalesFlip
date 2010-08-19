@@ -3,20 +3,17 @@
   %ul.actions
     %li= link_to t('edit_account'), [:edit, @account], :id => "edit_#{dom_id(@account)}"
     %li
-      - simple_form_for @account do |form|
-        = hidden_field_tag :return_to, request.request_uri
+      = simple_form_for @account do |form|
+        = hidden_field_tag :return_to, request.fullpath
         - if @account.tracked_by?(current_user)
           = hidden_field_tag 'account[remove_tracker_ids][]', current_user.id
           = form.button :submit, t('stop_updating_me'), :id => 'stop_updating_me'
         - else
           = hidden_field_tag 'account[tracker_ids][]', current_user.id
           = form.button :submit, t('keep_me_updated'), :id => 'keep_me_updated'
-    -#%li.delete
-      - simple_form_for @account, :html => { :method => :delete } do |form|
-        = form.button :submit, t('delete'), :id => "delete_#{dom_id @account}"
   %br/
   %small
-    = t('added_ago_by', :time => l(@account.created_at, :format => :short), :by => @account.user.username)
+    = raw t('added_ago_by', :time => l(@account.created_at, :format => :short), :by => @account.user.username)
 .clear
 %h3= t('contacts')
 .contacts

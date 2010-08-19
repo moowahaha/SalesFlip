@@ -62,9 +62,9 @@ protected
 
   def self.find_target( email )
     target = Lead.first(:conditions => { :email => find_target_email(email), :status => Lead.statuses.index('New') })
-    target = Contact.first(:email => find_target_email(email)) unless target
-    target = Account.first(:email => find_target_email(email)) unless target
-    target = Lead.first(:email => find_target_email(email)) unless target
+    target = Contact.first(:conditions => { :email => find_target_email(email) }) unless target
+    target = Account.first(:conditions => { :email => find_target_email(email) }) unless target
+    target = Lead.first(:conditions => { :email => find_target_email(email) }) unless target
     target
   end
 
@@ -92,7 +92,7 @@ protected
   def self.find_user_from( email )
     api_key = email.to.to_a.first.split('@').last.split('.').first
     user = User.first(:conditions => { :api_key => api_key })
-    user = User.first(:email => email.from.to_a.first.strip) if user.nil?
+    user = User.first(:conditions => { :email => email.from.to_a.first.strip }) if user.nil?
     user
   end
 end

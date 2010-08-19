@@ -9,23 +9,19 @@
         = contact.listing_name
 
     %small
-      = "via #{contact.lead.full_name}#{" @ #{contact.lead.company}" if contact.lead.company.present?} | " if !contact.lead.nil?
+      = raw "via #{contact.lead.full_name}#{" @ #{contact.lead.company}" if contact.lead.company.present?} | " if !contact.lead.nil?
       - contact_info = []
       = " @ #{contact.account.name}" if contact.account
-      = " | Email: #{mail_to(contact.email, nil, :bcc => current_user.dropbox_email)}" if contact.email.present?
+      = raw " | Email: #{mail_to(contact.email, nil, :bcc => current_user.dropbox_email)}" if contact.email.present?
       = " | Phone: <b>#{contact.phone}</b>" if contact.phone.present?
       = " | Mobile: <b>#{contact.mobile}</b>" if contact.mobile.present?
       %br/
-      - contact_time = l(contact.created_at, :format => :short)
+      - contact_time = raw l(contact.created_at, :format => :short)
       %em.timestamp
         - if contact.assignee_id.present?
-          = t('assigned_ago_by', :time => contact_time, :by => contact.user.username, :for => User.find(contact.assignee_id).full_name)
+          = raw t('assigned_ago_by', :time => contact_time, :by => contact.user.username, :for => User.find(contact.assignee_id).full_name)
         - else
-          = t('added_ago_by', :time => contact_time, :by => contact.user.username)
+          = raw t('added_ago_by', :time => contact_time, :by => contact.user.username)
     - if contact.permitted_for?(current_user)
       %span.actions
         = link_to t('edit'), [:edit, contact], :id => "edit_#{dom_id(contact)}"
-      -#
-        %b.divider= "|"
-        - simple_form_for contact, :html => { :method => :delete } do |form|
-          = form.button :submit, t('delete_icon'), :id => "delete_#{dom_id contact}", :class=> 'delete'

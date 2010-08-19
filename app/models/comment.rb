@@ -10,8 +10,6 @@ class Comment
   field :subject
   field :text
 
-  named_scope :sorted, :order => 'created_at asc'
-
   belongs_to_related :user
   belongs_to_related :commentable, :polymorphic => true
 
@@ -20,6 +18,10 @@ class Comment
   validates_presence_of :commentable, :user, :text
 
   after_create :add_attachments
+
+  def self.sorted
+    where.asc(:created_at)
+  end
 
   def name
     "#{text[0..30]}..."

@@ -34,23 +34,23 @@ module NavigationHelpers
     when /the leads page/
       leads_path
     when /the lead page/
-      lead_path(@lead || Lead.last(:order => 'created_at'))
+      lead_path(@lead || Lead.last)
     when /the edit lead page/
-      edit_lead_path(@lead || Lead.last(:order => 'created_at'))
+      edit_lead_path(@lead || Lead.last)
 
     when /the new account page/
       new_account_path
     when /the accounts page/
       accounts_path
     when /the account page/
-      account_path(@account || Account.last(:order => 'created_at'))
+      account_path(@account || Account.last)
 
     when /the new contact page/
       new_contact_path
     when /the contacts page/
       contacts_path
     when /the contact page/
-      contact_path(@contact || Contact.last(:order => 'created_at'))
+      contact_path(@contact || Contact.last)
 
     when /the admin login page/
       new_admin_session_path

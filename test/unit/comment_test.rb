@@ -9,7 +9,7 @@ class CommentTest < ActiveSupport::TestCase
         @comment_2 = Comment.make(:created_at => 5.minutes.ago)
         @comment_1 = Comment.make(:created_at => 10.minutes.ago)
         @comment_3 = Comment.make(:created_at => 2.minutes.ago)
-        assert_equal [@comment_1,@comment_2,@comment_3], Comment.sorted
+        assert_equal [@comment_1, @comment_2, @comment_3], Comment.sorted
       end
     end
   end

@@ -1,9 +1,9 @@
 .tasks
   %h3.grad
     = t('tasks')
-    = link_to "<b>+</b>#{t('add_task')}", new_task_path(:asset_id => object.id, :asset_type => object.class.to_s, :return_to => request.request_uri), :id => 'add_task'
+    = link_to raw("<b>+</b>#{t('add_task')}"), new_task_path(:asset_id => object.id, :asset_type => object.class.to_s, :return_to => request.fullpath), :id => 'add_task'
   - if object.tasks.for(current_user).incomplete.any?
     = render :partial => 'tasks/task', :collection => object.tasks.for(current_user).incomplete
   - else
-    %p= t('no_tasks_for', :object => object.class.to_s.underscore.downcase, :link => new_task_path(:asset_id => object.id, :asset_type => object.class.to_s, :return_to => request.request_uri))
+    %p= raw t('no_tasks_for', :object => object.class.to_s.underscore.downcase, :link => new_task_path(:asset_id => object.id, :asset_type => object.class.to_s, :return_to => request.fullpath))
 .clear

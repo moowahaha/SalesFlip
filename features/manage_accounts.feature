@@ -15,10 +15,9 @@ Feature: Manage accounts
 
   Scenario: Editing an account
     Given I am registered and logged in as annika
-    And a user: "benny" exists
-    And account: "careermee" exists with user: benny
+    And account: "careermee" exists with user: annika
     And I am on the account's page
-    And I follow "edit"
+    And I follow "Edit Account"
     And I fill in "account_name" with "a test"
     When I press "account_submit"
     Then I should be on the account's page
@@ -46,7 +45,7 @@ Feature: Manage accounts
 
   Scenario: Viewing accounts
     Given I am registered and logged in as annika
-    And account: "careermee" exists with user: annika
+    And account: "careermee" exists with user: annika, name: "CareerMee"
     And I am on the dashboard page
     When I follow "accounts"
     Then I should see "CareerMee"
@@ -54,7 +53,7 @@ Feature: Manage accounts
 
   Scenario: Viewing an account
     Given I am registered and logged in as annika
-    And account: "careermee" exists with user: annika
+    And account: "careermee" exists with user: annika, name: "CareerMee"
     And I am on the dashboard page
     And I follow "accounts"
     When I follow "careermee"
@@ -83,7 +82,7 @@ Feature: Manage accounts
     Given I am registered and logged in as annika
     And a user: "benny" exists
     And benny belongs to the same company as annika
-    And an account: "careermee" exists with user: benny, permission: "Public"
+    And an account: "careermee" exists with user: benny, permission: "Public", name: "CareerMee"
     And an account: "world_dating" exists with user: benny, permission: "Private"
     When I go to the accounts page
     Then I should see "CareerMee"
@@ -109,7 +108,7 @@ Feature: Manage accounts
     Given I am registered and logged in as annika
     And a user: "benny" exists
     And benny belongs to the same company as annika
-    And an account: "careermee" exists with user: benny
+    And an account: "careermee" exists with user: benny, name: "CareerMee"
     And careermee is shared with annika
     And I am on the accounts page
     When I follow "careermee"
@@ -118,8 +117,7 @@ Feature: Manage accounts
 
   Scenario: Adding a task to an account
     Given I am registered and logged in as annika
-    And a user: "benny" exists
-    And an account: "careermee" exists with user: benny
+    And an account: "careermee" exists with user: annika
     And I am on the account's page
     And I follow "add_task"
     And I follow "preset_date"

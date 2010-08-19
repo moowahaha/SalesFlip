@@ -8,6 +8,7 @@ module ParanoidDelete
       named_scope :deleted, :where => { :deleted_at => { '$ne' => nil } }
 
       alias_method_chain :destroy, :paranoid
+      before_save :recently_restored?
     end
   end
 
@@ -22,10 +23,8 @@ module ParanoidDelete
       super
     end
 
-    def deleted_at=( value )
-      original_value = self.deleted_at
-      self[:deleted_at] = value
-      @recently_restored = true if !original_value.nil? && self.deleted_at.nil?
+    def recently_restored?
+      @recently_restored = true if changed.include?('deleted_at') && !self.deleted_at
     end
   end
 end

@@ -49,4 +49,19 @@ class Activity
     end
     activity
   end
+
+  class << self
+    def visible_to(user)
+      where.to_a.delete_if do |activity|
+        (activity.subject.permission_is?('Private') and activity.subject.user != user) or
+        (activity.subject.permission_is?('Shared') and not
+        activity.subject.permitted_user_ids.include?(user.id) and
+        activity.subject.user != user)
+      end
+    end
+
+    def not_restored
+      where.to_a.delete_if { |activity| activity.subject.deleted_at.nil? }
+    end
+  end
 end

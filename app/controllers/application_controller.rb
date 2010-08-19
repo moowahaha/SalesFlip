@@ -9,12 +9,23 @@ class ApplicationController < ActionController::Base
   before_filter :authenticate_user!
   before_filter :configuration_check
   before_filter :bson_ids
+  before_filter :fix_array_params
   after_filter :log_viewed_item, :only => :show
 
 protected
   def bson_ids
     params.each do |key, value|
-      params[key] = BSON::ObjectID.from_string(value.to_s) if key.to_s.match(/_id$/)
+      if key.to_s.match(/_id$/) || key.to_s.match(/^id$/)
+        params[key] = BSON::ObjectID.from_string(value.to_s)
+      end
+    end
+  end
+
+  def fix_array_params
+    [:lead, :contact, :account].each do |type|
+      if params[type] && params[type][:permitted_user_ids]
+        params[type][:permitted_user_ids] = params[type][:permitted_user_ids].to_a
+      end
     end
   end
 

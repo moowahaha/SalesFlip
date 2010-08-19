@@ -19,13 +19,13 @@ class ContactsController < InheritedResources::Base
 
 protected
   def collection
-    @contacts ||= Contact.permitted_for(current_user).not_deleted.order_by([:last_name, :asc]).
+    @contacts ||= Contact.permitted_for(current_user).not_deleted.asc(:last_name).
       for_company(current_user.company).paginate(:per_page => 10, :page => params[:page] || 1)
   end
 
   def resource
     @contact ||= Contact.for_company(current_user.company).permitted_for(current_user).
-      find(params[:id])
+      where(:_id => params[:id]).first
   end
 
   def begin_of_association_chain
