@@ -10,7 +10,7 @@ var Base = new Class({
       due_at = null;
       if($('due_at_value') != null) { due_at = $('due_at_value').innerHTML.trim(); }
       $('realdate').insert({
-        after: '<label for="realdate_input">Due At</label><input id="realdate_input" type="text" name="task[due_at]" value="' + due_at + '"/>'
+        after: '<label for="realdate_input">Due At</label><input id="realdate_input" type="text" name="task[due_at]" value="' + due_at + '"/ autocomplete="off">'
       });
       $('realdate').remove();
       new Calendar({ format: "%Y-%m-%d %H:%M" }).assignTo('realdate_input');
