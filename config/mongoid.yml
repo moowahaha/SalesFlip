@@ -27,7 +27,7 @@ staging:
 production:
   <<: *defaults
   host: swan.mongohq.com
-  port: 27043
+  port: 27093
   username: site
   password: p5ot31n
-  database: jobboersen
+  database: salesflip
