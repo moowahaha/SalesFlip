@@ -7,10 +7,18 @@ GIT
 
 GIT
   remote: git://github.com/jnicklas/carrierwave.git
-  revision: eb6e799
+  revision: 7566976
   specs:
     carrierwave (0.5.0.beta2)
       activesupport (>= 3.0.0.beta4)
+
+GIT
+  remote: git://github.com/koppen/hassle.git
+  revision: a08c757
+  specs:
+    hassle (0.0.1)
+      haml
+      rack
 
 GIT
   remote: git://github.com/mattbeedle/mongo_session_store.git
@@ -21,14 +29,14 @@ GIT
 
 GIT
   remote: git://github.com/mattbeedle/mongoid.git
-  revision: b1d08b5
+  revision: fff2bb8
   branch: development
   specs:
     mongoid (2.0.0.beta.16)
       activemodel (= 3.0.0.rc)
       bson (= 1.0.4)
       mongo (= 1.0.7)
-      tzinfo (= 0.3.22)
+      tzinfo (= 0.3.23)
       will_paginate (~> 3.0.pre)
 
 GIT
@@ -41,7 +49,7 @@ GIT
 
 GIT
   remote: git://github.com/rails/rails.git
-  revision: 072cd60
+  revision: 949c7e2
   specs:
     actionmailer (3.0.0.rc)
       actionpack (= 3.0.0.rc)
@@ -53,9 +61,9 @@ GIT
       erubis (~> 2.6.6)
       i18n (~> 0.4.1)
       rack (~> 1.2.1)
-      rack-mount (~> 0.6.9)
+      rack-mount (~> 0.6.10)
       rack-test (~> 0.5.4)
-      tzinfo (~> 0.3.22)
+      tzinfo (~> 0.3.23)
     activemodel (3.0.0.rc)
       activesupport (= 3.0.0.rc)
       builder (~> 2.1.2)
@@ -64,7 +72,7 @@ GIT
       activemodel (= 3.0.0.rc)
       activesupport (= 3.0.0.rc)
       arel (~> 0.4.0)
-      tzinfo (~> 0.3.22)
+      tzinfo (~> 0.3.23)
     activeresource (3.0.0.rc)
       activemodel (= 3.0.0.rc)
       activesupport (= 3.0.0.rc)
@@ -155,7 +163,7 @@ GEM
       bson (>= 1.0.4)
     navvy (0.3.1)
     nokogiri (1.4.3.1)
-    pickle (0.4.0)
+    pickle (0.4.1)
       cucumber (>= 0.8)
       rake
       rspec (>= 1.3)
@@ -165,7 +173,7 @@ GEM
       pickle (>= 0.3.0)
     polyglot (0.3.1)
     rack (1.2.1)
-    rack-mount (0.6.9)
+    rack-mount (0.6.10)
       rack (>= 1.0.0)
     rack-test (0.5.4)
       rack (>= 1.0)
@@ -191,7 +199,7 @@ GEM
     treetop (1.4.8)
       polyglot (>= 0.3.1)
     trollop (1.16.2)
-    tzinfo (0.3.22)
+    tzinfo (0.3.23)
     uuid (2.3.1)
       macaddr (~> 1.0)
     warden (0.10.7)
@@ -220,6 +228,7 @@ DEPENDENCIES
   haml
   has_constant
   has_scope
+  hassle!
   inherited_resources
   launchy
   machinist_mongo
