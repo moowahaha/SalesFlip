@@ -52,7 +52,7 @@ Feature: Manage leads
 
   Scenario: Logging activity
     Given I am registered and logged in as annika
-    And a user: "benny" exists
+    And Annika has invited Benny
     And a lead: "erich" exists with user: benny
     And I am on the lead's edit page
     When I press "lead_submit"
@@ -98,7 +98,7 @@ Feature: Manage leads
 
   Scenario: Editing a lead from index page
     Given I am registered and logged in as annika
-    And a user: "benny" exists
+    And Annika has invited Benny
     And benny belongs to the same company as annika
     And lead: "erich" exists with user: benny
     And I am on the leads page
@@ -107,7 +107,7 @@ Feature: Manage leads
 
   #Scenario: Deleting a lead from the index page
   #  Given I am registered and logged in as annika
-  #  And a user: "benny" exists
+  #  And Annika has invited Benny
   #  And benny belongs to the same company as annika
   #  And a lead "erich" exists with user: benny
   #  And I am on the leads page
@@ -131,14 +131,14 @@ Feature: Manage leads
     And a lead exists with user: annika, status: "New", first_name: "Erich"
     And a lead exists with user: annika, status: "Rejected", first_name: "Markus"
     And I go to the leads page
-    When I check "new"
-    And I press "filter"
+    When I check "New"
+    And I press "Filter"
     Then I should see "Erich"
     And I should not see "Markus"
 
   Scenario: Filtering unassigned leads
     Given I am registered and logged in as annika
-    And a user: "benny" exists
+    And Annika has invited Benny
     And a lead exists with user: annika, status: "New", first_name: "Erich"
     And a lead exists with user: annika, status: "New", assignee: benny, first_name: "Markus"
     And I go to the leads page
@@ -149,7 +149,7 @@ Feature: Manage leads
 
   Scenario: Filtering leads assigned to me
     Given I am registered and logged in as annika
-    And a user: "benny" exists
+    And Annika has invited Benny
     And a lead exists with user: annika, status: "New", first_name: "Erich", assignee: annika
     And a lead exists with user: annika, status: "New", first_name: "Markus", assignee: benny
     And I go to the leads page
@@ -178,7 +178,7 @@ Feature: Manage leads
     Given I am registered and logged in as annika
     And a lead: "erich" exists with user: annika, source: "Website"
     And I am on the dashboard page
-    And I follow "leads"
+    And I follow "Leads"
     When I follow "erich-feldmeier"
     Then I should be on the lead page
     And I should see "Erich"
@@ -187,14 +187,14 @@ Feature: Manage leads
 
   Scenario: Editing a account from the show page
     Given I am registered and logged in as annika
-    And account: "erich" exists with user: annika
+    And account: "careermee" exists with user: annika
     And I am on the account's page
     When I follow the edit link for the account
     Then I should be on the account's edit page
 
   #Scenario: Deleting a lead from the show page
   #  Given I am registered and logged in as annika
-  #  And a user: "benny" exists
+  #  And Annika has invited Benny
   #  And a lead "erich" exists with user: benny
   #  And I am on the lead's page
   #  When I click the delete button for the lead
@@ -220,7 +220,7 @@ Feature: Manage leads
 
   Scenario: Adding a task to an unassigned lead
     Given I am registered and logged in as annika
-    And Benny exists
+    And Annika has invited Benny
     And a lead exists with user: Benny, assignee_id: nil
     And I am on the lead's page
     And all emails have been delivered
@@ -259,20 +259,20 @@ Feature: Manage leads
 
   Scenario: Rejecting a lead
     Given I am registered and logged in as annika
-    And a user: "benny" exists
+    And Annika has invited Benny
     And a lead: "erich" exists with user: benny
     And I am on the lead's page
-    When I press "reject"
+    When I press "Reject"
     Then I should be on the leads page
     And lead "erich" should exist with status: 3
     And a new "Rejected" activity should have been created for "Lead" with "first_name" "Erich" and user: "annika"
 
   Scenario: Converting a lead to a new account
     Given I am registered and logged in as annika
-    And a user: "benny" exists
+    And Annika has invited Benny
     And a lead: "erich" exists with user: benny
     And I am on the lead's page
-    When I follow "convert"
+    When I follow "Convert"
     And I fill in "account_name" with "World Dating"
     And I press "convert"
     Then I should be on the account page
@@ -290,7 +290,7 @@ Feature: Manage leads
     And a lead: "erich" exists with user: annika
     And a account: "careermee" exists with user: annika
     And I am on the lead's page
-    When I follow "convert"
+    When I follow "Convert"
     And I select "CareerMee" from "account_id"
     And I press "convert"
     Then I should be on the account page
@@ -305,7 +305,7 @@ Feature: Manage leads
     And account: "careermee" exists with user: annika
     And contact: "florian" exists with email: "erich.feldmeier@gmail.com", account: careermee
     And I am on the lead's page
-    When I follow "convert"
+    When I follow "Convert"
     And I press "convert"
     Then I should be on the account page
     And I should see "CareerMee"
@@ -317,16 +317,15 @@ Feature: Manage leads
     And account: "careermee" exists with user: annika
     And contact: "florian" exists with email: "erich.feldmeier@gmail.com", account: careermee
     And I am on the lead's page
-    When I follow "convert"
-    Then I should not see "account_name"
-    And I should not see "account_id"
+    When I follow "Convert"
+    Then I should not see "Account Name"
     And I should see "convert"
 
   Scenario: Trying to convert a lead without entering an account name
     Given I am registered and logged in as annika
     And a lead: "erich" exists with user: annika
     And I am on the lead's page
-    When I follow "convert"
+    When I follow "Convert"
     And I press "convert"
     Then I should be on the lead's promote page
 
@@ -384,15 +383,15 @@ Feature: Manage leads
     Given I am registered and logged in as annika
     And a lead: "erich" exists with user: annika, status: "Converted"
     When I am on the lead's page
-    Then I should not see "convert_lead"
-    And I should not see "reject_lead"
+    Then I should not see "Convert" within "a"
+    And I should not see "Reject" within "a"
 
   Scenario: Actions for a rejected lead
     Given I am registered and logged in as annika
     And a lead: "erich" exists with user: annika, status: "Rejected"
     When I am on the lead's page
-    Then I should not see "convert_lead"
-    And I should not see "reject_lead"
+    Then I should not see "Convert"
+    And I should not see "Reject" within "a"
 
   Scenario: Viewing activites on the show page
     Given I am registered and logged in as annika
@@ -400,7 +399,7 @@ Feature: Manage leads
     And I am on the lead's page
     And I follow the edit link for the lead
     Then I should be on the lead's edit page
-    When I fill in "lead_salutation" with "Mr"
+    When I select "Mr" from "lead_salutation"
     And I press "lead_submit"
     Then I should be on the lead's page
     And I should see "Updated"

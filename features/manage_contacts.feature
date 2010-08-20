@@ -35,7 +35,7 @@ Feature: Manage contacts
 
   Scenario: Updating a contact
     Given I am registered and logged in as annika
-    And a user: "benny" exists
+    And Annika has invited Benny
     And a contact: "florian" exists with user: benny
     And I am on the contact's edit page
     When I press "contact_submit"
@@ -80,7 +80,7 @@ Feature: Manage contacts
 
   Scenario: Editing a account from the show page
     Given I am registered and logged in as annika
-    And account: "florian" exists with user: annika
+    And account: "careermee" exists with user: annika
     And I am on the account's page
     When I follow the edit link for the account
     Then I should be on the account's edit page
@@ -97,7 +97,7 @@ Feature: Manage contacts
 
   Scenario: Private contact (in)visibility on the contacts page
     Given I am registered and logged in as annika
-    And a user: "benny" exists
+    And Annika has invited Benny
     And benny belongs to the same company as annika
     And a contact: "florian" exists with user: benny, permission: "Public"
     And a contact exists with user: benny, first_name: "Joe", permission: "Private"
@@ -124,7 +124,7 @@ Feature: Manage contacts
 
   Scenario: Viewing a shared contact details
     Given I am registered and logged in as annika
-    And a user: "benny" exists
+    And Annika has invited Benny
     And benny belongs to the same company as annika
     And a contact: "florian" exists with user: benny
     And florian is shared with annika
@@ -135,8 +135,8 @@ Feature: Manage contacts
 
   Scenario: Adding a task to a contact
     Given I am registered and logged in as annika
-    And a user: "benny" exists
-    And a contact: "careermee" exists with user: benny
+    And Annika has invited Benny
+    And a contact: "florian" exists with user: benny
     And I am on the contact's page
     And I follow "add_task"
     And I follow "preset_date"
@@ -198,8 +198,7 @@ Feature: Manage contacts
     And a contact exists with user: annika
     And I am on the contact's page
     And I follow the edit link for the contact
-    Then I should be on the contact's edit page
-    When I fill in "contact_salutation" with "Mr"
+    When I select "Mr" from "contact_salutation"
     And I press "contact_submit"
     Then I should be on the contact's page
     And I should see "Updated"

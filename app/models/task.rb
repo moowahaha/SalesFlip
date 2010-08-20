@@ -119,10 +119,11 @@ class Task
   end
 
   def assignee_id=( assignee_id )
-    if !assignee_id.blank? and assignee_id != self.assignee_id and !new_record?
+    old_assignee_id = read_attribute(:assignee_id)
+    if old_assignee_id != assignee_id && !assignee_id.blank? && !new_record? && !old_assignee_id.blank?
       @reassigned = true
-      write_attribute :assignee_id, assignee_id
     end
+    write_attribute :assignee_id, assignee_id
   end
 
   def due_at=( due )

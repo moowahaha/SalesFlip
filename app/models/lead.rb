@@ -13,7 +13,7 @@ class Lead
   field :last_name
   field :email
   field :phone
-  field :status
+  field :status,        :type => Integer
   field :source,        :type => Integer
   field :rating,        :type => Integer
   field :notes
@@ -92,7 +92,10 @@ class Lead
   end
 
   def assignee_id=( assignee_id )
-    @reassigned = assignee_id unless new_record?
+    old_assignee_id = read_attribute(:assignee_id)
+    if old_assignee_id != assignee_id && !assignee_id.blank? && !new_record? && !old_assignee_id.blank?
+      @reassigned = true
+    end
     write_attribute :assignee_id, assignee_id
   end
 

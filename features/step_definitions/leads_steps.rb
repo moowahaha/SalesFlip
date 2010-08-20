@@ -7,6 +7,10 @@ Given /^I am registered and logged in as annika$/ do
   store_model('user', 'annika', User.last)
 end
 
+Given /^I follow the edit link for the lead$/ do
+  click "edit_lead_#{Lead.last.id}"
+end
+
 Given /^I have accepted an invitation from annika$/ do
   annika = model!('annika')
   invitation = Invitation.make(:inviter => annika, :email => 'test@test.com',
@@ -55,7 +59,7 @@ Given /^erich is shared with annika$/ do
 end
 
 Given /^markus is not shared with annika$/ do
-  lead = Lead.where(:first_name => 'Markus')
+  lead = Lead.where(:first_name => 'Markus').first
   lead.update_attributes :permitted_user_ids => [lead.user_id], :permission => 'Shared'
 end
 

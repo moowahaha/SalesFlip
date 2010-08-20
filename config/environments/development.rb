@@ -21,3 +21,5 @@ Salesflip::Application.configure do
 
   config.active_support.deprecation = :log
 end
+
+Sunspot.config.solr.url = 'http://localhost:8982/solr'

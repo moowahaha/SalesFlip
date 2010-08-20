@@ -1,5 +1,5 @@
-- form_tag promote_lead_path(@lead), :method => :put do
-  - if @contact
+= form_tag promote_lead_path(@lead), :method => :put do
+  - if @contact && !@contact.new_record?
     = t(:contact_already_exists, :contact => @contact.full_name)
   - else
     %fieldset
@@ -10,7 +10,7 @@
       .40.z
         .string
           %label{ :for => 'account_id' }= t('simple_form.labels.account_id')
-          = select_tag :account_id, options_for_select([''] + Account.all(:order => 'name').map {|a| [a.name, a.id] }, params[:account_id])
+          = select_tag :account_id, options_for_select([''] + Account.all.asc(:name).map {|a| [a.name, a.id] }, params[:account_id])
     %fieldset
       .20.a
         .string

@@ -1,11 +1,4 @@
 GIT
-  remote: git://github.com/chriseppstein/compass.git
-  revision: 0e33bde
-  specs:
-    compass (0.11.alpha.0.0e33bde)
-      haml (>= 3.0.4)
-
-GIT
   remote: git://github.com/jnicklas/carrierwave.git
   revision: 7566976
   specs:
@@ -49,7 +42,7 @@ GIT
 
 GIT
   remote: git://github.com/rails/rails.git
-  revision: 949c7e2
+  revision: 2ffa50f
   specs:
     actionmailer (3.0.0.rc)
       actionpack (= 3.0.0.rc)
@@ -114,6 +107,8 @@ GEM
       selenium-webdriver (>= 0.0.3)
     chronic (0.2.3)
       hoe (>= 1.2.1)
+    compass (0.10.4)
+      haml (>= 3.0.4)
     configuration (1.1.0)
     cucumber (0.8.5)
       builder (~> 2.1.2)
@@ -123,10 +118,11 @@ GEM
       term-ansicolor (~> 1.0.4)
     cucumber-rails (0.3.2)
       cucumber (>= 0.8.0)
-    culerity (0.2.10)
+    culerity (0.2.12)
     diff-lcs (1.1.2)
     erubis (2.6.6)
       abstract (>= 1.0.0)
+    escape (0.0.4)
     faker (0.3.1)
     fakeweb (1.2.8)
     ffi (0.6.3)
@@ -134,7 +130,7 @@ GEM
     gherkin (2.1.5)
       trollop (~> 1.16.2)
     haml (3.0.17)
-    has_constant (0.2.6)
+    has_constant (0.2.7)
     has_scope (0.5.0)
     hoe (2.6.1)
       rake (>= 0.8.7)
@@ -181,6 +177,8 @@ GEM
     redgreen (1.2.2)
     responders (0.6.2)
     riddle (1.0.12)
+    rsolr (0.12.1)
+      builder (>= 2.1.2)
     rspec (1.3.0)
     rubyforge (2.0.4)
       json_pure (>= 1.1.7)
@@ -194,6 +192,9 @@ GEM
     smurf (1.0.4)
     spork (0.8.4)
     sqlite3-ruby (1.3.1)
+    sunspot (1.1.0)
+      escape (= 0.0.4)
+      rsolr (= 0.12.1)
     term-ansicolor (1.0.5)
     thor (0.14.0)
     treetop (1.4.8)
@@ -219,7 +220,7 @@ DEPENDENCIES
   capybara
   carrierwave!
   chronic
-  compass!
+  compass
   cucumber
   cucumber-rails
   devise!
@@ -249,6 +250,7 @@ DEPENDENCIES
   smurf
   spork
   sqlite3-ruby
+  sunspot
   uuid
   warden
   will_paginate (= 3.0.pre)
