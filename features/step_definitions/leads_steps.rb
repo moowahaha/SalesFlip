@@ -77,7 +77,7 @@ end
 Then /^#{capture_model} should be observing the #{capture_model}$/ do |user, trackable|
   t = model!(trackable)
   u = model!(user)
-  assert t.tracker_ids.include?(u.id)
+  assert t.tracked_by?(u)
 end
 
 Then /^#{capture_model} should not be observing the #{capture_model}$/ do |user, trackable|

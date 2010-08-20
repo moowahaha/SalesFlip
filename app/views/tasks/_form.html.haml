@@ -9,7 +9,7 @@
   .33
     - if params[:preset_date]
       = form.input :due_at, :collection => %w(overdue due_today due_tomorrow due_this_week due_next_week due_later).map {|key| [t(key), key] }, :required => true
-      = link_to t('or_real_date'), params.delete_if {|k,v| k == 'preset_date' }, :id => 'real_date'
+      = link_to t('or_real_date'), params.delete_if { |k,v| k == 'preset_date' }, :id => 'real_date'
     - else
       #realdate= form.input :due_at, :as => :datetime
       = link_to t('or_preset_date'), params.merge(:preset_date => true), :id => 'preset_date'

@@ -8,4 +8,4 @@ Feature: Manage registrations
     And I fill in the registration form
     When I press "user_submit"
     Then a new user should have been created
-    And I should be on the dashboard page
+    And I should be on the new user session page
