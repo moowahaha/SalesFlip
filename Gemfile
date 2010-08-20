@@ -28,6 +28,7 @@ gem 'memcached'
 gem 'mongo_session_store', :git => 'git://github.com/mattbeedle/mongo_session_store.git'
 gem 'simple_form'
 gem 'has_constant'
+gem 'hassle', :git => 'git://github.com/koppen/hassle.git'
 
 group :production do
   gem 'smurf'
