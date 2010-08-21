@@ -59,7 +59,6 @@ Feature: Manage tasks
     And a task exists with user: annika, assignee: benny, name: "a task for benny"
     When I am on the tasks page
     And I follow "assigned"
-    And show me the page
     Then I should not see "Erich"
     And I should not see "annika's task"
     And I should not see "benny's task"

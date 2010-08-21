@@ -16,11 +16,7 @@ module ParanoidDelete
     def destroy_with_paranoid
       @recently_destroyed = true
       update_attributes :deleted_at => Time.now
-    end
-
-    def destroy
       comments.all.each(&:destroy_without_paranoid) if self.respond_to?(:comments)
-      super
     end
 
     def recently_restored?

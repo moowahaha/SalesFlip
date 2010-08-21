@@ -16,4 +16,4 @@ Feature: Manage admins
     And I login as an administrator: "matt"
     And I am on the admin dashboard page
     When I follow "logout"
-    Then I should be on the dashboard page
+    Then I should be on the new user session page

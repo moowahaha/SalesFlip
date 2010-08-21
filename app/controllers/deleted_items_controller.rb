@@ -23,6 +23,8 @@ class DeletedItemsController < ApplicationController
 
 protected
   def resource
-    @item ||= Lead.find(params[:id]) || Contact.find(params[:id]) || Account.find(params[:id])
+    @item ||= Lead.first(:conditions => { :id => params[:id] })
+    @item ||= Contact.first(:conditions => { :id => params[:id] })
+    @item ||= Account.first(:conditions => { :id => params[:id] })
   end
 end
