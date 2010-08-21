@@ -13,6 +13,11 @@ When /^I delete the (\d+)(?:st|nd|rd|th) tasks$/ do |pos|
   end
 end
 
+When /^I check #{capture_model}$/ do |task|
+  task = model!(task)
+  check "task_#{task.id}"
+end
+
 Then /^I should see the following tasks:$/ do |expected_tasks_table|
   expected_tasks_table.diff!(tableish('table tr', 'td,th'))
 end
