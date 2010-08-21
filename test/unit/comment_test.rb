@@ -1,7 +1,9 @@
 require 'test_helper.rb'
 
 class CommentTest < ActiveSupport::TestCase
-  
+  context 'Class' do
+    should_require_key :user, :commentable
+  end
 
   context 'Named Scopes' do
     context "sorted" do
@@ -14,7 +16,6 @@ class CommentTest < ActiveSupport::TestCase
     end
   end
 
-  
   context 'Instance' do
     setup do
       @comment = Comment.make_unsaved(:made_offer_to_erich)
@@ -26,18 +27,6 @@ class CommentTest < ActiveSupport::TestCase
 
     should 'be valid with all required attributes' do
       assert @comment.valid?
-    end
-
-    should 'not be valid without user' do
-      @comment.user_id = nil
-      assert !@comment.valid?
-      assert @comment.errors[:user_id]
-    end
-
-    should 'not be valid without commentable' do
-      @comment.commentable = nil
-      assert !@comment.valid?
-      assert @comment.errors[:commentable]
     end
   end
 end

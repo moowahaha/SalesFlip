@@ -20,5 +20,6 @@
           = simple_form_for task, :html => { :method => :delete } do |form|
             = hidden_field_tag :return_to, request.fullpath
             = form.button :submit, raw(t('delete_icon')), :class => 'delete', :id => "delete_#{dom_id task}"
-      = task_asset_info( task,link_to(task.asset.name, task.asset) ) if !task.asset.nil?
+      - unless task.asset.blank?
+        = task_asset_info(task, link_to(task.asset.name, task.asset))
 .clear

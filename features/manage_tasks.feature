@@ -7,8 +7,10 @@ Feature: Manage tasks
     Given I am registered and logged in as annika
     And I am on the tasks page
     And I follow "new"
+    And I follow "preset_date"
     And I fill in "task_name" with "a test task"
     And I select "Call" from "task_category"
+    And I select "Today" from "task_due_at"
     When I press "task_submit"
     Then I should be on the tasks page
     And I should see "a test task"
@@ -16,18 +18,19 @@ Feature: Manage tasks
   Scenario: Viewing my tasks
     Given I am registered and logged in as annika
     And a task exists with user: annika, name: "Task for Annika"
-    And user: "benny" exists
+    And Annika has invited Benny
     And a task exists with user: benny, name: "Task for Benny"
     And I am on the dashboard page
-    When I follow "tasks"
+    When I follow "Tasks"
     Then I should see "Task for Annika"
     And I should not see "Task for Benny"
 
   Scenario: Re-assiging a task
     Given I am registered and logged in as annika
-    And user: "benny" exists with email: "benjamin.pochhammer@1000jobboersen.de"
+    And Annika has invited Benny
     And a task: "call_erich" exists with user: annika
-    And I follow "tasks"
+    And all emails have been delivered
+    And I follow "Tasks"
     And I follow the edit link for the task
     And I follow "preset_date"
     When I select "benjamin.pochhammer@1000jobboersen.de" from "task_assignee_id"
@@ -48,7 +51,7 @@ Feature: Manage tasks
 
   Scenario: Filtering assigned tasks
     Given I am registered and logged in as annika
-    And a user: "benny" exists
+    And Annika has invited Benny
     And a task: "call_erich" exists with user: annika
     And a task exists with user: annika, assignee: annika, name: "annika's task"
     And a task exists with user: benny, assignee: benny, name: "benny's task"
@@ -56,6 +59,7 @@ Feature: Manage tasks
     And a task exists with user: annika, assignee: benny, name: "a task for benny"
     When I am on the tasks page
     And I follow "assigned"
+    And show me the page
     Then I should not see "Erich"
     And I should not see "annika's task"
     And I should not see "benny's task"

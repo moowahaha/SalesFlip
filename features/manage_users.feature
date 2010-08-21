@@ -33,7 +33,7 @@ Feature: Manage users
     And I fill in "user_password_confirmation" with "password"
     When I press "user_submit"
     Then 1 users should exist with username: "Werner"
-    And I should be on the root page
+    And I should be on the new user session page
 
   Scenario: Accepting a freelancer invitation
     Given I have a Freelancer invitation
@@ -43,7 +43,7 @@ Feature: Manage users
     And I fill in "user_password_confirmation" with "password"
     When I press "user_submit"
     Then 1 freelancers should exist with username: "Werner"
-    And I should be on the root page
+    And I should be on the new user session page
 
   Scenario: Accepted an invitation with errors
     Given I have an invitation

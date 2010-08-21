@@ -32,7 +32,6 @@ class Task
            { :user_id => user.id, :assignee_id => nil })
   end
 
-  # '$where' => "this.user_id == '#{user.id}' && this.assignee_id != null && this.assignee_id != '#{user.id}'"
   named_scope :assigned_by, lambda { |user| { :where => {
     :user_id => user.id, :assignee_id.ne => nil, :assignee_id.ne => user.id } } }
 
@@ -120,7 +119,7 @@ class Task
 
   def assignee_id=( assignee_id )
     old_assignee_id = read_attribute(:assignee_id)
-    if old_assignee_id != assignee_id && !assignee_id.blank? && !new_record? && !old_assignee_id.blank?
+    if old_assignee_id != assignee_id && !assignee_id.blank? && !new_record?
       @reassigned = true
     end
     write_attribute :assignee_id, assignee_id
@@ -175,7 +174,7 @@ class Task
   end
 
   def notify_assignee
-    TaskMailer.assignment_notification(self).deliver if @reassigned
+    TaskMailer.assignment_notification(self).deliver if @reassigned && !self.assignee.blank?
   end
 
   def log_creation

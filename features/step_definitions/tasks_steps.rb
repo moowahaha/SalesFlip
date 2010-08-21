@@ -2,6 +2,10 @@ Given /^the following tasks:$/ do |tasks|
   Tasks.create!(tasks.hashes)
 end
 
+When /^I follow the edit link for the task$/ do
+  click "edit_task_#{Task.last.id}"
+end
+
 When /^I delete the (\d+)(?:st|nd|rd|th) tasks$/ do |pos|
   visit tasks_url
   within("table tr:nth-child(#{pos.to_i+1})") do
@@ -18,7 +22,8 @@ Then /^the task "(.+)" should have been completed$/ do |name|
 end
 
 Then /^a task re\-assignment email should have been sent to "([^\"]*)"$/ do |email_address|
-  assert_sent_email do |email|
-    email.to.include?(email_address) && email.body.match(/\/tasks\//)
+  truth = ActionMailer::Base.deliveries.any? do |d|
+    d.to.include?(email_address) && d.body.match(/\/tasks\//)
   end
+  assert truth
 end

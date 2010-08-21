@@ -1,8 +1,8 @@
 %h2.title
   = t('tasks')
   = add_new t('add_task'), new_task_path
-- if @tasks.is_a?(Array)
-  - %w(overdue due_today due_tomorrow due_this_week due_next_week due_later).each do |deadline|
+- if @tasks.is_a?(Mongoid::Criteria) and @tasks.any?
+  - %w(overdue due_today due_tomorrow due_this_week).each do |deadline|
     - if @tasks.send(deadline).any?
       %h3.deadline{ :id => deadline }= t(deadline)
       = render :partial => 'task', :collection => @tasks.send(deadline)

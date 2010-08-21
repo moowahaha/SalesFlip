@@ -183,15 +183,15 @@ class LeadTest < ActiveSupport::TestCase
 
     context 'changing the assignee' do
       should 'notify assignee' do
+        @lead.assignee = User.make
         @lead.save!
         ActionMailer::Base.deliveries.clear
-        @lead.update_attributes :assignee_id => @user.id
-        assert_sent_email do |email|
-          email.to.include?(@user.email)
-        end
+        @lead.update_attributes! :assignee => @user
+        assert_sent_email { |email| email.to.include?(@user.email) }
       end
 
       should 'not notify assignee if do_not_notify is set' do
+        @lead.assignee = User.make
         @lead.save!
         ActionMailer::Base.deliveries.clear
         @lead.update_attributes :assignee_id => @user.id, :do_not_notify => true
