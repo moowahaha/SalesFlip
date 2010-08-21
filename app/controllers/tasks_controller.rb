@@ -58,7 +58,12 @@ protected
       @tasks ||= Task.grouped_by_scope(params[:scopes].map {|k,v| k.to_sym },
                                        :target => apply_scopes(Task).order_by([:due_at, :asc]))
     else
-      @tasks ||= apply_scopes(Task).order_by([:due_at, :asc])
+      @overdue ||= apply_scopes(Task).overdue.asc(:due_at)
+      @due_today ||= apply_scopes(Task).due_today.asc(:due_at)
+      @due_tomorrow ||= apply_scopes(Task).due_tomorrow.asc(:due_at)
+      @due_this_week ||= apply_scopes(Task).due_this_week.asc(:due_at)
+      @due_next_week ||= apply_scopes(Task).due_next_week.asc(:due_at)
+      @due_later ||= apply_scopes(Task).due_later.asc(:due_at)
     end
   end
 
