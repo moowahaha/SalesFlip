@@ -7,7 +7,7 @@ class Contact
   include Permission
   include Trackable
   include Activities
-  include FullSearch
+  include Sunspot::Mongoid
 
   field :first_name
   field :last_name
@@ -41,9 +41,6 @@ class Contact
 
   before_create :set_identifier
 
-  search_keys :first_name, :last_name, :department, :email, :alt_email, :phone, :mobile,
-    :fax, :website, :linked_in, :facebook, :twitter, :xing, :address
-
   has_constant :accesses, lambda { I18n.t('access_levels') }
   has_constant :titles, lambda { I18n.t('titles') }
   has_constant :sources,  lambda { I18n.t('lead_sources') }
@@ -59,6 +56,11 @@ class Contact
   has_many_related :leads, :dependent => :destroy
 
   named_scope :for_company, lambda { |company| { :where => { :user_id.in => company.users.map(&:id) } } }
+
+  searchable do
+    text :first_name, :last_name, :department, :email, :alt_email, :phone, :mobile,
+      :fax, :website, :linked_in, :facebook, :twitter, :xing, :address
+  end
 
   def full_name
     "#{first_name} #{last_name}"

@@ -6,8 +6,8 @@ class Account
   include ParanoidDelete
   include Permission
   include Trackable
-  include FullSearch
   include Activities
+  include Sunspot::Mongoid
 
   field :name
   field :email
@@ -37,7 +37,9 @@ class Account
 
   validates_uniqueness_of :email, :allow_blank => true
 
-  search_keys :name, :email, :phone, :website, :fax
+  searchable do
+    text :name, :email, :phone, :website, :fax
+  end
 
   alias :full_name :name
 

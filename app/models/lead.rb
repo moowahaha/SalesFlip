@@ -7,7 +7,7 @@ class Lead
   include Permission
   include Trackable
   include Activities
-  include FullSearch
+  include Sunspot::Mongoid
 
   field :first_name
   field :last_name
@@ -41,9 +41,6 @@ class Lead
 
   validates_presence_of :user, :last_name
 
-  search_keys :first_name, :last_name, :email, :phone, :notes, :company, :alternative_email,
-    :mobile, :address, :referred_by, :website, :twitter, :linked_in, :facebook, :xing
-
   attr_accessor :do_not_notify
 
   belongs_to_related :user
@@ -66,6 +63,11 @@ class Lead
   named_scope :unassigned, :where => { :assignee_id => nil }
   named_scope :assigned_to, lambda { |user_id| { :where => { :assignee_id => user_id } } }
   named_scope :for_company, lambda { |company| { :where => { :user_id.in => company.users.map(&:id) } } }
+
+  searchable do
+    text :first_name, :last_name, :email, :phone, :notes, :company, :alternative_email, :mobile,
+      :address, :referred_by, :website, :twitter, :linked_in, :facebook, :xing
+  end
 
   def full_name
     "#{first_name} #{last_name}"

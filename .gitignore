@@ -17,3 +17,4 @@ log/*
 *.sqlite3-journal
 .autotest
 .bundle
+solr/data/*

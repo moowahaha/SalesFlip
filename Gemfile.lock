@@ -196,6 +196,12 @@ GEM
     sunspot (1.1.0)
       escape (= 0.0.4)
       rsolr (= 0.12.1)
+    sunspot_mongoid (0.3.2)
+      mongoid
+      sunspot (>= 1.1.0)
+      sunspot_rails (>= 1.1.0)
+    sunspot_rails (1.1.0)
+      sunspot (= 1.1.0)
     term-ansicolor (1.0.5)
     thor (0.14.0)
     treetop (1.4.8)
@@ -253,6 +259,8 @@ DEPENDENCIES
   spork
   sqlite3-ruby
   sunspot
+  sunspot_mongoid
+  sunspot_rails
   uuid
   warden
   will_paginate (= 3.0.pre)

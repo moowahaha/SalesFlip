@@ -30,6 +30,8 @@ gem 'simple_form'
 gem 'has_constant'
 gem 'hassle',               :git => 'git://github.com/koppen/hassle.git'
 gem 'sunspot',              :require => 'sunspot'
+gem 'sunspot_rails'
+gem 'sunspot_mongoid'
 
 group :production do
   gem 'smurf'

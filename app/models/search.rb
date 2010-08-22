@@ -12,12 +12,12 @@ class Search
 
   def results
     unless company.blank?
-      @results ||= Lead.search(company, :keys_to_search => 'company').not_deleted +
-        Account.search(company, :keys_to_search => 'name').not_deleted
+      @results ||= Lead.search { with(:company, company) }.results +
+        Account.search { with(:name, company) }.results
     else
-      @results ||= (collections.blank? ? %w(Lead, Contact, Account) : collections).map do |klass|
-        klass.constantize.search(terms).not_deleted
-      end.inject { |sum,n| sum += n }
+      @results ||= Sunspot.search([Account, Contact, Lead]) do
+        keywords terms
+      end.results
     end
   end
 
