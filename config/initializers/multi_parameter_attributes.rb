@@ -2,42 +2,38 @@ module Mongoid
   module Rails
     module MultiParameterAttributes
       def self.included(base)
-      
         base.before_validation :handle_multiparameter_attributes
-      
+
         base.class_eval do
           include InstanceMethods
-        
         end
       end
     end
-  
+
     module InstanceMethods
-  
-      protected
-    
+
+    protected
       def handle_multiparameter_attributes
         multiparameter_attributes = []
         self.attributes.each_pair do |attr_name, value|
           multiparameter_attributes << [attr_name, value] if attr_name.include?("(")
         end
-      
         assign_multiparameter_attributes(multiparameter_attributes) if multiparameter_attributes.any?
       end
-    
+
       def assign_multiparameter_attributes(pairs)
         execute_callstack_for_multiparameter_attributes(
           extract_callstack_for_multiparameter_attributes(pairs)
         )
       end
-    
+
       def execute_callstack_for_multiparameter_attributes(callstack)
         errors = []
         callstack.each do |name, values_with_empty_parameters|
           begin
             klass = self.class.fields[name].type
-          
-            puts "Class is #{klass.to_s}"
+
+            # puts "Class is #{klass.to_s}"
             # in order to allow a date to be set without a year, we must keep the empty values.
             # Otherwise, we wouldn't be able to distinguish it from a date with an empty day.
             values = values_with_empty_parameters.reject(&:nil?)
@@ -69,7 +65,7 @@ module Mongoid
           raise MultiparameterAssignmentErrors.new(errors), "#{errors.size} error(s) on assignment of multiparameter attributes"
         end
       end
-    
+
       def extract_callstack_for_multiparameter_attributes(pairs)
         attributes = { }
 
@@ -84,20 +80,19 @@ module Mongoid
 
         attributes.each { |name, values| attributes[name] = values.sort_by{ |v| v.first }.collect { |v| v.last } }
       end
-    
+
       def type_cast_attribute_value(multiparameter_name, value)
         multiparameter_name =~ /\([0-9]*([if])\)/ ? value.send("to_" + $1) : value
       end
-    
+
       def find_parameter_position(multiparameter_name)
         multiparameter_name.scan(/\(([0-9]*).*\)/).first.first
       end
-    
+
       def instantiate_time_object(name, values)
         Time.zone.local(*values)
       end
-    
-    
+
     end
   end
 end

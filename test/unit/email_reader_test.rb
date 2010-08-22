@@ -93,7 +93,7 @@ class EmailReaderTest < ActiveSupport::TestCase
 
         should 'create contact and add comment to it' do
           assert_equal 1, Contact.count
-          assert Contact.first(:conditions => { :email => @email.to })
+          assert Contact.first(:conditions => { :email => @email.to.first })
         end
 
         should 'create an account' do

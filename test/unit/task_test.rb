@@ -13,6 +13,7 @@ class TaskTest < ActiveSupport::TestCase
         "due_at(4i)" => time.hour.to_s,
         "due_at(5i)" => time.min.to_s,
         "due_at(6i)" => time.sec.to_s
+      obj.valid?
       assert_equal time.to_i, obj.due_at.to_i
     end
 

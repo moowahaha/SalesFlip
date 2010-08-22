@@ -4,6 +4,7 @@ class Task
   include HasConstant
   include HasConstant::Orm::Mongoid
   include Permission
+  include Mongoid::Rails::MultiParameterAttributes
 
   field :name
   field :due_at,          :type => Time

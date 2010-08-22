@@ -34,7 +34,6 @@ class User
       self.company_id = @invitation.inviter.company_id
       self.username = @invitation.email.split('@').first if self.username.blank?
       self.email = @invitation.email if self.email.blank?
-      self._type = @invitation.user_type
     end
   end
 

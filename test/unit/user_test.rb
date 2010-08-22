@@ -79,7 +79,7 @@ class UserTest < ActiveSupport::TestCase
 
   context 'Instance' do
     setup do
-      @user = User.make_unsaved(:annika)
+      @user = User.make_unsaved(:annika, :company => Company.make(:jobboersen))
     end
 
     should 'add user to postfix after creation' do
@@ -104,7 +104,7 @@ class UserTest < ActiveSupport::TestCase
     context 'when invited' do
       setup do
         @user.save!
-        @invitation = Invitation.make:inviter => @user, :user_type => 'Freelancer',
+        @invitation = Invitation.make :inviter => @user, :user_type => 'Freelancer',
           :email => 'test@test.com'
       end
 
