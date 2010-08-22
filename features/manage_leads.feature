@@ -176,7 +176,7 @@ Feature: Manage leads
 
   Scenario: Viewing a lead
     Given I am registered and logged in as annika
-    And a lead: "erich" exists with user: annika, source: "Website"
+    And a lead: "erich" exists with user: annika, source: "Imported"
     And I am on the dashboard page
     And I follow "Leads"
     When I follow "erich-feldmeier"
