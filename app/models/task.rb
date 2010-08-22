@@ -34,7 +34,7 @@ class Task
   end
 
   named_scope :assigned_by, lambda { |user| { :where => {
-    :user_id => user.id, :assignee_id.ne => nil, :assignee_id.ne => user.id } } }
+    :user_id => user.id, :assignee_id.nin => [nil, user.id] } } }
 
   named_scope :pending, :where => { :completed_at => nil, :assignee_id => nil }
 

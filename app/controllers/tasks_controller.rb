@@ -55,8 +55,10 @@ protected
 
   def collection
     if params[:scopes]
-      @tasks ||= Task.grouped_by_scope(params[:scopes].map {|k,v| k.to_sym },
-                                       :target => apply_scopes(Task).order_by([:due_at, :asc]))
+      @tasks = {}
+      params[:scopes].keys.map(&:to_sym).each do |scope|
+        @tasks[scope] = apply_scopes(Task).asc(:due_at).send(scope)
+      end
     else
       @overdue ||= apply_scopes(Task).overdue.asc(:due_at)
       @due_today ||= apply_scopes(Task).due_today.asc(:due_at)

@@ -54,4 +54,5 @@ group :test do
   gem 'mocha'
   gem 'faker'
   gem 'shoulda'
+  gem 'database_cleaner'
 end

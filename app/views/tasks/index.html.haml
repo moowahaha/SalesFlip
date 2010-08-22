@@ -5,7 +5,7 @@
   - %w(overdue due_today due_tomorrow due_this_week due_next_week due_later).each do |deadline|
     - tasks = instance_variable_get(:"@#{deadline}")
     - if tasks.any?
-      %h3.deadline{ :id => deadline }= t(deadline)
+      %h3.deadline{ :id => "#{deadline}_tasks" }= t(deadline)
       = render :partial => 'task', :collection => tasks
 - if @tasks.is_a?(Hash)
   - @tasks.each do |key, value|
