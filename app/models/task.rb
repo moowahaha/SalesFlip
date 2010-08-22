@@ -24,6 +24,7 @@ class Task
 
   validates_presence_of :user, :name, :due_at, :category
 
+  before_create :set_recently_created
   after_create :assign_unassigned_lead
 
   named_scope :incomplete, :where => { :completed_at => nil }
@@ -174,8 +175,24 @@ class Task
     end
   end
 
+  def reassigned?
+    !assignee.blank? && (changed.include?('assignee_id') || @recently_created &&
+                         assignee_id != user_id)
+  end
+
+protected
+  def set_recently_created
+    @recently_created = true
+  end
+
+  def assign_unassigned_lead
+    if asset and asset.is_a?(Lead) and asset.assignee.blank?
+      asset.update_attributes :assignee => self.user
+    end
+  end
+
   def notify_assignee
-    TaskMailer.assignment_notification(self).deliver if @reassigned && !self.assignee.blank?
+    TaskMailer.assignment_notification(self).deliver if reassigned?
   end
 
   def log_creation
@@ -183,7 +200,7 @@ class Task
   end
 
   def log_update
-    unless @reassigned
+    unless reassigned?
       Activity.log(self.user, self, 'Updated') unless @recently_completed
       Activity.log(self.user, self, 'Completed') if @recently_completed
     end
@@ -191,12 +208,5 @@ class Task
 
   def log_reassignment
     Activity.log(self.user, self, 'Re-assigned') if @reassigned and valid?
-  end
-
-protected
-  def assign_unassigned_lead
-    if asset and asset.is_a?(Lead) and asset.assignee.blank?
-      asset.update_attributes :assignee => self.user
-    end
   end
 end

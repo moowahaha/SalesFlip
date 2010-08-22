@@ -202,13 +202,13 @@ class LeadTest < ActiveSupport::TestCase
         @lead.assignee_id = @user.id
         @lead.save!
         ActionMailer::Base.deliveries.clear
-        @lead.update_attributes :assignee_id => nil
+        @lead.update_attributes :assignee => nil
         assert_equal 0, ActionMailer::Base.deliveries.length
       end
 
       should 'not notify the assignee if the lead is a new record' do
         ActionMailer::Base.deliveries.clear
-        @lead.assignee_id = @user.id
+        @lead.assignee_id = @lead.user.id
         @lead.save!
         assert_equal 0, ActionMailer::Base.deliveries.length
       end

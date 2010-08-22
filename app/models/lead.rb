@@ -53,7 +53,7 @@ class Lead
   has_many_related :tasks, :as => :asset, :dependent => :delete_all
 
   before_validation :set_initial_state
-  before_create :set_identifier
+  before_create :set_identifier, :set_recently_created
   after_save :notify_assignee, :unless => :do_not_notify
 
   has_constant :titles, lambda { I18n.t('titles') }
@@ -91,17 +91,13 @@ class Lead
     I18n.locale_around(:en) { update_attributes :status => 'Rejected' }
   end
 
-  def assignee_id=( assignee_id )
-    old_assignee_id = read_attribute(:assignee_id)
-    if old_assignee_id != assignee_id && !assignee_id.blank? && !new_record?
-      @reassigned = true
-    end
-    write_attribute :assignee_id, assignee_id
+protected
+  def set_recently_created
+    @recently_created = true
   end
 
-protected
   def notify_assignee
-    if @reassigned && !assignee.blank?
+    if !assignee.blank? && (changed.include?('assignee_id') || @recently_created && assignee_id != user_id)
       UserMailer.lead_assignment_notification(self).deliver
     end
   end

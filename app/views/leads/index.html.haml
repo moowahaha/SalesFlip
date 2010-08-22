@@ -17,7 +17,7 @@
   - content_for :sidebar do
     .gold.box
       %h3= t('filter_by_status')
-      - form_tag '', :method => :get do
+      = form_tag '', :method => :get do
         %ul.checks.stacked
           - Lead.statuses.each do |status|
             %li
