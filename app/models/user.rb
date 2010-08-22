@@ -81,6 +81,7 @@ class User
 
 protected
   def set_api_key
+    UUID.state_file = false # for heroku
     self.api_key = UUID.new.generate
   end
 
