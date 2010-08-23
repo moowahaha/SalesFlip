@@ -12,8 +12,8 @@ class Search
 
   def results
     unless company.blank?
-      @results ||= Lead.search { with(:company, company) }.results +
-        Account.search { with(:name, company) }.results
+      @results ||= Lead.search { with(:company, company) }.results.not_deleted +
+        Account.search { with(:name, company) }.results.not_deleted
     else
       @results ||= Sunspot.search([Account, Contact, Lead]) do
         keywords terms
