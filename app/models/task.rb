@@ -25,7 +25,11 @@ class Task
   validates_presence_of :user, :name, :due_at, :category
 
   before_create :set_recently_created
-  after_create :assign_unassigned_lead
+  before_update :log_reassignment
+  before_save   :log_recently_changed
+  after_create  :assign_unassigned_lead, :log_creation, :assign_unassigned_lead
+  after_update  :log_update
+  after_save    :notify_assignee
 
   named_scope :incomplete, :where => { :completed_at => nil }
 
@@ -83,12 +87,6 @@ class Task
   named_scope :completed_last_month, lambda { { :where => {
     :completed_at.gte => (Time.zone.now.beginning_of_month.utc - 1.day).beginning_of_month.utc,
     :completed_at.lte => Time.zone.now.beginning_of_month.utc } } }
-
-  before_update :log_reassignment
-  after_create  :log_creation
-  after_create  :assign_unassigned_lead
-  after_update  :log_update
-  after_save    :notify_assignee
 
   def self.daily_email
     (Task.overdue + Task.due_today).flatten.sort_by(&:due_at).group_by(&:user).
@@ -176,13 +174,17 @@ class Task
   end
 
   def reassigned?
-    !assignee.blank? && (changed.include?('assignee_id') || @recently_created &&
+    @reassigned ||= !assignee.blank? && (@recently_changed.include?('assignee_id') || @recently_created &&
                          assignee_id != user_id)
   end
 
 protected
   def set_recently_created
     @recently_created = true
+  end
+
+  def log_recently_changed
+    @recently_changed = changed
   end
 
   def assign_unassigned_lead
