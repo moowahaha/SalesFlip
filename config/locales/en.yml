@@ -312,7 +312,9 @@ en:
     invitation:
       subject: "SalesFlip: You have been invited to join %{company}'s company"
       body:
-        top: "Here is your invitation link, please signup here.  You will then receive a confirmation email before you are able to log in"
+        top: Here is your invitation link, please signup here.  You will then receive a confirmation email before you are able to log in
+    lead_notification:
+      subject: New lead
   
   
   #--------------------------------------------------------------

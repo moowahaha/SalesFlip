@@ -43,15 +43,16 @@ class Lead
 
   attr_accessor :do_not_notify
 
-  belongs_to_related :user
-  belongs_to_related :assignee, :class_name => 'User'
-  belongs_to_related :contact
-  has_many_related :comments, :as => :commentable, :dependent => :delete_all
-  has_many_related :tasks, :as => :asset, :dependent => :delete_all
+  belongs_to_related  :user
+  belongs_to_related  :assignee, :class_name => 'User'
+  belongs_to_related  :contact
+  has_many_related    :comments, :as => :commentable, :dependent => :delete_all
+  has_many_related    :tasks, :as => :asset, :dependent => :delete_all
 
   before_validation :set_initial_state
-  before_create :set_identifier, :set_recently_created
-  after_save :notify_assignee, :unless => :do_not_notify
+  before_create     :set_identifier, :set_recently_created
+  after_create      :send_notifications
+  after_save        :notify_assignee, :unless => :do_not_notify
 
   has_constant :titles, lambda { I18n.t('titles') }
   has_constant :statuses, lambda { I18n.t('lead_statuses') }
@@ -122,5 +123,18 @@ protected
 
   def set_identifier
     self.identifier = Identifier.next_lead
+  end
+
+  def send_notifications
+    users = []
+    self.user.company.users.each do |user|
+      notification_criteria = user.notification_criterias.to_a.find do |c|
+        c.model == 'Lead' && c.frequency_is?('Immediate')
+      end
+      if !notification_criteria.blank? && Lead.where(notification_criteria.criteria).include?(self)
+        users << user
+      end
+    end
+    UserMailer.instant_lead_notification(users, self).deliver unless users.blank?
   end
 end
