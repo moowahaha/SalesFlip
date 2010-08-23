@@ -11,4 +11,4 @@
       - if result.is_a?(Account)
         = render :partial => "accounts/account", :locals => { :account => result }
 - else
-  = t('no_search_results', :link => new_search_path)
+  = raw t('no_search_results', :link => new_search_path)

@@ -15,7 +15,7 @@ class Search
       @results ||= Lead.search { with(:company, company) }.results.not_deleted +
         Account.search { with(:name, company) }.results.not_deleted
     else
-      @results ||= Sunspot.search([Account, Contact, Lead]) do
+      @results ||= Sunspot.search(collections.map(&:constantize) || [Account, Contact, Lead]) do
         keywords terms
       end.results
     end
