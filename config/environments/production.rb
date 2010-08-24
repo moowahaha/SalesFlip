@@ -41,4 +41,9 @@ Salesflip::Application.configure do
   # config.threadsafe!
 
   config.active_support.deprecation = :log
+
+  config.after_initialize do
+    require 'websolr-sunspot_rails'
+    Sunspot.config.solr.url = ENV['WEBSOLR_URL']
+  end
 end
