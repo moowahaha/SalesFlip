@@ -1,14 +1,14 @@
 module Salesflip
   module Callback
     @@classes = []
-    @@responder = []
+    @@responder = {}
 
     def self.add( klass )
       @@classes << klass
     end
 
     def self.responder( method )
-      @@responder[method] ||= @classes.map(&:instance).select do |instance|
+      @@responder[method] ||= @@classes.map(&:instance).select do |instance|
         instance.respond_to?(method)
       end
     end

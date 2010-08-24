@@ -1,5 +1,5 @@
 class ContactsController < InheritedResources::Base
-  before_filter :merge_updater_id, :only => [:update]
+  before_filter :merge_updater_id, :only => [ :update ]
 
   respond_to :html
   respond_to :xml
@@ -11,7 +11,6 @@ class ContactsController < InheritedResources::Base
   end
 
   def destroy
-    resource
     @contact.updater_id = current_user.id
     @contact.destroy
     redirect_to contacts_path
@@ -19,11 +18,16 @@ class ContactsController < InheritedResources::Base
 
 protected
   def collection
+    @page ||= params[:page] || 1
+    @per_page = 10
+    @contacts ||= hook(:contacts_collection, self,
+                       :pages => { :page => @page, :per_page => @per_page }).last
     @contacts ||= Contact.permitted_for(current_user).not_deleted.asc(:last_name).
-      for_company(current_user.company).paginate(:per_page => 10, :page => params[:page] || 1)
+      for_company(current_user.company).paginate(:per_page => @per_page, :page => @page)
   end
 
   def resource
+    @contact ||= hook(:contacts_resource, self).last
     @contact ||= Contact.for_company(current_user.company).permitted_for(current_user).
       where(:_id => params[:id]).first
   end

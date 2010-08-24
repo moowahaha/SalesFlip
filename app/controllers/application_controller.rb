@@ -2,6 +2,7 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
+  include Salesflip::Callback::Helper
 
   protect_from_forgery
   layout 'application'
@@ -10,7 +11,9 @@ class ApplicationController < ActionController::Base
   before_filter :configuration_check
   before_filter :bson_ids
   before_filter :fix_array_params
-  after_filter :log_viewed_item, :only => :show
+  before_filter "hook(:app_before_filter, self)"
+  after_filter  "hook(:app_after_filter, self)"
+  after_filter  :log_viewed_item, :only => :show
 
 protected
   def bson_ids

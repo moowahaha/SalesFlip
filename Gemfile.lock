@@ -6,6 +6,15 @@ GIT
       activesupport (>= 3.0.0.beta4)
 
 GIT
+  remote: git://github.com/jugyo/sunspot_mongoid.git
+  revision: 6480801
+  specs:
+    sunspot_mongoid (0.3.2)
+      mongoid
+      sunspot (>= 1.1.0)
+      sunspot_rails (>= 1.1.0)
+
+GIT
   remote: git://github.com/koppen/hassle.git
   revision: a08c757
   specs:
@@ -31,16 +40,6 @@ GIT
       mongo (= 1.0.7)
       tzinfo (= 0.3.23)
       will_paginate (~> 3.0.pre)
-
-GIT
-  remote: git://github.com/mattbeedle/sunspot_mongoid.git
-  revision: 87a00a7
-  branch: development
-  specs:
-    sunspot_mongoid (0.3.2)
-      mongoid
-      sunspot (>= 1.1.0)
-      sunspot_rails (>= 1.1.0)
 
 GIT
   remote: git://github.com/plataformatec/devise.git

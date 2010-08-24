@@ -10,7 +10,7 @@ class CommentsController < InheritedResources::Base
       end
     end
   end
-  
+
   def update
     update! do |success, failure|
       success.html do
