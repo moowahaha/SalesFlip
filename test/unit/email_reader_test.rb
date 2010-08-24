@@ -50,7 +50,7 @@ class EmailReaderTest < ActiveSupport::TestCase
 
       context 'when receiver exists as a lead' do
         setup do
-          @lead = Lead.make(:erich, :email => 'test@test.com')
+          @lead = Lead.make(:erich, :email => 'Test@Test.com')
           EmailReader.parse_email(@email)
         end
 
