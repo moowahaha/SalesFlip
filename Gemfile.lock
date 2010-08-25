@@ -15,15 +15,6 @@ GIT
       sunspot_rails (>= 1.1.0)
 
 GIT
-  remote: git://github.com/jugyo/sunspot_mongoid.git
-  revision: 6480801
-  specs:
-    sunspot_mongoid (0.3.2)
-      mongoid
-      sunspot (>= 1.1.0)
-      sunspot_rails (>= 1.1.0)
-
-GIT
   remote: git://github.com/koppen/hassle.git
   revision: a08c757
   specs:
@@ -58,11 +49,11 @@ GIT
       bcrypt-ruby (~> 2.1.2)
       warden (~> 0.10.7)
 
-GIT
-  remote: git://github.com/rails/rails.git
-  revision: 37467bf
-  branch: 3-0-stable
+GEM
+  remote: http://rubygems.org/
   specs:
+    ZenTest (4.3.3)
+    abstract (1.0.0)
     actionmailer (3.0.0.rc2)
       actionpack (= 3.0.0.rc2)
       mail (~> 2.2.5)
@@ -89,25 +80,6 @@ GIT
       activemodel (= 3.0.0.rc2)
       activesupport (= 3.0.0.rc2)
     activesupport (3.0.0.rc2)
-    rails (3.0.0.rc2)
-      actionmailer (= 3.0.0.rc2)
-      actionpack (= 3.0.0.rc2)
-      activerecord (= 3.0.0.rc2)
-      activeresource (= 3.0.0.rc2)
-      activesupport (= 3.0.0.rc2)
-      bundler (>= 1.0.0.rc.6)
-      railties (= 3.0.0.rc2)
-    railties (3.0.0.rc2)
-      actionpack (= 3.0.0.rc2)
-      activesupport (= 3.0.0.rc2)
-      rake (>= 0.8.4)
-      thor (~> 0.14.0)
-
-GEM
-  remote: http://rubygems.org/
-  specs:
-    ZenTest (4.3.3)
-    abstract (1.0.0)
     arel (1.0.0.rc1)
       activesupport (>= 3.0.0.beta)
     autotest-rails (4.1.0)
@@ -193,6 +165,19 @@ GEM
       rack (>= 1.0.0)
     rack-test (0.5.4)
       rack (>= 1.0)
+    rails (3.0.0.rc2)
+      actionmailer (= 3.0.0.rc2)
+      actionpack (= 3.0.0.rc2)
+      activerecord (= 3.0.0.rc2)
+      activeresource (= 3.0.0.rc2)
+      activesupport (= 3.0.0.rc2)
+      bundler (>= 1.0.0.rc.6)
+      railties (= 3.0.0.rc2)
+    railties (3.0.0.rc2)
+      actionpack (= 3.0.0.rc2)
+      activesupport (= 3.0.0.rc2)
+      rake (>= 0.8.3)
+      thor (~> 0.14.0)
     rake (0.8.7)
     redgreen (1.2.2)
     responders (0.6.2)
@@ -265,7 +250,7 @@ DEPENDENCIES
   navvy
   pickle
   pickle-mongoid
-  rails!
+  rails (= 3.0.0.rc2)
   redgreen
   riddle
   shoulda
