@@ -58,10 +58,10 @@ Feature: Manage leads
     When I press "lead_submit"
     Then an activity should have been created with for lead: "erich" and user: "annika"
 
-  Scenario: Creating a lead via XML
-    Given I am registered and logged in as annika
-    When I POST attributes for lead: "erich" to the leads page
-    Then 1 leads should exist with assignee_id: nil
+  #Scenario: Creating a lead via XML
+  #  Given I am registered and logged in as annika
+  #  When I POST attributes for lead: "erich" to the leads page
+  #  Then 1 leads should exist with assignee_id: nil
 
   Scenario: Adding a comment
     Given I am registered and logged in as annika

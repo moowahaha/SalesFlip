@@ -126,15 +126,13 @@ protected
   end
 
   def send_notifications
-    users = []
-    self.user.company.users.each do |user|
-      notification_criteria = user.notification_criterias.to_a.find do |c|
-        c.model == 'Lead' && c.frequency_is?('Immediate')
-      end
-      if !notification_criteria.blank? && Lead.where(notification_criteria.criteria).include?(self)
-        users << user
-      end
+    users = User.where(:company_id => self.user.company_id,
+      'notification_criterias.frequency' => NotificationCriteria.frequencies.index('Immediate'),
+      'notification_criterias.model' => 'Lead').to_a
+    users.delete_if do |u|
+      !u.notification_criterias.any? { |c| Lead.where(c.criteria).include?(self) }
     end
+
     UserMailer.instant_lead_notification(users, self).deliver unless users.blank?
   end
 end

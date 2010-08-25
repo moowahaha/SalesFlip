@@ -174,8 +174,8 @@ class Task
   end
 
   def reassigned?
-    @reassigned ||= !assignee.blank? && (@recently_changed.include?('assignee_id') || @recently_created &&
-                         assignee_id != user_id)
+    @reassigned = !assignee.blank? && (@recently_changed.include?('assignee_id') ||
+                                         @recently_created && assignee_id.to_s != user_id.to_s)
   end
 
 protected
