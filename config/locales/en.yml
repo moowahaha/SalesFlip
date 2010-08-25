@@ -5,7 +5,9 @@ en:
   #--------------------------------------------------------------
   # Layout
   #--------------------------------------------------------------
+  welcome: Welcome
   dashboard: Dashboard
+  edit_notifications: Notifications
   task: Task
   tasks: Tasks
   lead: Lead
@@ -315,6 +317,8 @@ en:
         top: Here is your invitation link, please signup here.  You will then receive a confirmation email before you are able to log in
     lead_notification:
       subject: New lead
+      body:
+        top: A new lead has arrived matching your notification criteria
   
   
   #--------------------------------------------------------------

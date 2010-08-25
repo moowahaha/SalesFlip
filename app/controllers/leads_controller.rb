@@ -1,5 +1,5 @@
 class LeadsController < InheritedResources::Base
-  before_filter :resource, :only => [:convert, :promote, :reject]
+  before_filter :resource, :only => [ :convert, :promote, :reject ]
 
   respond_to :html
   respond_to :xml, :only => [ :new, :create, :index, :show ]
@@ -28,7 +28,6 @@ class LeadsController < InheritedResources::Base
   end
 
   def destroy
-    hook(:leads_destroy, self, :document => resource)
     @lead.updater_id = current_user.id
     @lead.destroy
     redirect_to leads_path
