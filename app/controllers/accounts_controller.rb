@@ -20,11 +20,16 @@ class AccountsController < InheritedResources::Base
 
 protected
   def collection
+    @page = params[:page] || 1
+    @per_page = 10
+    @accounts ||= hook(:accounts_collection, self,
+                       :pages => { :page => @page, :per_page => @per_page }).last
     @accounts ||= Account.for_company(current_user.company).permitted_for(current_user).
-      not_deleted.sort_by(&:name).paginate(:per_page => 10, :page => params[:page] || 1)
+      not_deleted.sort_by(&:name).paginate(:per_page => @per_page, :page => @page)
   end
 
   def resource
+    @account ||= hook(:accounts_resource, self).last
     @account ||= Account.for_company(current_user.company).permitted_for(current_user).
       where(:_id => params[:id]).first
   end

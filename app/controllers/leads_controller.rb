@@ -10,7 +10,7 @@ class LeadsController < InheritedResources::Base
   has_scope :source_is, :type => :array
 
   def new
-    @lead = build_resource
+    @lead ||= build_resource
     @lead.assignee_id = current_user.id
   end
 
@@ -28,7 +28,7 @@ class LeadsController < InheritedResources::Base
   end
 
   def destroy
-    resource
+    hook(:leads_destroy, self, :document => resource)
     @lead.updater_id = current_user.id
     @lead.destroy
     redirect_to leads_path
@@ -58,12 +58,17 @@ class LeadsController < InheritedResources::Base
 
 protected
   def collection
+    @page = params[:page] || 1
+    @per_page = 10
+    @leads ||= hook(:leads_collection, self, :pages => { :page => @page, :per_page => @per_page }).
+      last
     @leads ||= apply_scopes(Lead).for_company(current_user.company).not_deleted.
       permitted_for(current_user).desc(:status).desc(:created_at).
-      paginate(:per_page => 10, :page => params[:page] || 1)
+      paginate(:per_page => @per_page, :page => @page)
   end
 
   def resource
+    @lead ||= hook(:leads_resource, self).last
     @lead ||= Lead.for_company(current_user.company).permitted_for(current_user).
       where(:_id => params[:id]).first
   end

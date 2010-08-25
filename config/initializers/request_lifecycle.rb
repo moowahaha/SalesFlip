@@ -8,8 +8,7 @@ module Sunspot #:nodoc:
     module RequestLifecycle
       class <<self
         def included(base) #:nodoc:
-          loaded_controllers =
-            [base].concat(base.subclasses)
+          loaded_controllers = [base].concat(base.subclasses)
           # Depending on how Sunspot::Rails is loaded, there may already be
           # controllers loaded into memory that subclass this controller. In
           # this case, since after_filter uses the inheritable_attribute

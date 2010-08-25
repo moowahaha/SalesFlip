@@ -119,6 +119,21 @@ class AccountTest < ActiveSupport::TestCase
       @account = Account.make_unsaved(:careermee, :user => User.make)
     end
 
+    should 'ensure http:// is prepended to uris' do
+      @account.website = 'test.com'
+      assert_equal 'http://test.com', @account.website
+    end
+
+    should 'not prepend http:// if it is already there' do
+      @account.website = 'http://test.com'
+      assert_equal 'http://test.com', @account.website
+    end
+
+    should 'not prepend http:// if the uri is nil' do
+      @account.website = nil
+      assert @account.website.nil?
+    end
+
     should 'be assigned an identifier on creation' do
       assert @account.identifier.nil?
       @account.save!
