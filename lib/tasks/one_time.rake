@@ -13,6 +13,13 @@ namespace(:one_time) do
     end
   end
 
+  desc "Index all leads, contacts and accounts"
+  task :index_everything => :environment do
+    Account.all.each(&:index!)
+    Contact.all.each(&:index!)
+    Lead.all.each(&:index!)
+  end
+
   desc 'Add identifiers to all accounts, leads and contacts'
   task :add_identifiers => :environment do
     Account.all(:identifier => nil).each do |account|
