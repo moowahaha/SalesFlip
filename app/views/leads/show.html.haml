@@ -43,7 +43,7 @@
     = raw t('added_ago_by', :time => l(@lead.created_at, :format => :short), :by => @lead.user.username)
     = " : #{t('assigned_to', :user => User.find(@lead.assignee_id).full_name) if @lead.assignee_id.present?}"
 - if @lead.notes.present?
-  .notes= @lead.notes
+  .notes= raw @lead.notes
 
 = render :partial => "tasks/add_task", :locals => { :object => @lead }
 
