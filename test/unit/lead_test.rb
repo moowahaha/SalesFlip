@@ -220,53 +220,6 @@ class LeadTest < ActiveSupport::TestCase
       end
     end
 
-    context 'Instant Notifications' do
-      context 'when the user has instant notifications on' do
-        setup do
-          notification_criteria = NotificationCriteria.new(:model => 'Lead',
-                                                           :criteria => { :source => 0 },
-                                                           :frequency => 'Immediate')
-          @lead.source = 0
-          @user = @lead.user
-          @user.notification_criterias << notification_criteria
-          @user.save!
-        end
-
-        should 'notify the user of the new lead' do
-          @lead.save!
-          assert_sent_email do |email|
-            email.to.include?(@user.email) && email.subject =~ /New lead/ &&
-              email.body =~ /#{@lead.id}/
-          end
-        end
-
-        should 'send email to all matching users' do
-          @user2 = User.make(:company => @user.company)
-          @user2.notification_criterias << NotificationCriteria.new(:model => 'Lead',
-                                                                    :criteria => { :source => 0 },
-                                                                    :frequency => 'Immediate')
-          @user2.save!
-          @lead.save!
-
-          assert_sent_email do |email|
-            email.to.include?(@user.email) && email.to.include?(@user2.email)
-          end
-        end
-
-        should 'not notify the user if the lead does not match notification criteria' do
-          notification_criteria = NotificationCriteria.new(:model => 'Lead',
-                                                           :criteria => { :source => 0 },
-                                                           :frequency => 'Immediate')
-          @lead.source = 1
-          @user.notification_criterias = [notification_criteria]
-          @user.save!
-          ActionMailer::Base.deliveries.clear
-          @lead.save!
-          assert_equal 0, ActionMailer::Base.deliveries.length
-        end
-      end
-    end
-
     context 'activity logging' do
       setup do
         @lead.save!

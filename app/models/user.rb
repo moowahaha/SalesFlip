@@ -24,8 +24,6 @@ class User
 
   belongs_to_related :company
 
-  embeds_many :notification_criterias
-
   before_validation :set_api_key, :create_company, :on => :create
   after_create :update_invitation, :add_user_to_postfix
 

@@ -51,7 +51,6 @@ class Lead
 
   before_validation :set_initial_state
   before_create     :set_identifier, :set_recently_created
-  after_create      :send_notifications
   after_save        :notify_assignee, :unless => :do_not_notify
 
   has_constant :titles, lambda { I18n.t('titles') }
@@ -123,16 +122,5 @@ protected
 
   def set_identifier
     self.identifier = Identifier.next_lead
-  end
-
-  def send_notifications
-    users = User.where(:company_id => self.user.company_id,
-      'notification_criterias.frequency' => NotificationCriteria.frequencies.index('Immediate'),
-      'notification_criterias.model' => 'Lead').to_a
-    users.delete_if do |u|
-      !u.notification_criterias.any? { |c| Lead.where(c.criteria).include?(self) }
-    end
-
-    UserMailer.instant_lead_notification(users, self).deliver unless users.blank?
   end
 end
