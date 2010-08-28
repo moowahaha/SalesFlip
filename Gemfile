@@ -8,7 +8,8 @@ gem 'sqlite3-ruby',         :require => 'sqlite3'
 gem 'haml'
 gem 'inherited_resources'
 gem 'warden'
-gem 'devise',               :git => 'git://github.com/plataformatec/devise.git'
+#gem 'devise',               :git => 'git://github.com/plataformatec/devise.git'
+gem 'devise'
 #gem 'mongoid', :git => 'http://github.com/durran/mongoid.git'
 gem 'mongoid',              :git => 'git://github.com/mattbeedle/mongoid.git', :branch => 'development'
 gem 'mongo'
@@ -33,6 +34,9 @@ gem 'hassle',               :git => 'git://github.com/koppen/hassle.git'
 gem 'sunspot',              :require => 'sunspot'
 gem 'sunspot_rails'
 gem 'sunspot_mongoid',      :git => 'git://github.com/jugyo/sunspot_mongoid.git'
+
+# Plugins
+gem 'salesflip-lead_notifications', :require => 'lead_notifications'
 
 group :production do
   gem 'smurf'
