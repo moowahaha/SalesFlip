@@ -46,4 +46,10 @@ Salesflip::Application.configure do
     require 'sunspot/rails'
     Sunspot.config.solr.url = ENV['WEBSOLR_URL']
   end
+
+  config.action_mailer.delivery_method = :remail
+  config.action_mailer.remail_settings = {
+    :app_id  => 'salesflip',
+    :api_key => '20015510-959d-012d-a4ae-001c25a0b06f'
+  }
 end

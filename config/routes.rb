@@ -6,7 +6,7 @@ Salesflip::Application.routes.draw do
   match 'profile', :to => 'users#profile'
 
   resources :users, :comments, :tasks, :accounts, :contacts, :attachments, :deleted_items,
-    :searches, :invitations
+    :searches, :invitations, :emails
 
   resources :leads do
     member do

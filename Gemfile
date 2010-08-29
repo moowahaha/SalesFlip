@@ -34,6 +34,7 @@ gem 'hassle',               :git => 'git://github.com/koppen/hassle.git'
 gem 'sunspot',              :require => 'sunspot'
 gem 'sunspot_rails'
 gem 'sunspot_mongoid',      :git => 'git://github.com/jugyo/sunspot_mongoid.git'
+gem 'remail'
 
 # Plugins
 gem 'salesflip-lead_notifications', :require => 'lead_notifications'
