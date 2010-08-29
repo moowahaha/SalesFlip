@@ -72,14 +72,14 @@ GEM
       activemodel (= 3.0.0.rc2)
       activesupport (= 3.0.0.rc2)
     activesupport (3.0.0.rc2)
-    arel (1.0.0.rc1)
-      activesupport (>= 3.0.0.beta)
+    arel (1.0.1)
+      activesupport (~> 3.0.0)
     autotest-rails (4.1.0)
       ZenTest
     bcrypt-ruby (2.1.2)
     beanstalk-client (1.1.0)
     bson (1.0.4)
-    bson_ext (1.0.6)
+    bson_ext (1.0.7)
     builder (2.1.2)
     capybara (0.3.9)
       culerity (>= 0.2.4)
@@ -175,6 +175,8 @@ GEM
       thor (~> 0.14.0)
     rake (0.8.7)
     redgreen (1.2.2)
+    remail (0.0.2)
+      activeresource
     responders (0.6.2)
     riddle (1.1.0)
     rsolr (0.12.1)
@@ -248,6 +250,7 @@ DEPENDENCIES
   pickle-mongoid
   rails (= 3.0.0.rc2)
   redgreen
+  remail
   riddle
   salesflip-lead_notifications
   shoulda
