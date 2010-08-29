@@ -23,6 +23,13 @@ GIT
       rack
 
 GIT
+  remote: git://github.com/maccman/remail.git
+  revision: fff5797
+  specs:
+    remail (0.0.3)
+      activeresource
+
+GIT
   remote: git://github.com/mattbeedle/mongo_session_store.git
   revision: 392445a
   specs:
@@ -175,8 +182,6 @@ GEM
       thor (~> 0.14.0)
     rake (0.8.7)
     redgreen (1.2.2)
-    remail (0.0.2)
-      activeresource
     responders (0.6.2)
     riddle (1.1.0)
     rsolr (0.12.1)
@@ -250,7 +255,7 @@ DEPENDENCIES
   pickle-mongoid
   rails (= 3.0.0.rc2)
   redgreen
-  remail
+  remail!
   riddle
   salesflip-lead_notifications
   shoulda
