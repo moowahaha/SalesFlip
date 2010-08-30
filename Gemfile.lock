@@ -190,7 +190,7 @@ GEM
     rubyforge (2.0.4)
       json_pure (>= 1.1.7)
     rubyzip (0.9.4)
-    salesflip-lead_notifications (0.0.3)
+    salesflip-lead_notifications (0.0.4)
     selenium-webdriver (0.0.28)
       ffi (>= 0.6.1)
       json_pure
