@@ -93,6 +93,10 @@ class Lead
     I18n.locale_around(:en) { update_attributes :status => 'Rejected' }
   end
 
+  def pipe_deliminated( fields )
+    fields.map { |field| self.send(field) }.join('|')
+  end
+
 protected
   def set_recently_created
     @recently_created = true

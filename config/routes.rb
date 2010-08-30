@@ -14,6 +14,7 @@ Salesflip::Application.routes.draw do
       put :promote
       put :reject
     end
+    get :export, :on => :collection
   end
 
   namespace :admin do

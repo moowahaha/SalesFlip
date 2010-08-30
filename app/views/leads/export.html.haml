@@ -1,0 +1,17 @@
+%h2.title
+  = t(:choose_fields)
+= form_tag leads_path(@filters.merge(:format => 'csv')), :method => :get do
+  - @filters.each do |key, value|
+    - if value.is_a?(Array)
+      - value.each do |v|
+        = hidden_field_tag "#{key}[]", v
+    - else
+      = hidden_field_tag key, value
+  - Lead.fields.map(&:first).sort.delete_if { |f| f.match(/_id|_at$/) }.each do |field|
+    .boolean
+      = check_box_tag 'fields[]', field, false, :id => field
+      %label{ :for => field }= field.humanize
+    .clear
+  = submit_tag t(:submit)
+  = t(:or)
+  = link_to t(:cancel), :back

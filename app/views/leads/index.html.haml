@@ -5,18 +5,10 @@
 = render :partial => 'lead', :collection => @leads
 = will_paginate @leads
 
--# In case we want to group by status later on
--#
--# t('lead_statuses').each_with_index do |status, index|
-  - if @leads.with_status(status).any?
-    %h3.status{:id=>status}= t('lead_statuses')[index]
-    = render :partial => 'lead', :collection => @leads.with_status(status)
-    .clear
-
 - unless current_user.instance_of?(Freelancer)
   - content_for :sidebar do
     .gold.box
-      %h3= t('filter_by_status')
+      %h3= t(:filter_by_status)
       = form_tag '', :method => :get do
         %ul.checks.stacked
           - Lead.statuses.each do |status|
@@ -36,3 +28,7 @@
               = check_box_tag 'source_is[]', source, (params[:source_is] and params[:source_is].include?(source)), :id => "source_#{source.parameterize}"
               %label{ :for => "source_#{source.parameterize}" }= source
         .clear= submit_tag t('filter'), :id => 'filter'
+    .gold.box
+      %h3= t(:data_actions)
+      %ul.plain
+        %li= link_to t(:export_as_csv), export_leads_path(@filters), :id => 'export_as_csv'

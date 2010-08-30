@@ -67,6 +67,7 @@ en:
   filter: Filter
   filters: Filters
   filter_by_status: Filter by Status
+  data_actions: Data Options
   follow: Follow
   go_back: Go Back
   or: or
@@ -82,6 +83,8 @@ en:
   keep_me_updated: Keep me updated
   stop_updating_me: Stop updating me
   accept: Accept
+  export_as_csv: Export this list as a CSV
+  choose_fields: Choose Fields to Export
   
   #--------------------------------------------------------------
   # Form Labels

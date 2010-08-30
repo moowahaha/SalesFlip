@@ -404,3 +404,16 @@ Feature: Manage leads
     Then I should be on the lead's page
     And I should see "Updated"
     And I should see "annika.fleischer@1000jobboersen.de"
+
+  Scenario: Exporting Leads
+    Given I am registered and logged in as annika
+    And a lead: "erich" exists with user: Annika
+    When I am on the leads page
+    Then I should see "Export this list as a CSV"
+
+  Scenario: Exporting Leads (2)
+    Given I am registered and logged in as annika
+    And a lead: "erich" exists with user: Annika
+    And I am on the leads page
+    When I follow "Export this list as a CSV"
+    Then I should be on the export leads page
