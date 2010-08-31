@@ -10,8 +10,8 @@
     %small
       = "at #{lead.company}" if !lead.company.blank?
       = raw " | Email: #{mail_to lead.email, nil, :bcc => current_user.dropbox_email}" if lead.email.present?
-      = " | Phone: #{lead.phone}" if lead.phone.present?
-      = " | Mobile: #{lead.mobile}" if lead.mobile.present?
+      = raw " | Phone: #{lead.phone}" if lead.phone.present?
+      = raw " | Mobile: #{lead.mobile}" if lead.mobile.present?
       %br/
       %em.timestamp
         = raw t('added_ago_by', :time => l(lead.created_at, :format => :short), :by => lead.user.username)
