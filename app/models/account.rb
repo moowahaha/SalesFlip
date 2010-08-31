@@ -41,6 +41,12 @@ class Account
     text :name, :email, :phone, :website, :fax
   end
 
+  def self.exportable_fields
+    fields.map(&:first).sort.delete_if do |f|
+      f.match(/access|permission|permitted_user_ids|tracker_ids/)
+    end
+  end
+
   alias :full_name :name
 
   def website=( website )
@@ -66,6 +72,10 @@ class Account
     end
     account = object.updater_or_user.accounts.create :permission => permission,
       :name => name, :permitted_user_ids => permitted
+  end
+
+  def deliminated( deliminator, fields )
+    fields.map { |field| self.send(field) }.join(deliminator)
   end
 
 protected

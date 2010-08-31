@@ -8,6 +8,19 @@ class LeadTest < ActiveSupport::TestCase
     should_be_trackable
     should_belong_to :user, :assignee, :contact
     should_have_many :comments, :tasks, :activities
+
+    should 'know which fields may be exported' do
+      assert !Lead.exportable_fields.include?('access')
+      assert !Lead.exportable_fields.include?('permission')
+      Lead.fields.map(&:first).each do |field|
+        unless field == 'access' || field == 'permission' ||
+          field == 'permitted_user_ids' || field == 'tracker_ids'
+          assert Lead.exportable_fields.include?(field)
+        else
+          assert !Lead.exportable_fields.include?(field)
+        end
+      end
+    end
   end
 
   context 'Named Scopes' do
@@ -167,7 +180,7 @@ class LeadTest < ActiveSupport::TestCase
     end
 
     should 'be able to get fields in pipe deliminated format' do
-      assert_equal @lead.pipe_deliminated(['first_name', 'last_name']), 'Erich|Feldmeier'
+      assert_equal @lead.deliminated('|', ['first_name', 'last_name']), 'Erich|Feldmeier'
     end
 
     should 'be assigned an identifier on creation' do

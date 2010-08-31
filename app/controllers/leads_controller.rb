@@ -16,9 +16,9 @@ class LeadsController < InheritedResources::Base
       format.html
       format.xml
       format.csv do
-        fields = params[:fields] || Lead.fields.map(&:first)
-        data = "#{fields.sort.join('|')}\n"
-        data += leads.map { |l| l.pipe_deliminated(fields) }.join("\n")
+        fields = params[:fields] || Lead.exportable_fields
+        data = "#{fields.sort.join(params[:deliminator] || '|')}\n"
+        data += leads.map { |l| l.deliminated(params[:deliminator] || '|', fields) }.join("\n")
         send_data data, :type => 'text/csv'
       end
     end

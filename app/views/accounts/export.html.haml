@@ -1,0 +1,16 @@
+%h2.title
+  = t(:choose_fields)
+= form_tag accounts_path(:format => 'csv'), :method => :get do
+  .10.a
+    %label{ :for => 'deliminator' }= t(:deliminator)
+    = text_field_tag :deliminator, params[:deliminator] || '|'
+  .clear
+  %h3= t(:fields)
+  - Account.exportable_fields.each do |field|
+    .boolean
+      = check_box_tag 'fields[]', field, false, :id => field
+      %label{ :for => field }= field.humanize
+    .clear
+  = submit_tag t(:export)
+  = t(:or)
+  = link_to t(:cancel), :back

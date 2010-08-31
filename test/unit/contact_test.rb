@@ -9,6 +9,17 @@ class ContactTest < ActiveSupport::TestCase
     should_belong_to :account, :user, :assignee
     should_have_many :leads, :tasks, :comments
 
+    should 'know which fields can be exported' do
+      Contact.fields.each do |field|
+        unless field == 'access' || field == 'permission' ||
+          field == 'permitted_user_ids' || field == 'tracker_ids'
+          assert Contact.exportable_fields.include?(field)
+        else
+          assert !Contact.exportable_fields.include?(field)
+        end
+      end
+    end
+
     context 'create_for' do
       setup do
         @account = Account.make(:careermee)
@@ -76,6 +87,10 @@ class ContactTest < ActiveSupport::TestCase
   context "Instance" do
     setup do
       @contact = Contact.make_unsaved(:florian, :user => User.make(:annika))
+    end
+
+    should 'be able to get fields in pipe deliminated format' do
+      assert_equal @contact.deliminated('|', ['first_name', 'last_name']), "Florian|Behn"
     end
 
     should 'be assigned an identifier on creation' do

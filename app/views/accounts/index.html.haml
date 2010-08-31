@@ -5,3 +5,8 @@
 .accounts
   = render :partial => 'account', :collection => @accounts
   = will_paginate @accounts
+- content_for :sidebar do
+  .gold.box
+    %h3= t(:data_actions)
+    %ul.plain
+      %li= link_to t(:export_as_csv), export_accounts_path, :id => 'export_as_csv'

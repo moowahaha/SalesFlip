@@ -5,8 +5,8 @@
 = render :partial => 'lead', :collection => @leads
 = will_paginate @leads
 
-- unless current_user.instance_of?(Freelancer)
-  - content_for :sidebar do
+- content_for :sidebar do
+  - unless current_user.instance_of?(Freelancer)
     .gold.box
       %h3= t(:filter_by_status)
       = form_tag '', :method => :get do
@@ -28,7 +28,7 @@
               = check_box_tag 'source_is[]', source, (params[:source_is] and params[:source_is].include?(source)), :id => "source_#{source.parameterize}"
               %label{ :for => "source_#{source.parameterize}" }= source
         .clear= submit_tag t('filter'), :id => 'filter'
-    .gold.box
-      %h3= t(:data_actions)
-      %ul.plain
-        %li= link_to t(:export_as_csv), export_leads_path(@filters), :id => 'export_as_csv'
+  .gold.box
+    %h3= t(:data_actions)
+    %ul.plain
+      %li= link_to t(:export_as_csv), export_leads_path(@filters), :id => 'export_as_csv'
