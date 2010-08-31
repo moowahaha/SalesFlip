@@ -1,6 +1,6 @@
 = Salesflip CRM - A Simple Extendable Lightweight Unobtrusive CRM
 
-Salesflip is a simple lightweight extendable unobtrusive CRM built using Rails 3, MongoDB and rightJS. Developed by 1000JobBoersen.de after evaluating the other solutions in the market and finding them all either overpriced, bloated monsters, too inflexible or too javascript reliant.  Salesflip is based heavily on FatFreeCRM (http://github.com/michaeldv/fat_free_crm), which we eventually decided not to use due to it's unobtrusive nature.
+Salesflip is a simple lightweight extendable unobtrusive CRM built using Rails 3, MongoDB and rightJS. Developed by 1000JobBoersen.de after evaluating the other solutions in the market and finding them all either overpriced, bloated monsters, too inflexible or too javascript reliant.  Salesflip is based heavily on FatFreeCRM (http://github.com/michaeldv/fat_free_crm), which we eventually decided not to use due to it's unobtrusive nature, and we prefer to use shoulda and cucumber for testing.
 
 
 == System Requirements
