@@ -166,6 +166,10 @@ class LeadTest < ActiveSupport::TestCase
       @user = User.make(:benny)
     end
 
+    should 'be able to get fields in pipe deliminated format' do
+      assert_equal @lead.pipe_deliminated(['first_name', 'last_name']), 'Erich|Feldmeier'
+    end
+
     should 'be assigned an identifier on creation' do
       assert @lead.identifier.nil?
       @lead.save!

@@ -1,13 +1,27 @@
 class LeadsController < InheritedResources::Base
   before_filter :resource, :only => [ :convert, :promote, :reject ]
+  before_filter :set_filters, :only => [ :index, :export ]
 
   respond_to :html
   respond_to :xml, :only => [ :new, :create, :index, :show ]
+  respond_to :csv, :only => [ :index ]
 
   has_scope :with_status, :type => :array
   has_scope :unassigned, :type => :boolean
   has_scope :assigned_to
   has_scope :source_is, :type => :array
+
+  def index
+    index! do |format|
+      format.html
+      format.xml
+      format.csv do
+        data = "#{params[:fields].sort.join('|')}\n"
+        data += leads.map { |l| l.pipe_deliminated(params[:fields]) }.join("\n")
+        send_data data, :type => 'text/csv'
+      end
+    end
+  end
 
   def new
     @lead ||= build_resource
@@ -56,14 +70,25 @@ class LeadsController < InheritedResources::Base
   end
 
 protected
+  def leads
+    @leads ||= apply_scopes(Lead).for_company(current_user.company).not_deleted.
+      permitted_for(current_user).desc(:status).desc(:created_at)
+  end
+
   def collection
     @page = params[:page] || 1
     @per_page = 10
     @leads ||= hook(:leads_collection, self, :pages => { :page => @page, :per_page => @per_page }).
       last
-    @leads ||= apply_scopes(Lead).for_company(current_user.company).not_deleted.
-      permitted_for(current_user).desc(:status).desc(:created_at).
-      paginate(:per_page => @per_page, :page => @page)
+    @leads ||= leads.paginate(:per_page => @per_page, :page => @page)
+  end
+
+  def set_filters
+    @filters = {}
+    @filters.merge!(:with_status => params[:with_status]) if params[:with_status]
+    @filters.merge!(:unassigned => params[:unassigned]) if params[:unassigned]
+    @filters.merge!(:assigned_to => params[:assigned_to]) if params[:assigned_to]
+    @filters.merge!(:source_is => params[:source_is]) if params[:source_is]
   end
 
   def resource
