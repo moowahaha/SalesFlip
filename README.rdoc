@@ -16,6 +16,8 @@ git://github.com/mattbeedle/SalesFlip.git
 == Resources
 * Hosting: www.salesfliphq.com
 * Project page: http://github.com/mattbeedle/SalesFlip
+* Google group for users: http://groups.google.co.uk/group/salesflip-users
+* Google group for developers: http://groups.google.co.uk/group/salesflip-developers
 
 == Running the App
 $ rails server
