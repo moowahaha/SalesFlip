@@ -15,9 +15,12 @@ git://github.com/mattbeedle/SalesFlip.git
 
 == Resources
 * Hosting: www.salesfliphq.com
+* Demo: demo.salesfliphq.com
 * Project page: http://github.com/mattbeedle/SalesFlip
 * Google group for users: http://groups.google.co.uk/group/salesflip-users
 * Google group for developers: http://groups.google.co.uk/group/salesflip-developers
+* Features and bugs: Here on github issue tracker please
+* Current Development: https://www.pivotaltracker.com/projects/57839
 
 == Running the App
 $ rails server
