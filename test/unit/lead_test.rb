@@ -10,8 +10,6 @@ class LeadTest < ActiveSupport::TestCase
     should_have_many :comments, :tasks, :activities
 
     should 'know which fields may be exported' do
-      assert !Lead.exportable_fields.include?('access')
-      assert !Lead.exportable_fields.include?('permission')
       Lead.fields.map(&:first).each do |field|
         unless field == 'access' || field == 'permission' ||
           field == 'permitted_user_ids' || field == 'tracker_ids'

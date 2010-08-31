@@ -12,7 +12,7 @@ class AccountTest < ActiveSupport::TestCase
     should_have_many :contacts, :tasks, :comments
 
     should 'know which fields can be exported' do
-      Account.fields.each do |field|
+      Account.fields.map(&:first).each do |field|
         unless field == 'access' || field == 'permission' ||
           field == 'permitted_user_ids' || field == 'tracker_ids'
           assert Account.exportable_fields.include?(field)
