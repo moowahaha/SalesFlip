@@ -16,8 +16,9 @@ class LeadsController < InheritedResources::Base
       format.html
       format.xml
       format.csv do
-        data = "#{params[:fields].sort.join('|')}\n"
-        data += leads.map { |l| l.pipe_deliminated(params[:fields]) }.join("\n")
+        fields = params[:fields] || Lead.fields.map(&:first)
+        data = "#{fields.sort.join('|')}\n"
+        data += leads.map { |l| l.pipe_deliminated(fields) }.join("\n")
         send_data data, :type => 'text/csv'
       end
     end
@@ -71,7 +72,7 @@ class LeadsController < InheritedResources::Base
 
 protected
   def leads
-    @leads ||= apply_scopes(Lead).for_company(current_user.company).not_deleted.
+    @leads = apply_scopes(Lead).for_company(current_user.company).not_deleted.
       permitted_for(current_user).desc(:status).desc(:created_at)
   end
 
