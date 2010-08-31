@@ -1,31 +1,32 @@
-<b>Salesflip CRM - A Simple Extendable Lightweight Unobtrusive CRM</b>
+= Salesflip CRM - A Simple Extendable Lightweight Unobtrusive CRM
 
 Salesflip is a simple lightweight extendable unobtrusive CRM built using Rails 3, MongoDB and rightJS. Developed by 1000JobBoersen.de after evaluating the other solutions in the market and finding them all either overpriced, bloated monsters, too inflexible or too javascript reliant.  Salesflip is based heavily on FatFreeCRM (http://github.com/michaeldv/fat_free_crm), which we eventually decided not to use due to it's unobtrusive nature.
 
-<b>System Requirements</b>
 
-*Ruby 1.8.7 or 1.9.2
-*Rails 3
-*MongoDB
+== System Requirements
+* Ruby 1.8.7 or 1.9.2
+* Rails 3
+* MongoDB
 
-<b>Downloads</b>
+
+== Downloads
 git://github.com/mattbeedle/SalesFlip.git
 
-<b>Resources</b>
-*Hosting: www.salesfliphq.com
-*Project page: http://github.com/mattbeedle/SalesFlip
 
-<b>Running the App</b>
+== Resources
+* Hosting: www.salesfliphq.com
+* Project page: http://github.com/mattbeedle/SalesFlip
 
+== Running the App
 $ rails server
 
-<b>For Developers</b>
+== For Developers
 Salesflip can be extended by creating engines, and packaging them as gems (it's much simpler than it sounds). Here is a sample gem for notifying all users when a new lead arrives from via web service
 http://github.com/mattbeedle/salesflip-lead_notifications
 
 For more information on creating rails 3 engines and packaging them into gems we highly recommend these excellent articles:
 
-*http://www.themodestrubyist.com/2010/03/01/rails-3-plugins---part-1---the-big-picture/
-*http://www.themodestrubyist.com/2010/03/05/rails-3-plugins---part-2---writing-an-engine/
-*http://www.themodestrubyist.com/2010/03/16/rails-3-plugins---part-3---rake-tasks-generators-initializers-oh-my/
-*http://www.themodestrubyist.com/2010/03/22/rails-3-plugins---part-4---more-on-generators/
+* http://www.themodestrubyist.com/2010/03/01/rails-3-plugins---part-1---the-big-picture/
+* http://www.themodestrubyist.com/2010/03/05/rails-3-plugins---part-2---writing-an-engine/
+* http://www.themodestrubyist.com/2010/03/16/rails-3-plugins---part-3---rake-tasks-generators-initializers-oh-my/
+* http://www.themodestrubyist.com/2010/03/22/rails-3-plugins---part-4---more-on-generators/
