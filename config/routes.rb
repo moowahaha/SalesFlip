@@ -5,7 +5,7 @@ Salesflip::Application.routes.draw do
 
   match 'profile', :to => 'users#profile'
 
-  resources :users, :comments, :tasks, :accounts, :contacts, :attachments, :deleted_items,
+  resources :users, :comments, :tasks, :attachments, :deleted_items,
     :searches, :invitations, :emails
 
   resources :leads do
@@ -14,6 +14,14 @@ Salesflip::Application.routes.draw do
       put :promote
       put :reject
     end
+    get :export, :on => :collection
+  end
+
+  resources :contacts do
+    get :export, :on => :collection
+  end
+
+  resources :accounts do
     get :export, :on => :collection
   end
 

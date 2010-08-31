@@ -198,9 +198,15 @@ Feature: Manage accounts
     And account: "careermee" exists with user: annika
     And I am on the account's page
     And I follow the edit link for the account
-    Then I should be on the account's edit page
     When I fill in "account_name" with "CareerMe"
     And I press "account_submit"
     Then I should be on the account's page
     And I should see "Updated"
     And I should see "annika.fleischer@1000jobboersen.de"
+
+  Scenario: Exporting Accounts
+    Given I am registered and logged in as annika
+    And account: "careermee" exists with user: Annika
+    And I am on the accounts page
+    When I follow "Export this list as a CSV"
+    Then I should be on the export accounts page

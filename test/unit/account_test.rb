@@ -11,6 +11,17 @@ class AccountTest < ActiveSupport::TestCase
     should_belong_to :user, :assignee
     should_have_many :contacts, :tasks, :comments
 
+    should 'know which fields can be exported' do
+      Account.fields.each do |field|
+        unless field == 'access' || field == 'permission' ||
+          field == 'permitted_user_ids' || field == 'tracker_ids'
+          assert Lead.exportable_fields.include?(field)
+        else
+          assert !Lead.exportable_fields.include?(field)
+        end
+      end
+    end
+
     context 'find_or_create_for' do
       setup do
         @lead = Lead.make(:erich)
@@ -117,6 +128,10 @@ class AccountTest < ActiveSupport::TestCase
   context 'Instance' do
     setup do
       @account = Account.make_unsaved(:careermee, :user => User.make)
+    end
+
+    should 'be able to get fields in pipe deliminated format' do
+      assert_equal @account.deliminated('|', ['name', 'user_id']), "CareerMee|#{@account.user_id}"
     end
 
     should 'ensure http:// is prepended to uris' do

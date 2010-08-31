@@ -69,6 +69,12 @@ class Lead
       :address, :referred_by, :website, :twitter, :linked_in, :facebook, :xing
   end
 
+  def self.exportable_fields
+    fields.map(&:first).sort.delete_if do |f|
+      f.match(/access|permission|permitted_user_ids|tracker_ids/)
+    end
+  end
+
   def full_name
     "#{first_name} #{last_name}"
   end
@@ -93,8 +99,8 @@ class Lead
     I18n.locale_around(:en) { update_attributes :status => 'Rejected' }
   end
 
-  def pipe_deliminated( fields )
-    fields.map { |field| self.send(field) }.join('|')
+  def deliminated( deliminator, fields )
+    fields.map { |field| self.send(field) }.join(deliminator)
   end
 
 protected

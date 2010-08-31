@@ -86,6 +86,9 @@ en:
   export_as_csv: Export this list as a CSV
   choose_fields: Choose Fields to Export
   export: Export
+  create: Create
+  deliminator: Deliminator
+  fields: Fields
   
   #--------------------------------------------------------------
   # Form Labels

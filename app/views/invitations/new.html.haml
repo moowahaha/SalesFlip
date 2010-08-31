@@ -4,3 +4,5 @@
     .50.z= form.input :user_type, :collection => Invitation.user_types
   .act.pad
     = form.submit t('create'), :id => 'invitation_submit'
+    = t(:or)
+    = link_to t(:cancel), :back
