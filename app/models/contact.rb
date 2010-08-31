@@ -62,6 +62,12 @@ class Contact
       :fax, :website, :linked_in, :facebook, :twitter, :xing, :address
   end
 
+  def self.exportable_fields
+    fields.map(&:first).sort.delete_if do |f|
+      f.match(/access|permission|permitted_user_ids|tracker_ids/)
+    end
+  end
+
   def full_name
     "#{first_name} #{last_name}"
   end
@@ -87,6 +93,10 @@ class Contact
       contact.leads << lead
     end
     contact
+  end
+
+  def deliminated( deliminator, fields )
+    fields.map { |field| self.send(field) }.join(deliminator)
   end
 
 protected

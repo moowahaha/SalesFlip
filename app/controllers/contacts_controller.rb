@@ -4,6 +4,19 @@ class ContactsController < InheritedResources::Base
   respond_to :html
   respond_to :xml
 
+  def index
+    index! do |format|
+      format.html
+      format.xml
+      format.csv do
+        fields = params[:fields] || Contact.exportable_fields
+        data = "#{fields.join(params[:deliminator] || '|')}\n"
+        data = contacts.map { |c| c.deliminated(params[:deliminator] || '|', fields) }.join("\n")
+        send_data data, :type => 'text/csv'
+      end
+    end
+  end
+
   def create
     create! do |success, failure|
       success.xml { head :ok }
@@ -17,13 +30,17 @@ class ContactsController < InheritedResources::Base
   end
 
 protected
+  def contacts
+    Contact.permitted_for(current_user).not_deleted.asc(:last_name).
+      for_company(current_user.company)
+  end
+
   def collection
     @page ||= params[:page] || 1
     @per_page = 10
     @contacts ||= hook(:contacts_collection, self,
                        :pages => { :page => @page, :per_page => @per_page }).last
-    @contacts ||= Contact.permitted_for(current_user).not_deleted.asc(:last_name).
-      for_company(current_user.company).paginate(:per_page => @per_page, :page => @page)
+    @contacts ||= contacts.paginate(:per_page => @per_page, :page => @page)
   end
 
   def resource

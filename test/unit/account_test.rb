@@ -15,9 +15,9 @@ class AccountTest < ActiveSupport::TestCase
       Account.fields.each do |field|
         unless field == 'access' || field == 'permission' ||
           field == 'permitted_user_ids' || field == 'tracker_ids'
-          assert Lead.exportable_fields.include?(field)
+          assert Account.exportable_fields.include?(field)
         else
-          assert !Lead.exportable_fields.include?(field)
+          assert !Account.exportable_fields.include?(field)
         end
       end
     end

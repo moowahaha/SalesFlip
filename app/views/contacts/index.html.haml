@@ -4,3 +4,8 @@
 .contacts
   = render :partial => 'contacts/contact', :collection => @contacts
   = will_paginate @contacts
+- content_for :sidebar do
+  .gold.box
+    %h2= t(:data_actions)
+    %ul.plain
+      %li= link_to t(:export_as_csv), export_contacts_path, :id => 'export_as_csv'
