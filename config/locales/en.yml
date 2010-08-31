@@ -85,6 +85,7 @@ en:
   accept: Accept
   export_as_csv: Export this list as a CSV
   choose_fields: Choose Fields to Export
+  export: Export
   
   #--------------------------------------------------------------
   # Form Labels

@@ -12,6 +12,6 @@
       = check_box_tag 'fields[]', field, false, :id => field
       %label{ :for => field }= field.humanize
     .clear
-  = submit_tag t(:submit)
+  = submit_tag t(:export)
   = t(:or)
   = link_to t(:cancel), :back
