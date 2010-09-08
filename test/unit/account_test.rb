@@ -130,6 +130,49 @@ class AccountTest < ActiveSupport::TestCase
       @account = Account.make_unsaved(:careermee, :user => User.make)
     end
 
+    should 'be able to get all related leads' do
+      contact = Contact.make(:account => @account)
+      lead = Lead.make(:contact => contact)
+      contact2 = Contact.make(:account => @account)
+      lead2 = Lead.make(:contact => contact2)
+      assert @account.leads.include?(lead)
+      assert @account.leads.include?(lead2)
+      assert_equal 2, @account.leads.length
+    end
+
+    should 'include activities for related contacts in related_activities' do
+      contact = Contact.make(:account => @account)
+      assert @account.related_activities.include?(contact.activities.first)
+    end
+
+    should 'include activities for related leads in related_activities' do
+      contact = Contact.make(:account => @account)
+      lead = Lead.make(:contact => contact)
+      assert @account.related_activities.include?(lead.activities.first)
+    end
+
+    should 'include activities for related tasks in related_activities' do
+      contact = Contact.make(:account => @account)
+      lead = Lead.make(:contact => contact)
+      task = Task.make(:asset => contact)
+      task2 = Task.make(:asset => lead)
+      assert @account.related_activities.include?(task.activities.first)
+      assert @account.related_activities.include?(task2.activities.first)
+    end
+
+    should 'include activities for related comments and emails in related_activities' do
+      contact = Contact.make(:account => @account)
+      lead = Lead.make(:contact => contact)
+      comment = Comment.make(:commentable => contact)
+      comment2 = Comment.make(:commentable => lead)
+      email = Email.make(:commentable => contact)
+      email2 = Email.make(:commentable => lead)
+      assert @account.related_activities.include?(comment.activities.first)
+      assert @account.related_activities.include?(comment2.activities.first)
+      assert @account.related_activities.include?(email.activities.first)
+      assert @account.related_activities.include?(email2.activities.first)
+    end
+
     should 'be able to get fields in pipe deliminated format' do
       assert_equal @account.deliminated('|', ['name', 'user_id']), "CareerMee|#{@account.user_id}"
     end

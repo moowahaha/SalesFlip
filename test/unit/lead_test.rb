@@ -7,7 +7,7 @@ class LeadTest < ActiveSupport::TestCase
     should_act_as_paranoid
     should_be_trackable
     should_belong_to :user, :assignee, :contact
-    should_have_many :comments, :tasks, :activities
+    should_have_many :comments, :tasks, :activities, :emails
 
     should 'know which fields may be exported' do
       Lead.fields.map(&:first).each do |field|

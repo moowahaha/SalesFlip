@@ -205,6 +205,12 @@ Attachment.blueprint(:erich_offer_pdf) do
 end
 
 Email.blueprint do
+  user { User.make }
+  commentable { Lead.make }
+  text { 'asefeafewaf' }
+  subject { 'asefeaff' }
+  received_at { 1.day.ago }
+  from { 'test@test.com' }
 end
 
 Email.blueprint(:erich_offer_email) do
