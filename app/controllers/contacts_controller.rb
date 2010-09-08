@@ -20,7 +20,6 @@ class ContactsController < InheritedResources::Base
   def create
     create! do |success, failure|
       success.xml { head :ok }
-      success.html { return_to_or_default contact_path(@contact) }
     end
   end
 
@@ -59,12 +58,7 @@ protected
   end
 
   def build_resource
-    attributes = { :assignee_id => current_user.id }.merge(params[:contact] || {})
-    attributes.merge!(:account => account) if account
-    @contact ||= begin_of_association_chain.contacts.build attributes
-  end
-
-  def account
-    @account ||= Account.find(params[:account_id]) if params[:account_id]
+    @contact ||= begin_of_association_chain.contacts.build({ :assignee_id => current_user.id }.
+                                                           merge(params[:contact] || {}))
   end
 end

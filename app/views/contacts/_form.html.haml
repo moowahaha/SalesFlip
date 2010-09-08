@@ -1,4 +1,3 @@
-= hidden_field_tag :return_to, params[:return_to] if params[:return_to]
 %fieldset
   .16.a= form.input :salutation, :as => :select, :collection => Lead.salutations.map(&:to_s)
   .16= form.input :title, :as => :select, :collection => Lead.titles.map(&:to_s)

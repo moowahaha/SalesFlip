@@ -1,8 +1,7 @@
 .title
   %h2= @account.name
   %ul.actions
-    %li= link_to t(:add_contact), new_contact_path(:return_to => request.fullpath, :account_id => @account.id), :id => 'add_contact'
-    %li= link_to t(:edit_account), [:edit, @account], :id => "edit_#{dom_id(@account)}"
+    %li= link_to t('edit_account'), [:edit, @account], :id => "edit_#{dom_id(@account)}"
     %li
       = simple_form_for @account do |form|
         = hidden_field_tag :return_to, request.fullpath
