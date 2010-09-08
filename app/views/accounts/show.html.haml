@@ -38,7 +38,7 @@
 
   #recent_activity.box.ice
     %h3= t('recent_activity_for', :name => @account.full_name )
-    = render :partial => 'shared/activity_for', :collection => @account.related_activities.limit(6), :as => :activity, :locals => { :related => true }
+    = render :partial => 'shared/activity_for', :collection => @account.activities.limit(6), :as => :activity
 
   .box.gold
     %h3= t(:contacts)
