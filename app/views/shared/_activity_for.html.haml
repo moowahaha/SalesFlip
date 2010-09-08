@@ -1,5 +1,7 @@
 .item{ :class => activity.action.downcase }
   %span.icon= activity_icon(activity.action.downcase)
+  - if defined?(related)
+    = link_to truncate(activity.subject.name, :length => 20), activity.subject
   = activity.action
   by
   = link_to activity.user.username.present? ? activity.user.username : activity.user.email, activity.user
