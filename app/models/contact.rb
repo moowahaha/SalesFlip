@@ -54,6 +54,7 @@ class Contact
   has_many_related :tasks, :as => :asset, :dependent => :destroy
   has_many_related :comments, :as => :commentable, :dependent => :delete_all
   has_many_related :leads, :dependent => :destroy
+  has_many_related :emails, :as => :commentable, :dependent => :delete_all
 
   named_scope :for_company, lambda { |company| { :where => { :user_id.in => company.users.map(&:id) } } }
 

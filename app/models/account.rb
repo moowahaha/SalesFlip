@@ -47,6 +47,10 @@ class Account
     end
   end
 
+  def leads
+    @leads ||= contacts.map(&:leads).flatten
+  end
+
   alias :full_name :name
 
   def website=( website )

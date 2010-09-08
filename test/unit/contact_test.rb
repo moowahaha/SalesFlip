@@ -7,7 +7,7 @@ class ContactTest < ActiveSupport::TestCase
     should_act_as_paranoid
     should_be_trackable
     should_belong_to :account, :user, :assignee
-    should_have_many :leads, :tasks, :comments
+    should_have_many :leads, :tasks, :comments, :emails
 
     should 'know which fields can be exported' do
       Contact.fields.map(&:first).each do |field|
