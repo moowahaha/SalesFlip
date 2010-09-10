@@ -96,6 +96,8 @@ en:
   #--------------------------------------------------------------
   simple_form:
     labels:
+      task:
+        name: Subject
       identifier: Identifier
       address: Address
       account_name: Account Name
