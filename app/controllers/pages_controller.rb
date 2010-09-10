@@ -10,6 +10,7 @@ protected
   end
 
   def find_tasks
-    @tasks ||= Task.for(current_user).incomplete.desc(:due_at).limit(10)
+    @overdue ||= Task.for(current_user).incomplete.overdue.desc(:due_at)
+    @due_today ||= Task.for(current_user).incomplete.due_today.desc(:due_at)
   end
 end

@@ -9,10 +9,21 @@ Feature: Manage tasks
     And a task exists with user: Annika, name: "Task for Annika"
     And a task exists with user: Benny, name: "Task for Benny"
     And a task exists with user: Annika, name: "Completed Task for Annika", completed_at: "10 Oct 2009"
+    And a task exists with user: Annika, name: "Future Task for Annika", due_at: "10 Oct 3000"
     When I am on the dashboard page
     Then I should see "Task for Annika" within "#tasks"
     And I should not see "Task for Benny" within "#tasks"
     And I should not see "Completed Task for Annika" within "#tasks"
+    And I should not see "Future Task for Annika" within "#tasks"
+    And I should see "As soon as possible" within "#tasks"
+    And I should not see "You have no outstanding tasks" within "#tasks"
+
+  Scenario: Tasks on the dashboard when there are no tasks
+    Given I am registered and logged in as annika
+    When I am on the dashboard page
+    Then I should not see "As soon as possible" within "#tasks"
+    And I should not see "Today" within "#tasks"
+    And I should see "You have no outstanding tasks" within "#tasks"
 
   Scenario: Creating a new task
     Given I am registered and logged in as annika
