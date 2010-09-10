@@ -34,11 +34,17 @@ class Account
   before_create :set_identifier
 
   named_scope :for_company, lambda { |company| { :where => { :user_id.in => company.users.map(&:id) } } }
+  named_scope :unassigned, :where => { :assignee_id => nil }
 
   validates_uniqueness_of :email, :allow_blank => true
 
   searchable do
     text :name, :email, :phone, :website, :fax
+  end
+
+  def self.assigned_to( user_id )
+    user_id = BSON::ObjectId.from_string(user_id) if user_id.is_a?(String)
+    any_of({ :assignee_id => user_id }, { :user_id => user_id, :assignee_id => nil })
   end
 
   def self.exportable_fields
@@ -59,8 +65,8 @@ class Account
   end
 
   def self.find_or_create_for( object, name_or_id, options = {} )
-    account = Account.find(BSON::ObjectID.from_string(name_or_id.to_s))
-  rescue BSON::InvalidObjectID => e
+    account = Account.find(BSON::ObjectId.from_string(name_or_id.to_s))
+  rescue BSON::InvalidObjectId => e
     account = Account.first(:conditions => { :name => name_or_id })
     account = create_for(object, name_or_id, options) unless account
     account

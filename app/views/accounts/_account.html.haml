@@ -12,9 +12,9 @@
     %em.timestamp
       - account_time = l account.created_at, :format => :short
       - if account.assignee_id.present?
-        = raw t('assigned_ago_by', :time => account_time, :by => account.user.username, :for => User.find(account.assignee_id).full_name)
+        = raw t('assigned_ago_by', :time => account_time, :by => account.user.name, :for => User.find(account.assignee_id).full_name)
       - else
-        = raw t('added_ago_by', :time => account_time, :by => account.user.username)
+        = raw t('added_ago_by', :time => account_time, :by => account.user.name)
       - if account.permitted_for?(current_user)
         = raw " : #{link_to(pluralize(account.comments.not_deleted.size, t('comment')), account)}" if account.comments.not_deleted.any?
       - else

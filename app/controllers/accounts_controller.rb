@@ -4,6 +4,10 @@ class AccountsController < InheritedResources::Base
   respond_to :html
   respond_to :xml
 
+  has_scope :unassigned, :type => :boolean
+  has_scope :assigned_to
+  has_scope :account_type_is
+
   def index
     index! do |format|
       format.html
@@ -33,7 +37,7 @@ class AccountsController < InheritedResources::Base
 
 protected
   def accounts
-    @accounts = Account.for_company(current_user.company).permitted_for(current_user).
+    @accounts = apply_scopes(Account).for_company(current_user.company).permitted_for(current_user).
       not_deleted.asc(:name)
   end
 

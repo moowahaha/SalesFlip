@@ -18,10 +18,10 @@
         %ul.checks.stacked
           %li
             = check_box_tag 'unassigned', true, params[:unassigned]
-            %label{ :for => 'unassigned' } Unassigned
+            %label{ :for => 'unassigned' }= t(:unassigned)
           %li
             = check_box_tag 'assigned_to', current_user.id, params[:assigned_to]
-            %label{ :for => 'assigned_to' } Assigned to me
+            %label{ :for => 'assigned_to' }= t(:assigned_to_me)
         %ul.checks.stacked
           - Lead.sources.sort.each do |source|
             %li
