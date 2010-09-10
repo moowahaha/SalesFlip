@@ -210,3 +210,14 @@ Feature: Manage accounts
     And I am on the accounts page
     When I follow "Export this list as a CSV"
     Then I should be on the export accounts page
+
+  Scenario: Adding a contact to an existing account
+    Given I am registered and logged in as annika
+    And account: "careermee" exists with user: Annika
+    And I am on the account's page
+    When I follow "Add Contact"
+    And I fill in "First Name" with "Matt"
+    And I fill in "Last Name" with "Beedle"
+    And I press "contact_submit"
+    Then I should be on the account's page
+    And I should see "Matt Beedle"
