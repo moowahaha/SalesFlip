@@ -3,6 +3,17 @@ Feature: Manage tasks
   A User
   wants to add, update, delete and be reminded of tasks
 
+  Scenario: Tasks on the dashboard
+    Given I am registered and logged in as annika
+    And Benny exists
+    And a task exists with user: Annika, name: "Task for Annika"
+    And a task exists with user: Benny, name: "Task for Benny"
+    And a task exists with user: Annika, name: "Completed Task for Annika", completed_at: "10 Oct 2009"
+    When I am on the dashboard page
+    Then I should see "Task for Annika" within "#tasks"
+    And I should not see "Task for Benny" within "#tasks"
+    And I should not see "Completed Task for Annika" within "#tasks"
+
   Scenario: Creating a new task
     Given I am registered and logged in as annika
     And I am on the tasks page
