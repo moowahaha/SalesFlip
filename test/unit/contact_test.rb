@@ -20,6 +20,28 @@ class ContactTest < ActiveSupport::TestCase
       end
     end
 
+    context 'assigned_to' do
+      setup do
+        @user = User.make
+        @contact = Contact.make(:florian, :assignee => @user)
+        @contact2 = Contact.make(:steven)
+      end
+
+      should 'return contacts assigned to the specified user' do
+        assert Contact.assigned_to(@user.id).include?(@contact)
+        assert_equal 1, Contact.assigned_to(@user.id).count
+      end
+
+      should 'return contacts created by the specified user, but not assigned to anyone' do
+        assert Contact.assigned_to(@contact2.user.id).include?(@contact2)
+        assert_equal 1, Contact.assigned_to(@contact2.user.id).count
+      end
+
+      should 'work with a string arguement' do
+        assert_equal 1, Contact.assigned_to(@contact2.user.id.to_s).count
+      end
+    end
+
     context 'create_for' do
       setup do
         @account = Account.make(:careermee)

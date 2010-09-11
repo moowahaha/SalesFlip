@@ -6,6 +6,21 @@
   = will_paginate @contacts
 - content_for :sidebar do
   .gold.box
-    %h2= t(:data_actions)
+    %h3= t(:filter)
+    = form_tag '', :method => :get do
+      %ul.checks.stacked
+        %li
+          = check_box_tag :unassigned, true, params[:unassigned]
+          %label{ :for => 'unassigned' }= t(:unassigned)
+        %li
+          = check_box_tag :assigned_to, current_user.id, params[:assigned_to]
+          %label{ :for => 'assigned_to' }= t(:assigned_to_me)
+      .clear
+      .stacked
+        %label{ :for => 'source_is' }= t(:source_is)
+        = select_tag :source_is, options_for_select(Contact.sources.sort, params[:source_is]), :include_blank => true
+      .clear= submit_tag t(:filter), :id => 'filter'
+  .gold.box
+    %h3= t(:data_actions)
     %ul.plain
       %li= link_to t(:export_as_csv), export_contacts_path, :id => 'export_as_csv'

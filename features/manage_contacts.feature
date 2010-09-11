@@ -3,6 +3,29 @@ Feature: Manage contacts
   A User
   wants to manage contacts
 
+  Scenario: Filtering Contacts Assigned to Me
+    Given I am registered and logged in as annika
+    And Annika has invited Benny
+    And a contact: "florian" exists with user: Annika
+    And a contact: "steven" exists with user: Benny
+    And I am on the contacts page
+    When I check "Assigned to me"
+    And I press "filter"
+    Then I should be on the contacts page
+    And I should see "Florian"
+    And I should not see "Steven"
+
+  Scenario: Filtering Contacts by Source
+    Given I am registered and logged in as annika
+    And a contact: "florian" exists with user: Annika, source: "Campaign"
+    And a contact: "steven" exists with user: Annika, source: "Conference"
+    And I am on the contacts page
+    When I select "Campaign" from "source_is"
+    And I press "filter"
+    Then I should be on the contacts page
+    And I should see "Florian"
+    And I should not see "Steven"
+
   Scenario: Adding a contact when the account exists
     Given I am registered and logged in as annika
     And an account: "careermee" exists

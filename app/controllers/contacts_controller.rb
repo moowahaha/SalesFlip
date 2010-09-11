@@ -4,6 +4,10 @@ class ContactsController < InheritedResources::Base
   respond_to :html
   respond_to :xml
 
+  has_scope :unassigned, :type => :boolean
+  has_scope :assigned_to
+  has_scope :source_is
+
   def index
     index! do |format|
       format.html
@@ -32,7 +36,7 @@ class ContactsController < InheritedResources::Base
 
 protected
   def contacts
-    Contact.permitted_for(current_user).not_deleted.asc(:last_name).
+    apply_scopes(Contact).permitted_for(current_user).not_deleted.asc(:last_name).
       for_company(current_user.company)
   end
 
