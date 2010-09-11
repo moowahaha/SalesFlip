@@ -35,6 +35,7 @@ class Account
 
   named_scope :for_company, lambda { |company| { :where => { :user_id.in => company.users.map(&:id) } } }
   named_scope :unassigned, :where => { :assignee_id => nil }
+  named_scope :name_like, lambda { |name| { :where => { :name => /#{name}/i } } }
 
   validates_uniqueness_of :email, :allow_blank => true
 

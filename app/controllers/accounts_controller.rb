@@ -7,6 +7,7 @@ class AccountsController < InheritedResources::Base
   has_scope :unassigned, :type => :boolean
   has_scope :assigned_to
   has_scope :account_type_is
+  has_scope :name_like
 
   def index
     index! do |format|
