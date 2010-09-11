@@ -9,8 +9,8 @@
         %label= item.name
         %small= raw t('removed_ago', :time => l(item.deleted_at, :format => :short))
         %span.actions
-          - form_tag deleted_item_path(item), :method => :put do
+          = form_tag deleted_item_path(item), :method => :put do
             = submit_tag t('restore'), :id => "restore_#{item.name.to_s.to_dom_id}"
           %b.divider= '|'
-          - form_tag deleted_item_path(item), :method => :delete do
+          = form_tag deleted_item_path(item), :method => :delete do
             = submit_tag t('permanently_delete'), :id => "delete_#{dom_id(item)}", :class => 'delete-forever'
