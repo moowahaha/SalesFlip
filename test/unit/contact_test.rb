@@ -104,6 +104,19 @@ class ContactTest < ActiveSupport::TestCase
         assert_equal 1, Contact.for_company(@contact2.user.company).count
       end
     end
+
+    context 'name_like' do
+      setup do
+        @contact = Contact.make :first_name => 'Matt', :last_name => 'Beedle'
+        @contact2 = Contact.make :first_name => 'Benjamin', :last_name => 'Pochhammer'
+      end
+
+      should 'only return contacts whos first or last name match the supplied string' do
+        assert_equal [@contact], Contact.name_like('Mat').to_a
+        assert_equal [@contact2], Contact.name_like('Pochh').to_a
+        assert_equal [@contact], Contact.name_like('Matt Bee').to_a
+      end
+    end
   end
 
   context "Instance" do

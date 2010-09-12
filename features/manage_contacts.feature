@@ -26,6 +26,17 @@ Feature: Manage contacts
     And I should see "Florian"
     And I should not see "Steven"
 
+  Scenario: Filtering Contacts by Name
+    Given I am registered and logged in as annika
+    And a contact: "florian" exists with user: Annika
+    And a contact: "steven" exists with user: Annika
+    And I am on the contacts page
+    When I fill in "name_like" with "Florian B"
+    And I press "filter"
+    Then I should be on the contacts page
+    And I should see "Florian"
+    And I should not see "Steven"
+
   Scenario: Adding a contact when the account exists
     Given I am registered and logged in as annika
     And an account: "careermee" exists
