@@ -142,10 +142,14 @@ en:
   add_account: Add Account
   delete_account: Delete Account
   edit_account: Edit Account
+  add_sub_account: Add Sub-Account
+  sub_account: Add Sub-Account for %{account}
   permissions:
   - Public
   - Shared
   - Private
+  create_new_account: No, Create New Account
+  account_may_exist: This account may already exist
 
   #--------------------------------------------------------------
   # Search

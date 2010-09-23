@@ -3,6 +3,49 @@ Feature: Manage accounts
   A User
   wants to manage accounts
 
+  Scenario: Creating a sub account (The parent account name should be displayed)
+    Given I am registered and logged in as annika
+    And account: "careermee" exists with user: annika
+    And I am on the account's page
+    When I follow "add_sub_account"
+    Then I should see "CareerMee"
+
+  Scenario: Creating a sub account
+    Given I am registered and logged in as annika
+    And account: "careermee" exists with user: annika
+    And I am on the account's page
+    When I follow "add_sub_account"
+    And I fill in "account_name" with "1000JobBoersen"
+    And I press "account_submit"
+    Then I should be on the account's page
+    And I should see "CareerMee"
+    And I should see "1000JobBoersen"
+
+  Scenario: Creating a sub account, when there are similar accounts found, but none of them are a match
+    Given I am registered and logged in as annika
+    And CareerMee exists with user: Annika
+    And World Dating exists with user: Annika
+    And I am on CareerMee's page
+    When I follow "add_sub_account"
+    And I fill in "account_name" with "Universe Dating"
+    And I press "Create Account"
+    And I press "No, Create New Account"
+    Then I should be on CareerMee's page
+    And I should see "Universe Dating"
+
+  Scenario: Assigning a sub account, when it exists, but the name is slightly different
+    Given I am registered and logged in as annika
+    And CareerMee exists with user: annika
+    And World Dating exists with user: annika
+    And I am on CareerMee's page
+    When I follow "add_sub_account"
+    And I fill in "account_name" with "world dating"
+    And I press "account_submit"
+    And I press "World Dating"
+    Then I should be on CareerMee's page
+    And I should see "World Dating"
+    And CareerMee should have sub account: World Dating
+
   Scenario: Creating an account
     Given I am registered and logged in as annika
     And I am on the accounts page
@@ -12,6 +55,26 @@ Feature: Manage accounts
     Then I should be on the account page
     And I should see "CareerMee"
     And a new "Created" activity should have been created for "Account" with "name" "CareerMee"
+
+  Scenario: Creating an account, when it already exists with a similar name
+    Given I am registered and logged in as annika
+    And CareerMee exists with user: Annika
+    And I am on the accounts page
+    When I follow "new"
+    And I fill in "account_name" with "careermee"
+    And I press "account_submit"
+    And I follow "CareerMee"
+    Then I should be on CareerMee's page
+
+  Scenario: Creating an account, when there are some accounts with similar names
+    Given I am registered and logged in as annika
+    And CareerMee exists with user: Annika
+    And I am on the accounts page
+    When I follow "new"
+    And I fill in "account_name" with "CareerWee"
+    And I press "account_submit"
+    And I press "No, Create New Account"
+    Then 1 accounts should exist with name: "CareerWee"
 
   Scenario: Editing an account
     Given I am registered and logged in as annika

@@ -19,7 +19,7 @@
       %small.acted= raw t('wrote_ago', :time => l(comment.created_at, :format => :short))
     .quote= raw t('icons.comment')
     .message
-      = comment.text
+      = raw comment.text
       .attachments
         - comment.attachments.each do |attachment|
           = link_to attachment.attachment_filename, attachment

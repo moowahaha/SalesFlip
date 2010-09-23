@@ -1,0 +1,24 @@
+%h2.title= t(:account_may_exist)
+
+- if @account.parent_id
+  - @similar_accounts.each do |account|
+    = simple_form_for account do |form|
+      = hidden_field_tag :return_to, account_path(@account.parent_id)
+      = form.hidden_field :parent_id, :value => @account.parent_id
+      = form.button :submit, account.name
+- else
+  %ul
+    - @similar_accounts.each do |account|
+      %li= link_to account.name, account
+
+= simple_form_for @account do |form|
+  = hidden_field_tag :return_to, account_path(@account.parent_id) if @account.parent_id
+  = hidden_field_tag :similarity_off, true
+  - @account.fields.map(&:first).each do |field|
+    - next if @account.send(field).blank?
+    - if @account.send(field).is_a?(Array)
+      - @account.send(field).each do |value|
+        = form.hidden_field "#{field}[]", value
+    - else
+      = form.hidden_field field, :value => @account.send(field)
+  = form.button :submit, t(:create_new_account)

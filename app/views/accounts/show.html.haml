@@ -3,6 +3,7 @@
   %ul.actions
     %li= link_to t(:add_contact), new_contact_path(:return_to => request.fullpath, :account_id => @account.id), :id => 'add_contact'
     %li= link_to t(:edit_account), [:edit, @account], :id => "edit_#{dom_id(@account)}"
+    %li= link_to t(:add_sub_account), new_account_path(:account_id => @account.id), :id => 'add_sub_account'
     %li
       = simple_form_for @account do |form|
         = hidden_field_tag :return_to, request.fullpath
@@ -34,7 +35,7 @@
       = show_attribute(@account, 'fax')
       = show_attribute(@account, 'billing_address')
       = show_attribute(@account, 'shipping_address')
-      = show_attribute(@account, 'website', link_to(t('visit_website'),@account.website))
+      = show_attribute(@account, 'website', link_to(t(:visit_website), @account.website)) if @account.website
 
   #recent_activity.box.ice
     %h3= t('recent_activity_for', :name => @account.full_name )
@@ -43,6 +44,13 @@
   .box.gold
     %h3= t(:contacts)
     - if @account.contacts.any?
-      %ul
+      %dl
         - @account.contacts.each do |contact|
           %li= link_to contact.full_name, contact
+
+  - if @account.children.any?
+    .box.gold
+      %h2= t(:sub_accounts)
+      %ul
+        - @account.children.each do |child|
+          %li= link_to child.name, child

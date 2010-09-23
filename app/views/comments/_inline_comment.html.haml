@@ -6,7 +6,7 @@
     - else
       = link_to comment.user.full_name, comment.user
 
-    = comment.text.gsub(/\n/, '<br />')
+    = raw comment.text.gsub(/\n/, '<br />')
     - comment.attachments.each do |attachment|
       = link_to attachment.attachment_filename, attachment
     .footer

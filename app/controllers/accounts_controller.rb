@@ -1,5 +1,7 @@
 class AccountsController < InheritedResources::Base
   before_filter :merge_updater_id, :only => [ :update ]
+  before_filter :parent_account, :only => [ :new ]
+  before_filter :similarity_check, :only => [ :create ]
 
   respond_to :html
   respond_to :xml
@@ -21,6 +23,12 @@ class AccountsController < InheritedResources::Base
     create! do |success, failure|
       success.html { return_to_or_default account_path(@account) }
       success.xml { head :ok }
+    end
+  end
+
+  def update
+    update! do |success, failure|
+      success.html { return_to_or_default account_path(@account) }
     end
   end
 
@@ -62,5 +70,18 @@ protected
   def build_resource
     @account ||= begin_of_association_chain.accounts.build({ :assignee_id => current_user.id }.
                                                            merge(params[:account] || {}))
+  end
+
+  def parent_account
+    @parent_account ||= Account.find(params[:account_id]) if params[:account_id]
+  end
+
+  def similarity_check
+    return if params[:similarity_off]
+    build_resource
+    @similar_accounts ||= Account.for_company(current_user.company).similar_accounts(@account.name)
+    if @similar_accounts.any?
+      render :action => :did_you_mean
+    end
   end
 end

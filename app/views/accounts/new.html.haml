@@ -1,4 +1,12 @@
-%h2.title= t('add_account')
+- if @parent_account
+  %h2= t('sub_account', :account => @parent_account.name)
+- else
+  %h2.title= t('add_account')
 = simple_form_for @account do |form|
   = render :partial => 'form', :locals => { :form => form }
-  = hidden_field_tag :return_to, params[:return_to]
+  - if @parent_account
+    = form.hidden_field :parent_id, :value => @parent_account.id
+  - if params[:return_to]
+    = hidden_field_tag :return_to, params[:return_to]
+  - elsif @parent_account
+    = hidden_field_tag :return_to, account_path(@parent_account)

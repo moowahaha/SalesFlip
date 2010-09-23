@@ -28,6 +28,8 @@ class Account
   has_many_related :contacts, :dependent => :nullify
   has_many_related :tasks, :as => :asset
   has_many_related :comments, :as => :commentable
+  belongs_to_related :parent, :class_name => 'Account'
+  has_many_related :children, :class_name => 'Account', :foreign_key => 'parent_id'
 
   validates_presence_of :user, :name
 
@@ -39,6 +41,13 @@ class Account
 
   searchable do
     text :name, :email, :phone, :website, :fax
+  end
+
+  def self.similar_accounts( name )
+    ids = Account.only(:id, :name).map do |account|
+      [account.id, name.levenshtein_similar(account.name)]
+    end.select { |similarity| similarity.last > 0.5 }.map(&:first)
+    Account.where(:_id.in => ids)
   end
 
   def self.exportable_fields
@@ -59,8 +68,8 @@ class Account
   end
 
   def self.find_or_create_for( object, name_or_id, options = {} )
-    account = Account.find(BSON::ObjectID.from_string(name_or_id.to_s))
-  rescue BSON::InvalidObjectID => e
+    account = Account.find(BSON::ObjectId.from_string(name_or_id.to_s))
+  rescue BSON::InvalidObjectId => e
     account = Account.first(:conditions => { :name => name_or_id })
     account = create_for(object, name_or_id, options) unless account
     account

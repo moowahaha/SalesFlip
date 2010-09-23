@@ -11,6 +11,42 @@ class AccountTest < ActiveSupport::TestCase
     should_belong_to :user, :assignee
     should_have_many :contacts, :tasks, :comments
 
+    should 'be able to return accounts with similar names to the one provided' do
+      account1 = Account.make(:careermee)
+      account2 = Account.make(:name => 'CareerWee')
+      account3 = Account.make(:name => 'careermee')
+      account4 = Account.make(:world_dating)
+      assert_equal 3, Account.similar_accounts('CareerMee').count
+      assert !Account.similar_accounts('CareerMee').include?(account4)
+      assert_equal 1, Account.similar_accounts('World dating').count
+      assert Account.similar_accounts('Universe Dating').include?(account4)
+    end
+
+    should 'be able to have a parent' do
+      @parent = Account.make(:careermee)
+      @child = Account.make(:name => 'CareerWee')
+      @child.parent = @parent
+      @child.save!
+      @child = Account.find(@child.id)
+      assert_equal @parent, @child.parent
+    end
+
+    should 'be able to have a child' do
+      @child = Account.make(:careermee)
+      @parent = Account.make(:name => 'CareerWee')
+      @parent.children << @child
+      @parent = Account.find(@parent.id)
+      assert @parent.children.include?(@child)
+    end
+
+    should 'be able to have a child (2)' do
+      @child = Account.make
+      @parent = Account.make
+      @child.parent = @parent
+      @child.save!
+      assert_equal @child, @parent.children.first
+    end
+
     should 'know which fields can be exported' do
       Account.fields.map(&:first).each do |field|
         unless field == 'access' || field == 'permission' ||

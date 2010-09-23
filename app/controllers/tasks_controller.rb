@@ -15,7 +15,7 @@ class TasksController < InheritedResources::Base
   has_scope :completed_this_month,  :type => :boolean
   has_scope :completed_last_month,  :type => :boolean
   has_scope :for do |controller, scope, value|
-    scope.for(User.find(BSON::ObjectID.from_string(value)))
+    scope.for(User.find(BSON::ObjectId.from_string(value)))
   end
   has_scope :assigned_by do |controller, scope, value|
     scope.assigned_by(User.find(value))
