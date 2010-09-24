@@ -17,8 +17,8 @@ class ApplicationController < ActionController::Base
 protected
   def bson_ids
     params.each do |key, value|
-      if key.to_s.match(/_id$/) || key.to_s.match(/^id$/) and BSON::ObjectID.legal?(value.to_s)
-        params[key] = BSON::ObjectID.from_string(value.to_s)
+      if key.to_s.match(/_id$/) || key.to_s.match(/^id$/) and BSON::ObjectId.legal?(value.to_s)
+        params[key] = BSON::ObjectId.from_string(value.to_s)
       end
     end
   end
