@@ -125,9 +125,9 @@ end
 When /^I POST attributes for lead: "([^\"]*)" to (.+)$/ do |blueprint_name, page_name|
   annika = model!('annika')
   attributes = Lead.plan(blueprint_name.to_sym).delete_if {|k,v| k.to_s == 'user_id' }.to_xml(:root => 'lead')
-  send(:post, "#{path_to(page_name)}.xml", attributes,
-       { 'Authorization' => 'Basic ' + ["#{annika.email}:password"].pack('m').delete("\r\n"),
-         'Content-Type' => 'application/xml' })
+  post "#{path_to(page_name)}.xml", attributes,
+    { 'Authorization' => 'Basic ' + ["#{annika.email}:password"].pack('m').delete("\r\n"),
+      'Content-Type' => 'application/xml' }
 end
 
 Then /^#{capture_model} should be assigned to #{capture_model}$/ do |lead, user|
