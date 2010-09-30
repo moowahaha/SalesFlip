@@ -48,6 +48,7 @@ class Lead
   belongs_to_related  :contact
   has_many_related    :comments, :as => :commentable, :dependent => :delete_all
   has_many_related    :tasks, :as => :asset, :dependent => :delete_all
+  has_many_related    :emails, :as => :commentable, :dependent => :delete_all
 
   before_validation :set_initial_state
   before_create     :set_identifier, :set_recently_created

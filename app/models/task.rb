@@ -5,6 +5,7 @@ class Task
   include HasConstant::Orm::Mongoid
   include Permission
   include Mongoid::Rails::MultiParameterAttributes
+  include Activities
 
   field :name
   field :due_at,          :type => Time
@@ -27,7 +28,7 @@ class Task
   before_create :set_recently_created
   before_update :log_reassignment
   before_save   :log_recently_changed
-  after_create  :assign_unassigned_lead, :log_creation, :assign_unassigned_lead
+  after_create  :assign_unassigned_lead, :assign_unassigned_lead
   after_update  :log_update
   after_save    :notify_assignee
 
@@ -195,10 +196,6 @@ protected
 
   def notify_assignee
     TaskMailer.assignment_notification(self).deliver if reassigned?
-  end
-
-  def log_creation
-    Activity.log(self.user, self, 'Created')
   end
 
   def log_update

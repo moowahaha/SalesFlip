@@ -47,6 +47,10 @@ class Account
     end
   end
 
+  def leads
+    @leads ||= contacts.map(&:leads).flatten
+  end
+
   alias :full_name :name
 
   def website=( website )
@@ -55,8 +59,8 @@ class Account
   end
 
   def self.find_or_create_for( object, name_or_id, options = {} )
-    account = Account.find(BSON::ObjectID.from_string(name_or_id.to_s))
-  rescue BSON::InvalidObjectID => e
+    account = Account.find(BSON::ObjectId.from_string(name_or_id.to_s))
+  rescue BSON::InvalidObjectId => e
     account = Account.first(:conditions => { :name => name_or_id })
     account = create_for(object, name_or_id, options) unless account
     account

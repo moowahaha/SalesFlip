@@ -37,10 +37,25 @@ module Activities
     end
 
     def related_activities
-      conditions = ["(this.subject_type == 'Lead' && this.subject_id == '#{self.id}')"]
-      conditions << "((this.subject_type == 'Comment' || this.subject_type == 'Email') && '#{comments.map(&:id)}'.indexOf(this.subject_id) != -1)"
-      conditions << "(this.subject_type == 'Task' && '#{tasks.map(&:id)}'.indexOf(this.subject_id) != -1)"
-      Activity.where(conditions.join(' || '))
+      @activities ||=
+        Activity.any_of({ :subject_type.in => %w(Lead Account Contact), :subject_id => self.id },
+                        { :subject_type.in => %w(Comment Email), :subject_id.in => comments.map(&:id) },
+                        { :subject_type => 'Task', :subject_id.in => tasks.map(&:id) }).desc(:created_at)
+      if self.respond_to?(:contacts)
+        @activities = @activities.any_of(
+          { :subject_type => 'Contact', :subject_id.in => self.contacts.map(&:id) },
+          { :subject_type => 'Lead',
+            :subject_id.in => self.leads.flatten.map(&:id) },
+          { :subject_type => 'Task',
+            :subject_id.in => self.contacts.map(&:tasks).flatten.map(&:id) +
+            self.contacts.map(&:leads).flatten.map(&:tasks).flatten.map(&:id) },
+          { :subject_type.in => %w(Comment Email),
+            :subject_id.in => self.contacts.map(&:comments).flatten.map(&:id) +
+            self.contacts.map(&:emails).flatten.map(&:id) +
+            self.leads.map(&:comments).flatten.map(&:id) +
+            self.leads.map(&:emails).flatten.map(&:id) })
+      end
+      @activities
     end
   end
 end

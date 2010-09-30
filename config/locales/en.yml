@@ -89,12 +89,15 @@ en:
   create: Create
   deliminator: Deliminator
   fields: Fields
+  recent_activity: Recent Activity
   
   #--------------------------------------------------------------
   # Form Labels
   #--------------------------------------------------------------
   simple_form:
     labels:
+      task:
+        name: Subject
       identifier: Identifier
       address: Address
       account_name: Account Name
@@ -345,6 +348,7 @@ en:
   # Tasks
   #--------------------------------------------------------------
   tasks_for: "Tasks for %{name}"
+  no_outstanding_tasks: You have no outstanding tasks
   
   #--------------------------------------------------------------
   # Errors

@@ -10,7 +10,7 @@ module Trackable
   module InstanceMethods
     def trackers
       unless tracker_ids.nil?
-        User.where(:_id.in => tracker_ids.map { |id| BSON::ObjectID.from_string(id.to_s) })
+        User.where(:_id.in => tracker_ids.map { |id| BSON::ObjectId.from_string(id.to_s) })
       end
     end
 
@@ -19,7 +19,7 @@ module Trackable
     end
 
     def tracker_ids=( ids )
-      write_attribute :tracker_ids, ids.map { |id| BSON::ObjectID.from_string(id.to_s) } if ids
+      write_attribute :tracker_ids, ids.map { |id| BSON::ObjectId.from_string(id.to_s) } if ids
     end
 
     def remove_tracker_ids=( ids )

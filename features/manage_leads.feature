@@ -3,6 +3,11 @@ Feature: Manage leads
   A user
   wants manage leads
 
+  Scenario: Creating a lead via XML
+    Given I am registered and logged in as annika
+    When I POST attributes for lead: "erich" to the leads page
+    Then 1 leads should exist with assignee_id: nil
+
   Scenario: Accepting a lead
     Given I am registered and logged in as annika
     And a lead: "erich" exists with user: annika
@@ -58,6 +63,7 @@ Feature: Manage leads
     When I press "lead_submit"
     Then an activity should have been created with for lead: "erich" and user: "annika"
 
+  # TODO: Passes in real world, but for some reason posting from cucumber is not working.
   #Scenario: Creating a lead via XML
   #  Given I am registered and logged in as annika
   #  When I POST attributes for lead: "erich" to the leads page

@@ -1,6 +1,6 @@
-.item{:class => activity.action.downcase}
+.item{ :class => activity.action.downcase }
   %span.icon= activity_icon(activity.action.downcase)
   = activity.action
   by
   = link_to activity.user.username.present? ? activity.user.username : activity.user.email, activity.user
-  %small.timestamp= l(activity.updated_at, :format => :short)
+  %small.timestamp= raw l(activity.updated_at, :format => :short)
