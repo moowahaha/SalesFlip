@@ -34,6 +34,8 @@ class Task
 
   named_scope :incomplete, :where => { :completed_at => nil }
 
+  attr_accessor :google_username, :google_password
+
   def self.for( user )
     any_of({ :user_id => user.id, :assignee_id => user.id }, { :assignee_id => user.id },
            { :user_id => user.id, :assignee_id => nil })

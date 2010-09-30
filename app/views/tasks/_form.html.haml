@@ -14,4 +14,8 @@
       #realdate= form.input :due_at, :as => :datetime
       = link_to t('or_preset_date'), params.merge(:preset_date => true), :id => 'preset_date'
   .33.z= form.input :assignee_id, :collection => User.all.asc(:email).map {|u| [u.email, u.id] }, :required => true
+  .100
+    %strong Have a Google calendar?
+  .50=   form.input :google_username
+  .50=   form.input :google_password
   .clear

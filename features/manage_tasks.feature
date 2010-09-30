@@ -156,13 +156,26 @@ Feature: Manage tasks
     And I should see "erich"
     And I should not see "third task"
 
-  # TODO get this working with mongoDB, currently tries to use ActiveRecord for some weird reason
-  #@javascript
-  #Scenario: Completing a task
-  #  Given I am registered and logged in as annika
-  #  And a task: "call_erich" exists with user: annika, due_at: "overdue"
-  #  When I am on the tasks page
-  #  And I check task: "call_erich"
-  #  Then I should not see "Edit"
-  #  And I should not see "delete_task"
-  #  And a task exists with user: annika, name: "call_erich", completed_at: !nil
+  @wip
+  Scenario: Using a Google calendar
+    Given I am registered and logged in as annika
+    And I am on the tasks page
+    When I follow "new"
+    And I follow "preset_date"
+    And I fill in "Subject" with "a test task"
+    And I select "Call" from "Category"
+    And I enter my Google username
+    And I enter my Google password
+    And I press "Create Task"
+    Then there should be a Google calendar entry titled "a test task"    
+
+# TODO get this working with mongoDB, currently tries to use ActiveRecord for some weird reason
+#@javascript
+#Scenario: Completing a task
+#  Given I am registered and logged in as annika
+#  And a task: "call_erich" exists with user: annika, due_at: "overdue"
+#  When I am on the tasks page
+#  And I check task: "call_erich"
+#  Then I should not see "Edit"
+#  And I should not see "delete_task"
+#  And a task exists with user: annika, name: "call_erich", completed_at: !nil
