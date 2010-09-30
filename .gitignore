@@ -18,3 +18,4 @@ log/*
 .autotest
 .bundle
 solr/data/*
+.idea/
