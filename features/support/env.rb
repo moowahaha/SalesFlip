@@ -67,6 +67,6 @@ Before do
   end
   ActionMailer::Base.deliveries.clear
   Sham.reset
-  FakeWeb.allow_net_connect = false
+  FakeWeb.allow_net_connect = true
   FakeWeb.register_uri(:post, 'http://localhost:8981/solr/update?wt=ruby', :body => '')
 end

@@ -1,4 +1,4 @@
-require 'test_helper.rb'
+require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 
 class TaskTest < ActiveSupport::TestCase
   context "Class" do
@@ -8,11 +8,11 @@ class TaskTest < ActiveSupport::TestCase
     should 'allow multiparameter attributes for due_at' do
       time = Time.zone.now
       obj = Task.new "due_at(1i)" => time.year.to_s,
-        "due_at(2i)" => time.month.to_s,
-        "due_at(3i)" => time.day.to_s,
-        "due_at(4i)" => time.hour.to_s,
-        "due_at(5i)" => time.min.to_s,
-        "due_at(6i)" => time.sec.to_s
+                     "due_at(2i)" => time.month.to_s,
+                     "due_at(3i)" => time.day.to_s,
+                     "due_at(4i)" => time.hour.to_s,
+                     "due_at(5i)" => time.min.to_s,
+                     "due_at(6i)" => time.sec.to_s
       obj.valid?
       assert_equal time.to_i, obj.due_at.to_i
     end
@@ -80,7 +80,7 @@ class TaskTest < ActiveSupport::TestCase
         Task.daily_email
         assert_sent_email do |email|
           email.to.include?(@call_markus.user.email) && email.body.match(/#{@call_markus.name}/) &&
-            email.body.match(/#{@call_erich.name}/)
+                  email.body.match(/#{@call_erich.name}/)
         end
       end
 
@@ -89,7 +89,7 @@ class TaskTest < ActiveSupport::TestCase
         Task.daily_email
         assert_sent_email do |email|
           email.to.include?(@call_markus.user.email) && email.body.match(/#{@call_markus.name}/) &&
-            !email.body.match(/#{@call_erich.name}/)
+                  !email.body.match(/#{@call_erich.name}/)
         end
         @call_erich.update_attributes :due_at => 'overdue'
         Task.daily_email
@@ -170,7 +170,7 @@ class TaskTest < ActiveSupport::TestCase
         assert_equal [@task2], Task.due_later.to_a
       end
     end
-    
+
     context 'completed_today' do
       setup do
         @task2 = Task.make
@@ -300,7 +300,7 @@ class TaskTest < ActiveSupport::TestCase
 
       should 'assign the lead to the user who created the task' do
         @lead.tasks.create! :user => @user, :name => 'test', :due_at => Time.zone.now,
-          :category => Task.categories.first
+                            :category => Task.categories.first
         assert_equal @lead.reload.assignee, @user
       end
     end
@@ -315,12 +315,12 @@ class TaskTest < ActiveSupport::TestCase
       end
 
       should 'log activity when created' do
-        assert @task.activities.any? {|a| a.action == 'Created' }
+        assert @task.activities.any? { |a| a.action == 'Created' }
       end
 
       should 'log activity when update' do
         @task.update_attributes :name => 'test update'
-        assert @task.activities.any? {|a| a.action == 'Updated' }
+        assert @task.activities.any? { |a| a.action == 'Updated' }
       end
 
       should 'not log update activity when created' do
@@ -329,18 +329,18 @@ class TaskTest < ActiveSupport::TestCase
 
       should 'log activity when re-assigned' do
         @task.update_attributes :assignee_id => User.make(:benny).id
-        assert @task.activities.any? {|a| a.action == 'Re-assigned' }
+        assert @task.activities.any? { |a| a.action == 'Re-assigned' }
       end
 
       should 'not log update activity when re-assigned' do
         @task.update_attributes :assignee_id => User.make(:benny).id
-        assert !@task.activities.any? {|a| a.action == 'Updated' }
+        assert !@task.activities.any? { |a| a.action == 'Updated' }
       end
 
       should 'log activity when completed' do
         @task.completed_by_id = @task.user.id
         @task.save!
-        assert @task.activities.any? {|a| a.action == 'Completed' }
+        assert @task.activities.any? { |a| a.action == 'Completed' }
       end
     end
 
@@ -352,7 +352,7 @@ class TaskTest < ActiveSupport::TestCase
       @task.update_attributes :assignee_id => @benny.id
       assert_sent_email do |email|
         email.to.include?(@benny.email) && email.body.match(/\/tasks\//) &&
-          email.subject.match(/You have been assigned a new task/)
+                email.subject.match(/You have been assigned a new task/)
       end
     end
 
@@ -451,7 +451,7 @@ class TaskTest < ActiveSupport::TestCase
 
       should 'set due_at to midnight tomorrow when "due_tomorrow" is specified' do
         @task.due_at = 'due_tomorrow'
-        assert Time.zone.now.tomorrow.end_of_day.to_i  == @task.due_at.to_i
+        assert Time.zone.now.tomorrow.end_of_day.to_i == @task.due_at.to_i
       end
 
       should 'set due_at to end of week if "due_this_week" is specified' do
@@ -481,5 +481,67 @@ class TaskTest < ActiveSupport::TestCase
         assert_equal time.to_i, @task.due_at.to_i
       end
     end
+
+    context "google calendar" do
+      setup do
+        @fake_service = mock('google service')
+        GCal4Ruby::Service.stubs(:new).returns(@fake_service)
+        @fake_service.stubs(:authenticate)
+
+        @fake_calendars = mock('list of calendars')
+        @fake_service.stubs(:calendars).returns(@fake_calendars)
+
+        @fake_calendar = mock('calendar')
+        @fake_calendars.stubs(:first).returns(@fake_calendar)
+
+        @fake_event = mock('event')
+        GCal4Ruby::Event.stubs(:new).returns(@fake_event)
+        @fake_event.stubs(:save)
+
+        @task.google_username = 'aaa'
+        @task.google_password = 'bbb'
+      end
+
+      should 'login to google calendar if a google username and password is supplied' do
+        @fake_service.expects(:authenticate).with('aaa', 'bbb')
+        @task.save
+      end
+
+      should 'not login to google calendar twice for an instance' do
+        @task.save
+
+        GCal4Ruby::Service.expects(:new).never
+
+        @task.save
+      end
+
+      should 'pick the first calendar for the service' do
+        @fake_calendars.expects(:first)
+        @task.save
+      end
+
+      should 'create a new event' do
+        @task.due_at = Time.zone.now + 1.hour
+        @task.name = 'harold'
+
+        fake_event = mock('event')
+
+        GCal4Ruby::Event.expects(:new).with(
+                @fake_service,
+                {
+                        :calendar => @fake_calendar,
+                        :title => 'harold',
+                        :start_time => @task.due_at,
+                        :end_time => @task.due_at + 30.minutes
+
+                }
+        ).returns(fake_event)
+        
+        fake_event.expects(:save)
+
+        @task.save
+      end
+    end
+
   end
 end

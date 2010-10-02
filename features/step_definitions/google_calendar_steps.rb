@@ -7,13 +7,11 @@ When /^I enter my Google password$/ do
 end
 
 Then /^there should be a Google calendar entry titled "([^"]*)"$/ do |entry_title|
-  FakeWeb.allow_net_connect = true
   service = GCal4Ruby::Service.new
   service.authenticate(google_username, google_password)
-  entry = GCal4Ruby::Event.find(service, entry_title)
-  entry.should_not be_empty
-  entry.delete
-  FakeWeb.allow_net_connect = false
+  entries = GCal4Ruby::Event.find(service, entry_title)
+  entries.should_not be_empty
+  entries.first.delete
 end
 
 def google_username

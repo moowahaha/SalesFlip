@@ -30,11 +30,32 @@ class Task
   before_save   :log_recently_changed
   after_create  :assign_unassigned_lead, :assign_unassigned_lead
   after_update  :log_update
-  after_save    :notify_assignee
+  after_save    :notify_assignee, :update_google_calendar
 
   named_scope :incomplete, :where => { :completed_at => nil }
 
   attr_accessor :google_username, :google_password
+
+  def update_google_calendar
+    return if (google_username.blank? || google_password.blank?)
+
+    unless @google_service
+      @google_service = GCal4Ruby::Service.new
+      @google_service.authenticate(google_username, google_password)
+    end
+
+    calendar = @google_service.calendars.first
+
+    GCal4Ruby::Event.new(
+            @google_service,
+            {
+                    :calendar => calendar,
+                    :title => name,
+                    :start_time => due_at,
+                    :end_time => due_at + 30.minutes
+            }
+    ).save
+  end
 
   def self.for( user )
     any_of({ :user_id => user.id, :assignee_id => user.id }, { :assignee_id => user.id },

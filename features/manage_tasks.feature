@@ -156,7 +156,6 @@ Feature: Manage tasks
     And I should see "erich"
     And I should not see "third task"
 
-  @wip
   Scenario: Using a Google calendar
     Given I am registered and logged in as annika
     And I am on the tasks page
@@ -164,6 +163,7 @@ Feature: Manage tasks
     And I follow "preset_date"
     And I fill in "Subject" with "a test task"
     And I select "Call" from "Category"
+    And I select "Tomorrow" from "task_due_at"    
     And I enter my Google username
     And I enter my Google password
     And I press "Create Task"
