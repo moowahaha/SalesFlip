@@ -484,64 +484,37 @@ class TaskTest < ActiveSupport::TestCase
 
     context "google calendar" do
       setup do
-        @fake_service = mock('google service')
-        GCal4Ruby::Service.stubs(:new).returns(@fake_service)
-        @fake_service.stubs(:authenticate)
-
-        @fake_calendars = mock('list of calendars')
-        @fake_service.stubs(:calendars).returns(@fake_calendars)
-
-        @fake_calendar = mock('calendar')
-        @fake_calendars.stubs(:first).returns(@fake_calendar)
-
-        @fake_event = mock('event')
-        GCal4Ruby::Event.stubs(:new).returns(@fake_event)
-        @fake_event.stubs(:save)
-
         @task.google_username = 'aaa'
         @task.google_password = 'bbb'
       end
 
-      should 'login to google calendar if a google username and password is supplied' do
-        @fake_service.expects(:authenticate).with('aaa', 'bbb')
-        @task.save
-      end
-
-      should 'not login to google calendar twice for an instance' do
-        @task.save
-
-        GCal4Ruby::Service.expects(:new).never
+      should "create a google calendar entry for new tasks" do
+        fake_calendar = mock('google calendar')
+        GoogleCalendar.expects(:new).with(@task).returns(fake_calendar)
+        fake_calendar.expects(:record_task)
 
         @task.save
       end
 
-      should 'pick the first calendar for the service' do
-        @fake_calendars.expects(:first)
+      should "not instantiate a google calendar twice for one task instance" do
+        fake_calendar = mock('calendar')
+        GoogleCalendar.stubs(:new).returns(fake_calendar)
+        fake_calendar.stubs(:record_task)
+
+        @task.save
+
+        GoogleCalendar.expects(:new).never
+
         @task.save
       end
 
-      should 'create a new event' do
-        @task.due_at = Time.zone.now + 1.hour
-        @task.name = 'harold'
+      should "not create a google calendar entry when we don't supply a username or password" do
+        @task.google_username = ''
+        @task.google_password = ''
 
-        fake_event = mock('event')
-
-        GCal4Ruby::Event.expects(:new).with(
-                @fake_service,
-                {
-                        :calendar => @fake_calendar,
-                        :title => 'harold',
-                        :start_time => @task.due_at,
-                        :end_time => @task.due_at + 30.minutes
-
-                }
-        ).returns(fake_event)
-        
-        fake_event.expects(:save)
-
+        GoogleCalendar.expects(:new).never
         @task.save
       end
     end
-
   end
 end

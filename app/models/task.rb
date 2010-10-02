@@ -38,23 +38,8 @@ class Task
 
   def update_google_calendar
     return if (google_username.blank? || google_password.blank?)
-
-    unless @google_service
-      @google_service = GCal4Ruby::Service.new
-      @google_service.authenticate(google_username, google_password)
-    end
-
-    calendar = @google_service.calendars.first
-
-    GCal4Ruby::Event.new(
-            @google_service,
-            {
-                    :calendar => calendar,
-                    :title => name,
-                    :start_time => due_at,
-                    :end_time => due_at + 30.minutes
-            }
-    ).save
+    @google_calendar ||= GoogleCalendar.new(self)
+    @google_calendar.record_task
   end
 
   def self.for( user )
