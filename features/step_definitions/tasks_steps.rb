@@ -6,7 +6,7 @@ When /^I follow the edit link for the task$/ do
   click "edit_task_#{Task.last.id}"
 end
 
-When /^I delete the (\d+)(?:st|nd|rd|th) tasks$/ do |pos|
+When /^I delete the (\d+)(?:st|nd|rd|th) task$/ do |pos|
   visit tasks_url
   within("table tr:nth-child(#{pos.to_i+1})") do
     click_link "Destroy"
@@ -16,6 +16,10 @@ end
 When /^I check #{capture_model}$/ do |task|
   task = model!(task)
   check "task_#{task.id}"
+end
+
+When /^I delete my task$/ do
+  find(:css, '.delete').click
 end
 
 Then /^I should see the following tasks:$/ do |expected_tasks_table|

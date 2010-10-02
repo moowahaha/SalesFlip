@@ -57,5 +57,14 @@ class GoogleCalendarTest < ActiveSupport::TestCase
 
       @google_calendar.record_task
     end
+
+    should 'delete an event' do
+      fake_event = mock('event')
+      GCal4Ruby::Event.expects(:find).with(@fake_service, 'monkey business').returns([fake_event])
+      fake_event.expects('delete')
+      @task.name = 'monkey business'
+
+      @google_calendar.remove_task
+    end
   end
 end

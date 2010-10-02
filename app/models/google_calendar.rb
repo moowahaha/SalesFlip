@@ -17,6 +17,10 @@ class GoogleCalendar
     ).save
   end
 
+  def remove_task
+    GCal4Ruby::Event.find(@google_service, @task.name).first.delete
+  end
+
   private
 
   def select_calendar

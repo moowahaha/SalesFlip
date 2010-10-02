@@ -515,6 +515,18 @@ class TaskTest < ActiveSupport::TestCase
         GoogleCalendar.expects(:new).never
         @task.save
       end
+
+      should "remove a google calendar entry when we destroy a task" do
+        fake_calendar = mock('calendar')        
+        GoogleCalendar.stubs(:new).returns(fake_calendar)
+        fake_calendar.stubs(:record_task)
+
+        @task.save
+
+        fake_calendar.expects(:remove_task)
+
+        @task.destroy
+      end
     end
   end
 end

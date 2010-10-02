@@ -8,6 +8,9 @@ class Task
   include Activities
 
   field :name
+  # yuck! replace with some sort of security token
+  field :google_username
+  field :google_password
   field :due_at,          :type => Time
   field :category,        :type => Integer
   field :priority,        :type => Integer
@@ -25,22 +28,15 @@ class Task
 
   validates_presence_of :user, :name, :due_at, :category
 
-  before_create :set_recently_created
-  before_update :log_reassignment
-  before_save   :log_recently_changed
-  after_create  :assign_unassigned_lead, :assign_unassigned_lead
-  after_update  :log_update
-  after_save    :notify_assignee, :update_google_calendar
+  before_create  :set_recently_created
+  before_update  :log_reassignment
+  before_save    :log_recently_changed
+  before_destroy :remove_google_calendar_entry
+  after_create   :assign_unassigned_lead, :assign_unassigned_lead
+  after_update   :log_update
+  after_save     :notify_assignee, :update_google_calendar_entry
 
   named_scope :incomplete, :where => { :completed_at => nil }
-
-  attr_accessor :google_username, :google_password
-
-  def update_google_calendar
-    return if (google_username.blank? || google_password.blank?)
-    @google_calendar ||= GoogleCalendar.new(self)
-    @google_calendar.record_task
-  end
 
   def self.for( user )
     any_of({ :user_id => user.id, :assignee_id => user.id }, { :assignee_id => user.id },
@@ -112,6 +108,20 @@ class Task
       end
     end
     tasks
+  end
+  
+  def update_google_calendar_entry
+    return unless use_google_calendar?
+    google_calendar.record_task
+  end
+
+  def remove_google_calendar_entry
+    return unless use_google_calendar?
+    google_calendar.remove_task
+  end
+
+  def google_calendar
+    @google_calendar ||= GoogleCalendar.new(self)
   end
 
   def completed_by_id=( user_id )
@@ -185,6 +195,12 @@ class Task
   def reassigned?
     @reassigned = !assignee.blank? && (@recently_changed.include?('assignee_id') ||
                                          @recently_created && assignee_id.to_s != user_id.to_s)
+  end
+
+private
+
+  def use_google_calendar?
+    !google_username.blank? && !google_password.blank?
   end
 
 protected

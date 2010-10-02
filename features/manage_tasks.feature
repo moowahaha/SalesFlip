@@ -156,18 +156,34 @@ Feature: Manage tasks
     And I should see "erich"
     And I should not see "third task"
 
-  Scenario: Using a Google calendar
+  Scenario: Creating a Google calendar entry
     Given I am registered and logged in as annika
     And I am on the tasks page
     When I follow "new"
     And I follow "preset_date"
     And I fill in "Subject" with "a test task"
     And I select "Call" from "Category"
-    And I select "Tomorrow" from "task_due_at"    
+    And I select "Tomorrow" from "task_due_at"
     And I enter my Google username
     And I enter my Google password
     And I press "Create Task"
-    Then there should be a Google calendar entry titled "a test task"    
+    Then there should be a Google calendar entry titled "a test task"
+
+  Scenario: Removing a Google calendar entry
+    Given I am registered and logged in as annika
+    And I am on the tasks page
+    When I follow "new"
+    And I follow "preset_date"
+    And I fill in "Subject" with "a test task"
+    And I select "Call" from "Category"
+    And I select "Tomorrow" from "task_due_at"
+    And I enter my Google username
+    And I enter my Google password
+    And I press "Create Task"
+    And I am on the tasks page
+    And I delete my task
+    Then there should not be a Google calendar entry titled "a test task"
+
 
 # TODO get this working with mongoDB, currently tries to use ActiveRecord for some weird reason
 #@javascript
