@@ -6,22 +6,29 @@ class GoogleCalendar
   end
 
   def record_task
-    GCal4Ruby::Event.new(
-            @google_service,
-            {
-                    :calendar => @calendar,
-                    :title => @task.name,
-                    :start_time => @task.due_at,
-                    :end_time => @task.due_at + 30.minutes
-            }
-    ).save
+    event = fetch_event
+
+    event.calendar = @calendar
+    event.title = @task.name
+    event.start_time = @task.due_at
+    event.end_time = @task.due_at + 30.minutes
+    event.save
+    event.id
   end
 
   def remove_task
-    GCal4Ruby::Event.find(@google_service, @task.name).first.delete
+    GCal4Ruby::Event.find(@google_service, {:id => @task.google_event_id}).delete unless @task.google_event_id.blank?
   end
 
   private
+
+  def fetch_event
+    existing_event || GCal4Ruby::Event.new(@google_service)
+  end
+
+  def existing_event
+    GCal4Ruby::Event.find(@google_service, {:id => @task.google_event_id}) unless @task.google_event_id.blank?
+  end
 
   def select_calendar
     @calendar = @google_service.calendars.first

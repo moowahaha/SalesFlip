@@ -527,6 +527,15 @@ class TaskTest < ActiveSupport::TestCase
 
         @task.destroy
       end
+
+      should "store the google event id" do
+        fake_calendar = mock('calendar')
+        GoogleCalendar.stubs(:new).returns(fake_calendar)
+        fake_calendar.stubs(:record_task).returns('abc')
+
+        @task.save
+        assert_equal @task.google_event_id, 'abc'
+      end
     end
   end
 end

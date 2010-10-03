@@ -35,34 +35,55 @@ class GoogleCalendarTest < ActiveSupport::TestCase
       @google_calendar = GoogleCalendar.new(@task)
     end
 
-    should 'create a new event' do
-      @task.due_at = Time.zone.now + 1.hour
+    should 'create a new event if one does not already exist' do
+      GCal4Ruby::Event.stubs(:find).returns(nil)
 
+      @task.due_at = Time.zone.now + 1.hour
       @task.name = 'harold'
 
       fake_event = mock('event')
 
-      GCal4Ruby::Event.expects(:new).with(
-              @fake_service,
-              {
-                      :calendar => @fake_calendar,
-                      :title => 'harold',
-                      :start_time => @task.due_at,
-                      :end_time => @task.due_at + 30.minutes
+      GCal4Ruby::Event.expects(:new).with(@fake_service).returns(fake_event)
 
-              }
-      ).returns(fake_event)
-
+      fake_event.expects(:calendar=).with(@fake_calendar)
+      fake_event.expects(:start_time=).with(@task.due_at)
+      fake_event.expects(:end_time=).with(@task.due_at + 30.minutes)
+      fake_event.expects(:title=).with('harold')
+      fake_event.expects(:id).returns('hello')
       fake_event.expects(:save)
 
-      @google_calendar.record_task
+      assert_equal @google_calendar.record_task, 'hello'
+    end
+
+    should 'update an existing event' do
+      @task.due_at = Time.zone.now + 1.hour
+      @task.name = 'harold'
+      @task.google_event_id = 'some id'
+
+      @task.save
+      
+      @task.due_at = Time.zone.now + 2.hours
+      @task.name = 'timothy'
+
+      fake_event = mock('event')
+
+      GCal4Ruby::Event.expects(:find).with(@fake_service, {:id => 'some id'}).returns(fake_event)
+
+      fake_event.expects(:calendar=).with(@fake_calendar)
+      fake_event.expects(:start_time=).with(@task.due_at)
+      fake_event.expects(:end_time=).with(@task.due_at + 30.minutes)
+      fake_event.expects(:title=).with('timothy')
+      fake_event.expects(:id).returns('123')
+      fake_event.expects(:save)
+
+      assert_equal @google_calendar.record_task, '123'
     end
 
     should 'delete an event' do
       fake_event = mock('event')
-      GCal4Ruby::Event.expects(:find).with(@fake_service, 'monkey business').returns([fake_event])
+      GCal4Ruby::Event.expects(:find).with(@fake_service, {:id => 'monkey business'}).returns(fake_event)
       fake_event.expects('delete')
-      @task.name = 'monkey business'
+      @task.google_event_id = 'monkey business'
 
       @google_calendar.remove_task
     end

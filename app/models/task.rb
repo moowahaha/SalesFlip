@@ -11,6 +11,8 @@ class Task
   # yuck! replace with some sort of security token
   field :google_username
   field :google_password
+  field :google_event_id
+
   field :due_at,          :type => Time
   field :category,        :type => Integer
   field :priority,        :type => Integer
@@ -30,11 +32,11 @@ class Task
 
   before_create  :set_recently_created
   before_update  :log_reassignment
-  before_save    :log_recently_changed
+  before_save    :log_recently_changed, :update_google_calendar_entry
   before_destroy :remove_google_calendar_entry
   after_create   :assign_unassigned_lead, :assign_unassigned_lead
   after_update   :log_update
-  after_save     :notify_assignee, :update_google_calendar_entry
+  after_save     :notify_assignee
 
   named_scope :incomplete, :where => { :completed_at => nil }
 
@@ -112,7 +114,7 @@ class Task
   
   def update_google_calendar_entry
     return unless use_google_calendar?
-    google_calendar.record_task
+    self.google_event_id = google_calendar.record_task
   end
 
   def remove_google_calendar_entry
