@@ -1,6 +1,6 @@
 source :gemcutter
 
-#gem 'rails',                :git => 'git://github.com/rails/rails.git', :branch => '3-0-stable'
+#gem 'rails', '>= 6.1.7.3',                :git => 'git://github.com/rails/rails.git', :branch => '3-0-stable'
 gem 'rails'
 
 gem 'sqlite3-ruby',         :require => 'sqlite3'
