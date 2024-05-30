@@ -52,7 +52,7 @@ end
 group :test do
   gem 'pickle'
   gem 'pickle-mongoid'
-  gem 'capybara'
+  gem 'capybara', '>= 0.4.0'
   gem 'cucumber-rails'
   gem 'cucumber'
   gem 'spork'
