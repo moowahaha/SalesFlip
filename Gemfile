@@ -1,6 +1,6 @@
 source :gemcutter
 
-#gem 'rails',                :git => 'git://github.com/rails/rails.git', :branch => '3-0-stable'
+#gem 'rails', '>= 7.1.0',                :git => 'git://github.com/rails/rails.git', :branch => '3-0-stable'
 gem 'rails'
 
 gem 'sqlite3-ruby',         :require => 'sqlite3'
@@ -8,8 +8,8 @@ gem 'sqlite3-ruby',         :require => 'sqlite3'
 gem 'gcal4ruby'
 gem 'haml'
 gem 'inherited_resources'
-gem 'warden'
-#gem 'devise',               :git => 'git://github.com/plataformatec/devise.git'
+gem 'warden', '>= 1.0.0'
+#gem 'devise', '>= 1.1.4',               :git => 'git://github.com/plataformatec/devise.git'
 gem 'devise'
 #gem 'mongoid', :git => 'http://github.com/durran/mongoid.git'
 gem 'mongoid',              :git => 'git://github.com/mattbeedle/mongoid.git', :branch => 'development'
@@ -50,9 +50,9 @@ group :development do
 end
 
 group :test do
-  gem 'pickle'
-  gem 'pickle-mongoid'
-  gem 'capybara'
+  gem 'pickle', '>= 0.4.3'
+  gem 'pickle-mongoid', '>= 0.1.7'
+  gem 'capybara', '>= 0.4.0'
   gem 'cucumber-rails'
   gem 'cucumber'
   gem 'spork'
