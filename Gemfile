@@ -1,6 +1,6 @@
 source :gemcutter
 
-#gem 'rails',                :git => 'git://github.com/rails/rails.git', :branch => '3-0-stable'
+#gem 'rails', '>= 3.2.4',                :git => 'git://github.com/rails/rails.git', :branch => '3-0-stable'
 gem 'rails'
 
 gem 'sqlite3-ruby',         :require => 'sqlite3'
@@ -52,7 +52,7 @@ end
 group :test do
   gem 'pickle'
   gem 'pickle-mongoid'
-  gem 'capybara'
+  gem 'capybara', '>= 0.4.0'
   gem 'cucumber-rails'
   gem 'cucumber'
   gem 'spork'
